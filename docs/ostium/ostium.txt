@@ -1,0 +1,20 @@
+接口调用
+fetch("https://metadata-backend.ostium.io/graph", {
+  "headers": {
+    "accept": "*/*",
+    "accept-language": "zh-CN,zh;q=0.9",
+    "content-type": "application/json",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Google Chrome\";v=\"143\", \"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "cross-site"
+  },
+  "referrer": "https://app.ostium.com/",
+  "body": "{\"operationName\":\"GetPairsAndMetadata\",\"variables\":{},\"query\":\"query GetPairsAndMetadata {\\n  pairs(first: 1000) {\\n    ...PairFullFields\\n    __typename\\n  }\\n  metaData(id: \\\"ostium\\\") {\\n    ...MetadataFields\\n    __typename\\n  }\\n}\\n\\nfragment PairFullFields on Pair {\\n  ...PairDetailFields\\n  makerMaxLeverage\\n  maxLeverage\\n  group {\\n    ...PairGroupFields\\n    __typename\\n  }\\n  makerFeeP\\n  takerFeeP\\n  fee {\\n    ...PairFeeFields\\n    __typename\\n  }\\n  hillInflectionPoint\\n  hillPosScale\\n  hillNegScale\\n  lastOiDelta\\n  springFactor\\n  sFactorUpScaleP\\n  sFactorDownScaleP\\n  lastTradePrice\\n  netVolThreshold\\n  decayRate\\n  priceImpactK\\n  buyVolume\\n  sellVolume\\n  lastUpdateTimestamp\\n  __typename\\n}\\n\\nfragment PairDetailFields on Pair {\\n  ...PairBaseFields\\n  volume\\n  accRollover\\n  accFundingLong\\n  accFundingShort\\n  curRollover\\n  curFundingLong\\n  curFundingShort\\n  lastFundingRate\\n  maxFundingFeePerBlock\\n  lastFundingBlock\\n  lastFundingTime\\n  longOI\\n  shortOI\\n  maxOI\\n  rolloverFeePerBlock\\n  lastRolloverBlock\\n  lastRolloverLongPure\\n  brokerPremium\\n  isNegativeRolloverAllowed\\n  overnightMaxLeverage\\n  accRolloverShort\\n  accRolloverLong\\n  __typename\\n}\\n\\nfragment PairBaseFields on Pair {\\n  id\\n  from\\n  to\\n  feed\\n  __typename\\n}\\n\\nfragment PairGroupFields on Group {\\n  id\\n  name\\n  maxLeverage\\n  minLeverage\\n  maxCollateralP\\n  longCollateral\\n  shortCollateral\\n  __typename\\n}\\n\\nfragment PairFeeFields on Fee {\\n  id\\n  minLevPos\\n  liqFeeP\\n  oracleFee\\n  __typename\\n}\\n\\nfragment MetadataFields on MetaData {\\n  maxTradesPerPair\\n  maxPendingMarketOrders\\n  totalTrades\\n  totalUsers\\n  totalOpenTrades\\n  totalVolume\\n  liqMarginThresholdP\\n  maxAllowedCollateral\\n  maxNegativePnlOnOpenP\\n  __typename\\n}\"}",
+  "method": "POST",
+  "mode": "cors",
+  "credentials": "omit"
+});

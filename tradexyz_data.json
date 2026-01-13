@@ -1,0 +1,2186 @@
+[
+  {
+    "symbol": "PURR/USDC",
+    "coin": "PURR/USDC",
+    "volume_24h": 393146.4876540002,
+    "price": 0.057434,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "HFUN",
+    "coin": "HFUN",
+    "volume_24h": 34696.52024,
+    "price": 14.565,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "LICK",
+    "coin": "LICK",
+    "volume_24h": 0.0,
+    "price": 4.131e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "MANLET",
+    "coin": "MANLET",
+    "volume_24h": 0.0,
+    "price": 0.0029277,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "JEFF",
+    "coin": "JEFF",
+    "volume_24h": 7826.70877,
+    "price": 0.95148,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "SIX",
+    "coin": "SIX",
+    "volume_24h": 0.0,
+    "price": 0.67873,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "WAGMI",
+    "coin": "WAGMI",
+    "volume_24h": 0.0,
+    "price": 3.7e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "CAPPY",
+    "coin": "CAPPY",
+    "volume_24h": 0.0,
+    "price": 3.3e-06,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "POINTS",
+    "coin": "POINTS",
+    "volume_24h": 1724.5885168,
+    "price": 0.002969,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "TRUMP",
+    "coin": "TRUMP",
+    "volume_24h": 0.0,
+    "price": 0.000333,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "GMEOW",
+    "coin": "GMEOW",
+    "volume_24h": 0.0,
+    "price": 2.02e-06,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "PEPE",
+    "coin": "PEPE",
+    "volume_24h": 0.0,
+    "price": 7.3e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "XULIAN",
+    "coin": "XULIAN",
+    "volume_24h": 0.0,
+    "price": 4.306e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "RUG",
+    "coin": "RUG",
+    "volume_24h": 828.7077078,
+    "price": 0.00028959,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "ILIENS",
+    "coin": "ILIENS",
+    "volume_24h": 0.0,
+    "price": 4.501e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "FUCKY",
+    "coin": "FUCKY",
+    "volume_24h": 0.0,
+    "price": 4.4e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "CZ",
+    "coin": "CZ",
+    "volume_24h": 0.0,
+    "price": 0.022,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "BAGS",
+    "coin": "BAGS",
+    "volume_24h": 0.0,
+    "price": 2.15e-06,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "ANSEM",
+    "coin": "ANSEM",
+    "volume_24h": 0.0,
+    "price": 0.004874,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "TATE",
+    "coin": "TATE",
+    "volume_24h": 0.0,
+    "price": 0.01142,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "PUMP",
+    "coin": "PUMP",
+    "volume_24h": 14.94419705,
+    "price": 0.0001152,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "KOBE",
+    "coin": "KOBE",
+    "volume_24h": 0.0,
+    "price": 7.05e-06,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "HAPPY",
+    "coin": "HAPPY",
+    "volume_24h": 3.05821292,
+    "price": 0.092449,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "SCHIZO",
+    "coin": "SCHIZO",
+    "volume_24h": 0.0,
+    "price": 0.20714,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "SELL",
+    "coin": "SELL",
+    "volume_24h": 0.0,
+    "price": 8.54e-06,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "BIGBEN",
+    "coin": "BIGBEN",
+    "volume_24h": 0.0,
+    "price": 7.3e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "CATNIP",
+    "coin": "CATNIP",
+    "volume_24h": 0.0,
+    "price": 0.000788,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "HBOOST",
+    "coin": "HBOOST",
+    "volume_24h": 0.0,
+    "price": 5.26e-06,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "SUCKY",
+    "coin": "SUCKY",
+    "volume_24h": 4.19842678,
+    "price": 0.00015578,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "GUP",
+    "coin": "GUP",
+    "volume_24h": 0.0,
+    "price": 0.013155,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "FARMED",
+    "coin": "FARMED",
+    "volume_24h": 0.0,
+    "price": 0.000181,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "GPT",
+    "coin": "GPT",
+    "volume_24h": 0.0,
+    "price": 2.2e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "PURRPS",
+    "coin": "PURRPS",
+    "volume_24h": 0.0,
+    "price": 2.302e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "BID",
+    "coin": "BID",
+    "volume_24h": 0.0,
+    "price": 3e-07,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "HODL",
+    "coin": "HODL",
+    "volume_24h": 0.0,
+    "price": 0.002427,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "VEGAS",
+    "coin": "VEGAS",
+    "volume_24h": 459.3156316,
+    "price": 0.066615,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "ASI",
+    "coin": "ASI",
+    "volume_24h": 0.0,
+    "price": 0.003009,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "VAPOR",
+    "coin": "VAPOR",
+    "volume_24h": 0.0,
+    "price": 5.12e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "PANDA",
+    "coin": "PANDA",
+    "volume_24h": 0.0,
+    "price": 0.00017236,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "PILL",
+    "coin": "PILL",
+    "volume_24h": 0.0,
+    "price": 9.7e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "ADHD",
+    "coin": "ADHD",
+    "volume_24h": 94.73345844,
+    "price": 0.00027852,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "FUN",
+    "coin": "FUN",
+    "volume_24h": 0.0,
+    "price": 0.00179,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "LADY",
+    "coin": "LADY",
+    "volume_24h": 0.0,
+    "price": 0.0014,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "MOG",
+    "coin": "MOG",
+    "volume_24h": 0.0,
+    "price": 8e-06,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "HPEPE",
+    "coin": "HPEPE",
+    "volume_24h": 0.0,
+    "price": 2.047e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "JEET",
+    "coin": "JEET",
+    "volume_24h": 0.0,
+    "price": 6.075e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "DROP",
+    "coin": "DROP",
+    "volume_24h": 0.0,
+    "price": 0.000152,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "MBAPPE",
+    "coin": "MBAPPE",
+    "volume_24h": 0.0,
+    "price": 0.004501,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "TEST",
+    "coin": "TEST",
+    "volume_24h": 0.0,
+    "price": 7.817e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "RAGE",
+    "coin": "RAGE",
+    "volume_24h": 0.0,
+    "price": 0.000219,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "FRAC",
+    "coin": "FRAC",
+    "volume_24h": 4.3167309,
+    "price": 0.032047,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "ATEHUN",
+    "coin": "ATEHUN",
+    "volume_24h": 165.1191202,
+    "price": 0.2,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "COZY",
+    "coin": "COZY",
+    "volume_24h": 0.0,
+    "price": 0.016615,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "ARI",
+    "coin": "ARI",
+    "volume_24h": 0.0,
+    "price": 0.00015,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "WASH",
+    "coin": "WASH",
+    "volume_24h": 0.0,
+    "price": 0.058685,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "ANT",
+    "coin": "ANT",
+    "volume_24h": 0.0,
+    "price": 0.024413,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "NFT",
+    "coin": "NFT",
+    "volume_24h": 0.0,
+    "price": 0.039999,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "RICH",
+    "coin": "RICH",
+    "volume_24h": 0.0,
+    "price": 0.02774,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "LORA",
+    "coin": "LORA",
+    "volume_24h": 0.0,
+    "price": 0.074846,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "CATBAL",
+    "coin": "CATBAL",
+    "volume_24h": 1127.4229093,
+    "price": 0.56167,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "TJIF",
+    "coin": "TJIF",
+    "volume_24h": 0.0,
+    "price": 0.03216,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "GUESS",
+    "coin": "GUESS",
+    "volume_24h": 0.0,
+    "price": 0.00046,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "MAXI",
+    "coin": "MAXI",
+    "volume_24h": 0.0,
+    "price": 0.041237,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "NMTD",
+    "coin": "NMTD",
+    "volume_24h": 0.0,
+    "price": 0.050554,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "HPUMP",
+    "coin": "HPUMP",
+    "volume_24h": 0.0,
+    "price": 0.071986,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "PIGEON",
+    "coin": "PIGEON",
+    "volume_24h": 0.0,
+    "price": 0.045386,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "RISE",
+    "coin": "RISE",
+    "volume_24h": 0.0,
+    "price": 6.8e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "CINDY",
+    "coin": "CINDY",
+    "volume_24h": 0.0,
+    "price": 0.043003,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "CHINA",
+    "coin": "CHINA",
+    "volume_24h": 2.6830296,
+    "price": 0.14062,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "STACK",
+    "coin": "STACK",
+    "volume_24h": 5.976804,
+    "price": 0.43185,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "FRIED",
+    "coin": "FRIED",
+    "volume_24h": 0.0,
+    "price": 0.022048,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "@71",
+    "coin": "@71",
+    "volume_24h": 0.0,
+    "price": 1.0,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "NOCEX",
+    "coin": "NOCEX",
+    "volume_24h": 1779.8130395,
+    "price": 0.46949,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "RANK",
+    "coin": "RANK",
+    "volume_24h": 0.0,
+    "price": 0.06405,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "OMNIX",
+    "coin": "OMNIX",
+    "volume_24h": 38.225098,
+    "price": 7.72e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "RIP",
+    "coin": "RIP",
+    "volume_24h": 0.0,
+    "price": 0.13979,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "G",
+    "coin": "G",
+    "volume_24h": 0.0,
+    "price": 0.004444,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "BOZO",
+    "coin": "BOZO",
+    "volume_24h": 0.0,
+    "price": 0.004721,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "SPH",
+    "coin": "SPH",
+    "volume_24h": 0.0,
+    "price": 0.056647,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "SHOE",
+    "coin": "SHOE",
+    "volume_24h": 0.0,
+    "price": 0.049445,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "MONAD",
+    "coin": "MONAD",
+    "volume_24h": 0.0,
+    "price": 0.0002815,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "HOPE",
+    "coin": "HOPE",
+    "volume_24h": 0.0,
+    "price": 1.21e-06,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "BUSSY",
+    "coin": "BUSSY",
+    "volume_24h": 0.0,
+    "price": 0.036689,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "FATCAT",
+    "coin": "FATCAT",
+    "volume_24h": 0.0,
+    "price": 0.003395,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "SHREK",
+    "coin": "SHREK",
+    "volume_24h": 0.0,
+    "price": 0.036305,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "PIP",
+    "coin": "PIP",
+    "volume_24h": 501.85513,
+    "price": 1.6653,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "LQNA",
+    "coin": "LQNA",
+    "volume_24h": 40.91109978,
+    "price": 0.069655,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "NASDAQ",
+    "coin": "NASDAQ",
+    "volume_24h": 0.0,
+    "price": 0.062483,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "YEETI",
+    "coin": "YEETI",
+    "volume_24h": 0.0,
+    "price": 7.975e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "SYLVI",
+    "coin": "SYLVI",
+    "volume_24h": 0.0,
+    "price": 0.072015,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "FEIT",
+    "coin": "FEIT",
+    "volume_24h": 0.0,
+    "price": 0.002321,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "FRUDO",
+    "coin": "FRUDO",
+    "volume_24h": 0.0,
+    "price": 0.005039,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "VIZN",
+    "coin": "VIZN",
+    "volume_24h": 0.0,
+    "price": 0.13283,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "STRICT",
+    "coin": "STRICT",
+    "volume_24h": 0.0,
+    "price": 2.083e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "AUTIST",
+    "coin": "AUTIST",
+    "volume_24h": 70.23695752,
+    "price": 0.050344,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "MAGA",
+    "coin": "MAGA",
+    "volume_24h": 0.0,
+    "price": 3.2e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "HGOD",
+    "coin": "HGOD",
+    "volume_24h": 0.0,
+    "price": 0.005068,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "LIQUID",
+    "coin": "LIQUID",
+    "volume_24h": 0.0,
+    "price": 0.048016,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "@98",
+    "coin": "@98",
+    "volume_24h": 0.0,
+    "price": 1.0,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "EARTH",
+    "coin": "EARTH",
+    "volume_24h": 29.2518422,
+    "price": 0.039166,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "UP",
+    "coin": "UP",
+    "volume_24h": 0.0,
+    "price": 0.003317,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "NIGGO",
+    "coin": "NIGGO",
+    "volume_24h": 28.2339132,
+    "price": 0.14389,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "HOP",
+    "coin": "HOP",
+    "volume_24h": 0.0,
+    "price": 0.002201,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "LUCKY",
+    "coin": "LUCKY",
+    "volume_24h": 0.0,
+    "price": 3.149e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "COPE",
+    "coin": "COPE",
+    "volume_24h": 0.0,
+    "price": 0.0275,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "HPYH",
+    "coin": "HPYH",
+    "volume_24h": 0.0,
+    "price": 0.13119,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "YAP",
+    "coin": "YAP",
+    "volume_24h": 0.0,
+    "price": 0.00728,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "HYPE",
+    "coin": "HYPE",
+    "volume_24h": 55124041.4594,
+    "price": 24.304,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "CHEF",
+    "coin": "CHEF",
+    "volume_24h": 0.0,
+    "price": 0.00801,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "WOW",
+    "coin": "WOW",
+    "volume_24h": 0.0,
+    "price": 0.00016,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "STEEL",
+    "coin": "STEEL",
+    "volume_24h": 0.0,
+    "price": 0.008895,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "RETARD",
+    "coin": "RETARD",
+    "volume_24h": 0.0,
+    "price": 0.030554,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "MEOW",
+    "coin": "MEOW",
+    "volume_24h": 0.0,
+    "price": 0.0005801,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "NEIRO",
+    "coin": "NEIRO",
+    "volume_24h": 0.0,
+    "price": 6.46e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "PEAR",
+    "coin": "PEAR",
+    "volume_24h": 0.0,
+    "price": 0.0004112,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "HOLD",
+    "coin": "HOLD",
+    "volume_24h": 53.53195369,
+    "price": 0.046631,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "MUNCH",
+    "coin": "MUNCH",
+    "volume_24h": 0.0,
+    "price": 1.784e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "BERA",
+    "coin": "BERA",
+    "volume_24h": 0.0,
+    "price": 0.0007201,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "GENESY",
+    "coin": "GENESY",
+    "volume_24h": 119.24677909,
+    "price": 0.012099,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "BUBZ",
+    "coin": "BUBZ",
+    "volume_24h": 1.50533064,
+    "price": 0.006248,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "PICKL",
+    "coin": "PICKL",
+    "volume_24h": 0.0,
+    "price": 0.008516,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "SHEEP",
+    "coin": "SHEEP",
+    "volume_24h": 0.0,
+    "price": 0.002002,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "LAUNCH",
+    "coin": "LAUNCH",
+    "volume_24h": 28.77456519,
+    "price": 0.006741,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "FARM",
+    "coin": "FARM",
+    "volume_24h": 0.0,
+    "price": 0.029118,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "FLASK",
+    "coin": "FLASK",
+    "volume_24h": 0.0,
+    "price": 0.002162,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "VAULT",
+    "coin": "VAULT",
+    "volume_24h": 0.0,
+    "price": 0.0024,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "CAT",
+    "coin": "CAT",
+    "volume_24h": 90.80981616,
+    "price": 0.050001,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "HYENA",
+    "coin": "HYENA",
+    "volume_24h": 299.78202557,
+    "price": 0.046939,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "DEPIN",
+    "coin": "DEPIN",
+    "volume_24h": 89.4715136,
+    "price": 0.00055,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "MON",
+    "coin": "MON",
+    "volume_24h": 99.9741477,
+    "price": 0.0099,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "BEATS",
+    "coin": "BEATS",
+    "volume_24h": 24.9164972,
+    "price": 1e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "ORA",
+    "coin": "ORA",
+    "volume_24h": 0.0,
+    "price": 0.018,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "LIQD",
+    "coin": "LIQD",
+    "volume_24h": 1678.88407819,
+    "price": 0.001642,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "H",
+    "coin": "H",
+    "volume_24h": 0.0,
+    "price": 5e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "STAR",
+    "coin": "STAR",
+    "volume_24h": 0.0,
+    "price": 0.000205,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "SENT",
+    "coin": "SENT",
+    "volume_24h": 0.0,
+    "price": 1e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "SOLV",
+    "coin": "SOLV",
+    "volume_24h": 548.17915706,
+    "price": 0.0111,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "FLY",
+    "coin": "FLY",
+    "volume_24h": 0.0,
+    "price": 7e-06,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "TIME",
+    "coin": "TIME",
+    "volume_24h": 325.74155813,
+    "price": 0.0008975,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "SOVRN",
+    "coin": "SOVRN",
+    "volume_24h": 0.0,
+    "price": 0.042524,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "HWTR",
+    "coin": "HWTR",
+    "volume_24h": 0.0,
+    "price": 6.7e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "GOD",
+    "coin": "GOD",
+    "volume_24h": 0.0,
+    "price": 0.012857,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "UBTC",
+    "coin": "UBTC",
+    "volume_24h": 33675703.28000998,
+    "price": 92137.0,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "HEAD",
+    "coin": "HEAD",
+    "volume_24h": 0.0,
+    "price": 0.005396,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "@144",
+    "coin": "@144",
+    "volume_24h": 0.0,
+    "price": 8.3e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "VORTX",
+    "coin": "VORTX",
+    "volume_24h": 0.0,
+    "price": 9e-06,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "DEFIN",
+    "coin": "DEFIN",
+    "volume_24h": 0.0,
+    "price": 4e-06,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "JPEG",
+    "coin": "JPEG",
+    "volume_24h": 0.00067716,
+    "price": 0.001539,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "WHYPI",
+    "coin": "WHYPI",
+    "volume_24h": 0.0,
+    "price": 0.00027,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "@149",
+    "coin": "@149",
+    "volume_24h": 0.0,
+    "price": 1.0,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "USDE",
+    "coin": "USDE",
+    "volume_24h": 612267.8458932,
+    "price": 0.99934,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "UETH",
+    "coin": "UETH",
+    "volume_24h": 7068795.885810002,
+    "price": 3133.7,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "USDXL",
+    "coin": "USDXL",
+    "volume_24h": 667.0019865,
+    "price": 0.98663,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "FEUSD",
+    "coin": "FEUSD",
+    "volume_24h": 332229.8143550002,
+    "price": 1.0025,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "@154",
+    "coin": "@154",
+    "volume_24h": 0.0,
+    "price": 1.0,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "QUANT",
+    "coin": "QUANT",
+    "volume_24h": 0.0,
+    "price": 0.000392,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "USOL",
+    "coin": "USOL",
+    "volume_24h": 5838070.073760002,
+    "price": 141.69,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "RAT",
+    "coin": "RAT",
+    "volume_24h": 0.0,
+    "price": 0.001776,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "TILT",
+    "coin": "TILT",
+    "volume_24h": 0.0,
+    "price": 8e-06,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "TREND",
+    "coin": "TREND",
+    "volume_24h": 535.455772,
+    "price": 0.53505,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "BUDDY",
+    "coin": "BUDDY",
+    "volume_24h": 921.70381943,
+    "price": 0.001163,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "PRFI",
+    "coin": "PRFI",
+    "volume_24h": 49.778598,
+    "price": 0.06,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "UFART",
+    "coin": "UFART",
+    "volume_24h": 2614133.5010089995,
+    "price": 0.38409,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "FUND",
+    "coin": "FUND",
+    "volume_24h": 76.37017358,
+    "price": 0.044227,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "DIABLO",
+    "coin": "DIABLO",
+    "volume_24h": 0.0,
+    "price": 0.000796,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "PENIS",
+    "coin": "PENIS",
+    "volume_24h": 10.71993011,
+    "price": 0.018813,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "USDT0",
+    "coin": "USDT0",
+    "volume_24h": 1511265.3595286994,
+    "price": 0.99926,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "@167",
+    "coin": "@167",
+    "volume_24h": 0.0,
+    "price": 1.0,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "@168",
+    "coin": "@168",
+    "volume_24h": 0.0,
+    "price": 1.0,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "@169",
+    "coin": "@169",
+    "volume_24h": 0.0,
+    "price": 1.0,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "PEG",
+    "coin": "PEG",
+    "volume_24h": 0.0,
+    "price": 0.0065494,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "USH",
+    "coin": "USH",
+    "volume_24h": 0.0,
+    "price": 0.554965,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "COOK",
+    "coin": "COOK",
+    "volume_24h": 0.0,
+    "price": 0.00571,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "RUB",
+    "coin": "RUB",
+    "volume_24h": 0.5889,
+    "price": 70001.0,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "ANON",
+    "coin": "ANON",
+    "volume_24h": 31153.97057,
+    "price": 1.2494,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "FRCT",
+    "coin": "FRCT",
+    "volume_24h": 0.0,
+    "price": 7.58e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "PERP",
+    "coin": "PERP",
+    "volume_24h": 0.0,
+    "price": 1.9e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "PURRO",
+    "coin": "PURRO",
+    "volume_24h": 0.0,
+    "price": 0.031481,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "USR",
+    "coin": "USR",
+    "volume_24h": 0.0,
+    "price": 0.9999,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "OTTI",
+    "coin": "OTTI",
+    "volume_24h": 83.8337357,
+    "price": 0.15077,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "USDHL",
+    "coin": "USDHL",
+    "volume_24h": 30295.0334525,
+    "price": 0.9994,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "@181",
+    "coin": "@181",
+    "volume_24h": 0.0,
+    "price": 1.0,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "XAUT0",
+    "coin": "XAUT0",
+    "volume_24h": 1876837.3929999995,
+    "price": 4562.4,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "HORSY",
+    "coin": "HORSY",
+    "volume_24h": 0.0,
+    "price": 0.016364,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "HPENGU",
+    "coin": "HPENGU",
+    "volume_24h": 146036.8997288,
+    "price": 0.01204,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "ISLAND",
+    "coin": "ISLAND",
+    "volume_24h": 0.0,
+    "price": 0.007096,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "@186",
+    "coin": "@186",
+    "volume_24h": 0.0,
+    "price": 1.0,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "LICKO",
+    "coin": "LICKO",
+    "volume_24h": 0.0,
+    "price": 3.2e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "UPUMP",
+    "coin": "UPUMP",
+    "volume_24h": 2531130.2218478997,
+    "price": 0.0025143,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "USPYX",
+    "coin": "USPYX",
+    "volume_24h": 0.0,
+    "price": 620.0,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "STLOOP",
+    "coin": "STLOOP",
+    "volume_24h": 0.0,
+    "price": 0.003344,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "TRADE",
+    "coin": "TRADE",
+    "volume_24h": 0.0,
+    "price": 0.001162,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "ANZ",
+    "coin": "ANZ",
+    "volume_24h": 0.0,
+    "price": 0.00045,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "UUUSPX",
+    "coin": "UUUSPX",
+    "volume_24h": 57919.899282,
+    "price": 0.59463,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "UBONK",
+    "coin": "UBONK",
+    "volume_24h": 26676.99529772,
+    "price": 1.045e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "LATINA",
+    "coin": "LATINA",
+    "volume_24h": 0.0,
+    "price": 8e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "APU",
+    "coin": "APU",
+    "volume_24h": 0.0,
+    "price": 0.002327,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "@197",
+    "coin": "@197",
+    "volume_24h": 0.0,
+    "price": 1.0,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "WOULD",
+    "coin": "WOULD",
+    "volume_24h": 18353.079664,
+    "price": 0.10381,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "EX",
+    "coin": "EX",
+    "volume_24h": 0.0,
+    "price": 0.012359,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "UMOG",
+    "coin": "UMOG",
+    "volume_24h": 0.0,
+    "price": 1.715,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "HREKT",
+    "coin": "HREKT",
+    "volume_24h": 2043.29999982,
+    "price": 3e-07,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "KITTY",
+    "coin": "KITTY",
+    "volume_24h": 0.0,
+    "price": 0.000789,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "DBLN",
+    "coin": "DBLN",
+    "volume_24h": 0.0,
+    "price": 1.0,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "VSN",
+    "coin": "VSN",
+    "volume_24h": 0.0,
+    "price": 0.09058,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "THBILL",
+    "coin": "THBILL",
+    "volume_24h": 1599.114218,
+    "price": 1.0072,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "UENA",
+    "coin": "UENA",
+    "volume_24h": 349973.7693119999,
+    "price": 0.22037,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "HYPE",
+    "coin": "HYPE",
+    "volume_24h": 38346.57667,
+    "price": 24.311,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "LTHREE",
+    "coin": "LTHREE",
+    "volume_24h": 0.0,
+    "price": 0.012707,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "XAUT0",
+    "coin": "XAUT0",
+    "volume_24h": 2111.214,
+    "price": 4587.3,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "UXPL",
+    "coin": "UXPL",
+    "volume_24h": 3252235.158384001,
+    "price": 0.15673,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "BAYC",
+    "coin": "BAYC",
+    "volume_24h": 0.0,
+    "price": 0.000275,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "LINK0",
+    "coin": "LINK0",
+    "volume_24h": 0.0,
+    "price": 16.999,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "LINK0",
+    "coin": "LINK0",
+    "volume_24h": 39919.20988,
+    "price": 13.243,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "WMNT",
+    "coin": "WMNT",
+    "volume_24h": 67456.6744611,
+    "price": 0.9609,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "SLAY",
+    "coin": "SLAY",
+    "volume_24h": 0.0,
+    "price": 0.002256,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "REI",
+    "coin": "REI",
+    "volume_24h": 0.0,
+    "price": 0.012,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "RZR",
+    "coin": "RZR",
+    "volume_24h": 0.0,
+    "price": 1.2626,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "REX",
+    "coin": "REX",
+    "volume_24h": 0.0,
+    "price": 3.0,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "BRIDGE",
+    "coin": "BRIDGE",
+    "volume_24h": 0.0,
+    "price": 0.001504,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "@220",
+    "coin": "@220",
+    "volume_24h": 0.0,
+    "price": 1.0,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "@221",
+    "coin": "@221",
+    "volume_24h": 0.0,
+    "price": 1.0,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "@222",
+    "coin": "@222",
+    "volume_24h": 0.0,
+    "price": 1.0,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "PUP",
+    "coin": "PUP",
+    "volume_24h": 8388.39699404,
+    "price": 0.009658,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "UWLD",
+    "coin": "UWLD",
+    "volume_24h": 0.0,
+    "price": 1.75,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "FLR",
+    "coin": "FLR",
+    "volume_24h": 4418.27507253,
+    "price": 0.011203,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "AVAX0",
+    "coin": "AVAX0",
+    "volume_24h": 5648.93612,
+    "price": 13.767,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "AAVE0",
+    "coin": "AAVE0",
+    "volume_24h": 28369.3346,
+    "price": 169.32,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "UDZ",
+    "coin": "UDZ",
+    "volume_24h": 164.516504,
+    "price": 0.12041,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "@229",
+    "coin": "@229",
+    "volume_24h": 0.0,
+    "price": 1.0,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "USDH",
+    "coin": "USDH",
+    "volume_24h": 8997756.595050996,
+    "price": 1.0001,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "UPHL",
+    "coin": "UPHL",
+    "volume_24h": 175.13756559,
+    "price": 0.0006,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "HYPE",
+    "coin": "HYPE",
+    "volume_24h": 492236.8974399997,
+    "price": 24.298,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "UXPL",
+    "coin": "UXPL",
+    "volume_24h": 84913.907162,
+    "price": 0.15655,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "UBTC",
+    "coin": "UBTC",
+    "volume_24h": 446616.23395,
+    "price": 92106.0,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "UETH",
+    "coin": "UETH",
+    "volume_24h": 515885.37495,
+    "price": 3133.2,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "KEI",
+    "coin": "KEI",
+    "volume_24h": 0.0,
+    "price": 0.97792,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "WAR",
+    "coin": "WAR",
+    "volume_24h": 0.0,
+    "price": 1.1e-05,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "XION",
+    "coin": "XION",
+    "volume_24h": 2126.2369,
+    "price": 0.1982,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "@239",
+    "coin": "@239",
+    "volume_24h": 0.0,
+    "price": 1.0,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "KITTEN",
+    "coin": "KITTEN",
+    "volume_24h": 145.32654052,
+    "price": 0.001027,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "HWAVE",
+    "coin": "HWAVE",
+    "volume_24h": 246.06085039,
+    "price": 0.00029,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "SWAP",
+    "coin": "SWAP",
+    "volume_24h": 344.83689,
+    "price": 0.018,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "UMON",
+    "coin": "UMON",
+    "volume_24h": 2602202.6593147987,
+    "price": 0.023437,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "USDXL",
+    "coin": "USDXL",
+    "volume_24h": 0.0,
+    "price": 9.9902,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "NBT",
+    "coin": "NBT",
+    "volume_24h": 0.0,
+    "price": 0.00208,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "IZEC",
+    "coin": "IZEC",
+    "volume_24h": 0.0,
+    "price": 0.0029,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "FI",
+    "coin": "FI",
+    "volume_24h": 18.64701995,
+    "price": 0.012511,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "BZEC",
+    "coin": "BZEC",
+    "volume_24h": 43714.9144,
+    "price": 405.9,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "RISK",
+    "coin": "RISK",
+    "volume_24h": 0.0,
+    "price": 0.0325,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "KHYPE",
+    "coin": "KHYPE",
+    "volume_24h": 21799.39931,
+    "price": 24.536,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "MMOVE",
+    "coin": "MMOVE",
+    "volume_24h": 0.0,
+    "price": 0.034378,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "AXL",
+    "coin": "AXL",
+    "volume_24h": 19.97953167,
+    "price": 0.072459,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "CREAM",
+    "coin": "CREAM",
+    "volume_24h": 0.0,
+    "price": 0.64,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "KNTQ",
+    "coin": "KNTQ",
+    "volume_24h": 526789.5730296301,
+    "price": 0.10401,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "HYPE",
+    "coin": "HYPE",
+    "volume_24h": 173105.75977,
+    "price": 24.269,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "SEDA",
+    "coin": "SEDA",
+    "volume_24h": 182688.73463626,
+    "price": 0.039702,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "UMEGA",
+    "coin": "UMEGA",
+    "volume_24h": 0.0,
+    "price": 0.1,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "STABLE",
+    "coin": "STABLE",
+    "volume_24h": 641.93899376,
+    "price": 0.014362,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "CASH",
+    "coin": "CASH",
+    "volume_24h": 0.0,
+    "price": 1.00015,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "XMR1",
+    "coin": "XMR1",
+    "volume_24h": 4610569.526700001,
+    "price": 668.97,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "HAR",
+    "coin": "HAR",
+    "volume_24h": 3628.00438973,
+    "price": 0.004216,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "@262",
+    "coin": "@262",
+    "volume_24h": 0.0,
+    "price": 1.0,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "CRCL",
+    "coin": "CRCL",
+    "volume_24h": 0.0,
+    "price": 43.10455,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "TSLA",
+    "coin": "TSLA",
+    "volume_24h": 0.0,
+    "price": 415.51,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "SLV",
+    "coin": "SLV",
+    "volume_24h": 0.0,
+    "price": 65.258,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "GOOGL",
+    "coin": "GOOGL",
+    "volume_24h": 0.0,
+    "price": 158.97505,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "FXRP",
+    "coin": "FXRP",
+    "volume_24h": 279546.13177,
+    "price": 2.0596,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "AAPL",
+    "coin": "AAPL",
+    "volume_24h": 0.0,
+    "price": 263.975,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "BNB1",
+    "coin": "BNB1",
+    "volume_24h": 0.0,
+    "price": 500.015,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "SOON",
+    "coin": "SOON",
+    "volume_24h": 3547.7233878,
+    "price": 0.37202,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "HOOD",
+    "coin": "HOOD",
+    "volume_24h": 0.0,
+    "price": 58.9757,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  },
+  {
+    "symbol": "UZEC",
+    "coin": "UZEC",
+    "volume_24h": 0.0,
+    "price": 380.0,
+    "funding_rate": 0,
+    "platform": "Trade.xyz"
+  }
+]

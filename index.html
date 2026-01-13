@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>合约价格和资金费率对比 - Ostium vs Trade.xyz</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+        color: #fff;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        animation: fadeInDown 0.8s ease-out;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+        animation: fadeInUp 0.8s ease-out;
+      }
+
+      .stat-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 25px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      .stat-label {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        margin-bottom: 10px;
+      }
+
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+      }
+
+      .table-container {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        overflow-x: auto;
+        animation: fadeInUp 1s ease-out;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        color: #333;
+      }
+
+      thead {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+      }
+
+      th {
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      td {
+        padding: 15px;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      tbody tr {
+        transition: background-color 0.2s ease;
+      }
+
+      tbody tr:hover {
+        background-color: #f5f5f5;
+      }
+
+      .symbol {
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: #667eea;
+      }
+
+      .price {
+        font-family: "Courier New", monospace;
+        font-weight: 600;
+      }
+
+      .positive {
+        color: #10b981;
+      }
+
+      .negative {
+        color: #ef4444;
+      }
+
+      .arbitrage-badge {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-block;
+        animation: pulse 2s infinite;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 60px;
+        font-size: 1.2rem;
+      }
+
+      .spinner {
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top: 4px solid #fff;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.7;
+        }
+      }
+
+      .refresh-btn {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 25px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        margin: 20px auto;
+        display: block;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .refresh-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4);
+      }
+
+      .refresh-btn:active {
+        transform: scale(0.98);
+      }
+
+      .error {
+        background: rgba(239, 68, 68, 0.9);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>🔄 合约价格和资金费率对比</h1>
+        <p style="opacity: 0.9; margin-top: 10px">
+          Ostium vs Trade.xyz 实时数据对比
+        </p>
+      </header>
+
+      <div class="stats" id="stats">
+        <div class="stat-card">
+          <div class="stat-label">匹配合约数</div>
+          <div class="stat-value" id="total-matched">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">套利机会</div>
+          <div class="stat-value" id="arbitrage-count">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">最大价差</div>
+          <div class="stat-value" id="max-price-diff">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">最大费率差</div>
+          <div class="stat-value" id="max-funding-diff">-</div>
+        </div>
+      </div>
+
+      <button class="refresh-btn" onclick="loadData()">🔄 刷新数据</button>
+
+      <div class="table-container">
+        <div id="loading" class="loading">
+          <div class="spinner"></div>
+          <div>正在加载数据...</div>
+        </div>
+        <div id="error" class="error" style="display: none"></div>
+        <table id="comparison-table" style="display: none">
+          <thead>
+            <tr>
+              <th>合约</th>
+              <th>Ostium 价格</th>
+              <th>Trade.xyz 价格</th>
+              <th>价格差异</th>
+              <th>Ostium 费率</th>
+              <th>Trade.xyz 费率</th>
+              <th>费率差异</th>
+              <th>套利机会</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      function formatNumber(num, decimals = 2) {
+        if (num === null || num === undefined || isNaN(num)) return "-";
+        return Number(num).toLocaleString("en-US", {
+          minimumFractionDigits: decimals,
+          maximumFractionDigits: decimals,
+        });
+      }
+
+      function formatPercent(num, decimals = 2) {
+        if (num === null || num === undefined || isNaN(num)) return "-";
+        const sign = num >= 0 ? "+" : "";
+        return sign + Number(num).toFixed(decimals) + "%";
+      }
+
+      function loadData() {
+        const loading = document.getElementById("loading");
+        const error = document.getElementById("error");
+        const table = document.getElementById("comparison-table");
+
+        loading.style.display = "block";
+        error.style.display = "none";
+        table.style.display = "none";
+
+        fetch("/api/comparison")
+          .then((response) => {
+            if (!response.ok) throw new Error("数据加载失败");
+            return response.json();
+          })
+          .then((data) => {
+            displayData(data);
+            loading.style.display = "none";
+            table.style.display = "table";
+          })
+          .catch((err) => {
+            loading.style.display = "none";
+            error.style.display = "block";
+            error.textContent =
+              "❌ " + err.message + " - 请确保后台程序正在运行";
+          });
+      }
+
+      function displayData(data) {
+        // 更新统计信息
+        document.getElementById("total-matched").textContent =
+          data.total_matched || 0;
+        document.getElementById("arbitrage-count").textContent =
+          data.arbitrage_opportunities || 0;
+
+        // 计算最大价差和费率差
+        let maxPriceDiff = 0;
+        let maxFundingDiff = 0;
+        if (data.all_comparisons && data.all_comparisons.length > 0) {
+          maxPriceDiff = Math.max(
+            ...data.all_comparisons.map((c) =>
+              Math.abs(c.comparison.price_diff_pct || 0)
+            )
+          );
+          maxFundingDiff = Math.max(
+            ...data.all_comparisons.map((c) =>
+              Math.abs(c.comparison.funding_diff || 0)
+            )
+          );
+        }
+        document.getElementById("max-price-diff").textContent =
+          formatPercent(maxPriceDiff);
+        document.getElementById("max-funding-diff").textContent = formatPercent(
+          maxFundingDiff * 100,
+          4
+        );
+
+        // 填充表格
+        const tbody = document.getElementById("table-body");
+        tbody.innerHTML = "";
+
+        if (!data.all_comparisons || data.all_comparisons.length === 0) {
+          tbody.innerHTML =
+            '<tr><td colspan="8" style="text-align: center; padding: 40px;">暂无数据</td></tr>';
+          return;
+        }
+
+        // 按价格差异排序
+        const sorted = [...data.all_comparisons].sort(
+          (a, b) =>
+            Math.abs(b.comparison.price_diff_pct || 0) -
+            Math.abs(a.comparison.price_diff_pct || 0)
+        );
+
+        sorted.forEach((item) => {
+          const row = document.createElement("tr");
+
+          const priceDiff = item.comparison.price_diff_pct || 0;
+          const fundingDiff = item.comparison.funding_diff || 0;
+          const hasArbitrage = item.comparison.has_arbitrage_opportunity;
+
+          row.innerHTML = `
+                    <td class="symbol">${item.symbol}</td>
+                    <td class="price">$${formatNumber(item.ostium.price)}</td>
+                    <td class="price">$${formatNumber(item.tradexyz.price)}</td>
+                    <td class="${
+                      priceDiff >= 0 ? "positive" : "negative"
+                    }">${formatPercent(priceDiff)}</td>
+                    <td>${formatPercent(item.ostium.funding_rate * 100, 4)}</td>
+                    <td>${formatPercent(
+                      item.tradexyz.funding_rate * 100,
+                      4
+                    )}</td>
+                    <td class="${
+                      fundingDiff >= 0 ? "positive" : "negative"
+                    }">${formatPercent(fundingDiff * 100, 4)}</td>
+                    <td>${
+                      hasArbitrage
+                        ? '<span class="arbitrage-badge">✨ 套利机会</span>'
+                        : "-"
+                    }</td>
+                `;
+
+          tbody.appendChild(row);
+        });
+      }
+
+      // 页面加载时自动获取数据
+      loadData();
+
+      // 每30秒自动刷新一次
+      setInterval(loadData, 30000);
+    </script>
+  </body>
+</html>
