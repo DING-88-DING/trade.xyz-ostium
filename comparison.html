@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DEX 合约费率对比 | Hyperliquid vs Ostium</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-primary: #0a0a0f;
+        --bg-secondary: #12121a;
+        --bg-card: #1a1a24;
+        --bg-hover: #22222e;
+        --accent-blue: #3b82f6;
+        --accent-purple: #8b5cf6;
+        --accent-green: #10b981;
+        --accent-red: #ef4444;
+        --accent-yellow: #f59e0b;
+        --text-primary: #ffffff;
+        --text-secondary: #9ca3af;
+        --text-muted: #6b7280;
+        --border-color: #2d2d3a;
+        --gradient-hl: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        --gradient-os: linear-gradient(135deg, #10b981, #3b82f6);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        line-height: 1.5;
+      }
+
+      /* 头部 */
+      .header {
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--border-color);
+        padding: 1rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-content {
+        max-width: 1800px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 1.5rem;
+        font-weight: 700;
+        background: linear-gradient(
+          135deg,
+          var(--accent-blue),
+          var(--accent-purple)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .update-time {
+        color: var(--text-muted);
+        font-size: 0.875rem;
+      }
+
+      /* 主容器 */
+      .container {
+        max-width: 1800px;
+        margin: 0 auto;
+        padding: 1.5rem;
+      }
+
+      /* 三栏布局 */
+      .columns {
+        display: grid;
+        grid-template-columns: 1fr 1.2fr 1fr;
+        gap: 1.5rem;
+        min-height: calc(100vh - 120px);
+      }
+
+      /* 列样式 */
+      .column {
+        background: var(--bg-secondary);
+        border-radius: 16px;
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .column-header {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .column-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .column-title .icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+      }
+
+      .hyperliquid .column-title .icon {
+        background: var(--gradient-hl);
+      }
+
+      .ostium .column-title .icon {
+        background: var(--gradient-os);
+      }
+
+      .common .column-title .icon {
+        background: linear-gradient(
+          135deg,
+          var(--accent-yellow),
+          var(--accent-red)
+        );
+      }
+
+      .column-count {
+        background: var(--bg-card);
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+      }
+
+      .column-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0.75rem;
+      }
+
+      /* 合约卡片 */
+      .contract-card {
+        background: var(--bg-card);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        border: 1px solid transparent;
+        transition: all 0.2s ease;
+      }
+
+      .contract-card:hover {
+        background: var(--bg-hover);
+        border-color: var(--border-color);
+        transform: translateY(-2px);
+      }
+
+      .contract-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+      }
+
+      .contract-name {
+        font-weight: 600;
+        font-size: 1rem;
+      }
+
+      .contract-group {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: 500;
+      }
+
+      .group-crypto {
+        background: rgba(139, 92, 246, 0.2);
+        color: #a78bfa;
+      }
+      .group-commodities {
+        background: rgba(245, 158, 11, 0.2);
+        color: #fbbf24;
+      }
+      .group-forex {
+        background: rgba(16, 185, 129, 0.2);
+        color: #34d399;
+      }
+      .group-stocks {
+        background: rgba(59, 130, 246, 0.2);
+        color: #60a5fa;
+      }
+      .group-indices {
+        background: rgba(236, 72, 153, 0.2);
+        color: #f472b6;
+      }
+
+      .contract-price {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .price-value {
+        font-size: 1.25rem;
+        font-weight: 700;
+      }
+
+      .price-label {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+      }
+
+      .contract-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+        font-size: 0.8rem;
+      }
+
+      .stat-item {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .stat-label {
+        color: var(--text-muted);
+        font-size: 0.7rem;
+      }
+
+      .stat-value {
+        color: var(--text-secondary);
+      }
+
+      .stat-value.positive {
+        color: var(--accent-green);
+      }
+      .stat-value.negative {
+        color: var(--accent-red);
+      }
+
+      /* 对比卡片 - 中间列 */
+      .comparison-card {
+        background: var(--bg-card);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        border: 1px solid var(--border-color);
+      }
+
+      .comparison-header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .comparison-name {
+        font-weight: 700;
+        font-size: 1.25rem;
+        background: linear-gradient(
+          135deg,
+          var(--accent-blue),
+          var(--accent-purple)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .comparison-row {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 0.5rem;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .comparison-row:last-child {
+        border-bottom: none;
+      }
+
+      .comp-label {
+        text-align: center;
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+      }
+
+      .comp-value {
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      .comp-value.left {
+        text-align: left;
+        color: #60a5fa;
+      }
+      .comp-value.right {
+        text-align: right;
+        color: #34d399;
+      }
+
+      .diff-badge {
+        display: inline-block;
+        padding: 0.15rem 0.4rem;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: 600;
+      }
+
+      .diff-positive {
+        background: rgba(16, 185, 129, 0.2);
+        color: var(--accent-green);
+      }
+
+      .diff-negative {
+        background: rgba(239, 68, 68, 0.2);
+        color: var(--accent-red);
+      }
+
+      /* 空状态 */
+      .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--text-muted);
+      }
+
+      .empty-state .emoji {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+      }
+
+      /* 滚动条样式 */
+      .column-body::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .column-body::-webkit-scrollbar-track {
+        background: var(--bg-secondary);
+      }
+
+      .column-body::-webkit-scrollbar-thumb {
+        background: var(--border-color);
+        border-radius: 3px;
+      }
+
+      .column-body::-webkit-scrollbar-thumb:hover {
+        background: var(--text-muted);
+      }
+
+      /* 响应式 */
+      @media (max-width: 1200px) {
+        .columns {
+          grid-template-columns: 1fr;
+        }
+
+        .column {
+          max-height: 500px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">⚡ DEX 费率对比</div>
+        <div class="update-time" id="updateTime">加载中...</div>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="columns">
+        <!-- 左栏：Hyperliquid -->
+        <div class="column hyperliquid">
+          <div class="column-header">
+            <div class="column-title">
+              <span class="icon">H</span>
+              Hyperliquid
+            </div>
+            <span class="column-count" id="hlCount">0 合约</span>
+          </div>
+          <div class="column-body" id="hlList"></div>
+        </div>
+
+        <!-- 中栏：共同合约对比 -->
+        <div class="column common">
+          <div class="column-header">
+            <div class="column-title">
+              <span class="icon">⚖</span>
+              共同合约对比
+            </div>
+            <span class="column-count" id="commonCount">0 对</span>
+          </div>
+          <div class="column-body" id="commonList"></div>
+        </div>
+
+        <!-- 右栏：Ostium -->
+        <div class="column ostium">
+          <div class="column-header">
+            <div class="column-title">
+              <span class="icon">O</span>
+              Ostium
+            </div>
+            <span class="column-count" id="osCount">0 合约</span>
+          </div>
+          <div class="column-body" id="osList"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 名称映射表：Ostium 名称 -> Hyperliquid 名称
+      const NAME_MAPPING = {
+        XAU: "GOLD", // 黄金
+        XAG: "SILVER", // 白银
+        CL: "CL", // 原油
+        BTC: "BTC",
+        ETH: "ETH",
+        SOL: "SOL",
+        XRP: "XRP",
+        BNB: "BNB",
+        TRX: "TRX",
+        LINK: "LINK",
+        ADA: "ADA",
+        HYPE: "HYPE",
+      };
+
+      // 反向映射
+      const REVERSE_MAPPING = {};
+      for (const [os, hl] of Object.entries(NAME_MAPPING)) {
+        REVERSE_MAPPING[hl] = os;
+      }
+
+      // 格式化价格
+      function formatPrice(price) {
+        if (!price && price !== 0) return "N/A";
+        const num = parseFloat(price);
+        if (num >= 1000)
+          return num.toLocaleString("en-US", { maximumFractionDigits: 2 });
+        if (num >= 1) return num.toFixed(4);
+        return num.toFixed(6);
+      }
+
+      // 格式化费率
+      function formatRate(rate) {
+        if (!rate && rate !== 0) return "N/A";
+        const num = parseFloat(rate);
+        return (num >= 0 ? "+" : "") + num.toFixed(4) + "%";
+      }
+
+      // 格式化成交量
+      function formatVolume(vol) {
+        if (!vol && vol !== 0) return "N/A";
+        const num = parseFloat(vol);
+        if (num >= 1e9) return "$" + (num / 1e9).toFixed(2) + "B";
+        if (num >= 1e6) return "$" + (num / 1e6).toFixed(2) + "M";
+        if (num >= 1e3) return "$" + (num / 1e3).toFixed(2) + "K";
+        return "$" + num.toFixed(0);
+      }
+
+      // 获取分组颜色类
+      function getGroupClass(group) {
+        const mapping = {
+          crypto: "group-crypto",
+          commodities: "group-commodities",
+          forex: "group-forex",
+          stocks: "group-stocks",
+          indices: "group-indices",
+        };
+        return mapping[group?.toLowerCase()] || "group-crypto";
+      }
+
+      // 渲染 Hyperliquid 合约卡片
+      function renderHLCard(contract) {
+        const funding8h = contract.fundingRate?.rate8h;
+        const rateClass =
+          funding8h > 0 ? "positive" : funding8h < 0 ? "negative" : "";
+
+        return `
+                <div class="contract-card">
+                    <div class="contract-header">
+                        <span class="contract-name">${contract.coin}</span>
+                        <span class="contract-group group-crypto">PERP</span>
+                    </div>
+                    <div class="contract-price">
+                        <span class="price-value">$${formatPrice(
+                          contract.mid
+                        )}</span>
+                        <span class="price-label">Mid Price</span>
+                    </div>
+                    <div class="contract-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">8h Funding</span>
+                            <span class="stat-value ${rateClass}">${formatRate(
+          funding8h
+        )}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">24h Volume</span>
+                            <span class="stat-value">${formatVolume(
+                              contract.dayVolume_USD
+                            )}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+      }
+
+      // 渲染 Ostium 合约卡片
+      function renderOSCard(contract) {
+        const hasFunding = contract.fundingRate?.longPayHourly;
+        const rate = hasFunding
+          ? contract.fundingRate.longPayHourly
+          : contract.rolloverRate?.hourly;
+        const rateLabel = hasFunding ? "Funding/h" : "Rollover/h";
+        const rateClass = rate > 0 ? "negative" : "positive";
+
+        return `
+                <div class="contract-card">
+                    <div class="contract-header">
+                        <span class="contract-name">${contract.pair}</span>
+                        <span class="contract-group ${getGroupClass(
+                          contract.group
+                        )}">${contract.group || "N/A"}</span>
+                    </div>
+                    <div class="contract-price">
+                        <span class="price-value">$${formatPrice(
+                          contract.mid
+                        )}</span>
+                        <span class="price-label">Mid Price</span>
+                    </div>
+                    <div class="contract-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">${rateLabel}</span>
+                            <span class="stat-value ${rateClass}">${formatRate(
+          rate
+        )}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Open Interest</span>
+                            <span class="stat-value">${formatVolume(
+                              contract.totalOI_USD
+                            )}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+      }
+
+      // 渲染共同合约对比卡片
+      function renderComparisonCard(hlContract, osContract, commonName) {
+        const hlFunding = hlContract.fundingRate?.rate8h;
+        const osFunding =
+          osContract.fundingRate?.longPay8h ||
+          osContract.rolloverRate?.hourly * 8;
+
+        const priceDiff =
+          ((hlContract.mid - osContract.mid) / osContract.mid) * 100;
+        const rateDiff = hlFunding && osFunding ? hlFunding - osFunding : null;
+
+        return `
+                <div class="comparison-card">
+                    <div class="comparison-header">
+                        <span class="comparison-name">${commonName}</span>
+                    </div>
+                    
+                    <div class="comparison-row">
+                        <span class="comp-value left">$${formatPrice(
+                          hlContract.mid
+                        )}</span>
+                        <span class="comp-label">Mid Price</span>
+                        <span class="comp-value right">$${formatPrice(
+                          osContract.mid
+                        )}</span>
+                    </div>
+                    
+                    <div class="comparison-row">
+                        <span class="comp-value left">${formatRate(
+                          hlFunding
+                        )}</span>
+                        <span class="comp-label">8h Rate</span>
+                        <span class="comp-value right">${formatRate(
+                          osFunding
+                        )}</span>
+                    </div>
+                    
+                    <div class="comparison-row">
+                        <span class="comp-value left">${formatVolume(
+                          hlContract.dayVolume_USD
+                        )}</span>
+                        <span class="comp-label">Volume/OI</span>
+                        <span class="comp-value right">${formatVolume(
+                          osContract.totalOI_USD
+                        )}</span>
+                    </div>
+                    
+                    <div class="comparison-row">
+                        <span class="comp-value">
+                            <span class="diff-badge ${
+                              priceDiff >= 0 ? "diff-positive" : "diff-negative"
+                            }">
+                                ${priceDiff >= 0 ? "+" : ""}${priceDiff.toFixed(
+          3
+        )}%
+                            </span>
+                        </span>
+                        <span class="comp-label">Price Diff</span>
+                        <span class="comp-value">
+                            ${
+                              rateDiff !== null
+                                ? `
+                                <span class="diff-badge ${
+                                  rateDiff >= 0
+                                    ? "diff-negative"
+                                    : "diff-positive"
+                                }">
+                                    ${
+                                      rateDiff >= 0 ? "+" : ""
+                                    }${rateDiff.toFixed(4)}%
+                                </span>
+                            `
+                                : "N/A"
+                            }
+                        </span>
+                    </div>
+                </div>
+            `;
+      }
+
+      // 主函数
+      async function loadData() {
+        try {
+          // 加载数据
+          const [hlRes, osRes] = await Promise.all([
+            fetch("hyperliquid_filtered.json"),
+            fetch("ostium_filtered.json"),
+          ]);
+
+          const hlData = await hlRes.json();
+          const osData = await osRes.json();
+
+          const hlContracts = hlData.contracts || [];
+          const osContracts = osData.contracts || [];
+
+          // 更新计数
+          document.getElementById(
+            "hlCount"
+          ).textContent = `${hlContracts.length} 合约`;
+          document.getElementById(
+            "osCount"
+          ).textContent = `${osContracts.length} 合约`;
+
+          // 渲染 Hyperliquid 列表
+          const hlList = document.getElementById("hlList");
+          hlList.innerHTML = hlContracts.map(renderHLCard).join("");
+
+          // 渲染 Ostium 列表
+          const osList = document.getElementById("osList");
+          osList.innerHTML = osContracts.map(renderOSCard).join("");
+
+          // 找出共同合约
+          const commonPairs = [];
+          const hlMap = {};
+
+          // 构建 Hyperliquid 映射（支持带前缀的名称如 xyz:GOLD）
+          hlContracts.forEach((c) => {
+            const coin = c.coin.includes(":") ? c.coin.split(":")[1] : c.coin;
+            hlMap[coin.toUpperCase()] = c;
+          });
+
+          // 查找匹配
+          osContracts.forEach((osContract) => {
+            const osName = osContract.from.toUpperCase();
+            const hlName = NAME_MAPPING[osName] || osName;
+
+            if (hlMap[hlName]) {
+              commonPairs.push({
+                hl: hlMap[hlName],
+                os: osContract,
+                name: osName === hlName ? osName : `${osName} / ${hlName}`,
+              });
+            }
+          });
+
+          // 渲染共同合约
+          document.getElementById(
+            "commonCount"
+          ).textContent = `${commonPairs.length} 对`;
+          const commonList = document.getElementById("commonList");
+
+          if (commonPairs.length > 0) {
+            commonList.innerHTML = commonPairs
+              .map((p) => renderComparisonCard(p.hl, p.os, p.name))
+              .join("");
+          } else {
+            commonList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="emoji">🔍</div>
+                            <p>暂无共同合约</p>
+                            <p style="font-size: 0.8rem">请确保两个数据文件都已更新</p>
+                        </div>
+                    `;
+          }
+
+          // 更新时间
+          document.getElementById(
+            "updateTime"
+          ).textContent = `最后更新: ${new Date().toLocaleString("zh-CN")}`;
+        } catch (error) {
+          console.error("加载数据失败:", error);
+          document.getElementById("commonList").innerHTML = `
+                    <div class="empty-state">
+                        <div class="emoji">⚠️</div>
+                        <p>加载数据失败</p>
+                        <p style="font-size: 0.8rem">${error.message}</p>
+                    </div>
+                `;
+        }
+      }
+
+      // 页面加载时执行
+      loadData();
+    </script>
+  </body>
+</html>
