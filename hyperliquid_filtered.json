@@ -1,0 +1,1014 @@
+{
+  "total_filtered": 56,
+  "filter_criteria": "24h Volume > $2,000,000",
+  "contracts": [
+    {
+      "coin": "BTC",
+      "pair": "BTC/USD",
+      "bid": 95195.3,
+      "mid": 95204.5,
+      "ask": 95205.0,
+      "markPx": 95198.0,
+      "oraclePx": 95227.0,
+      "dayVolume_USD": 4690196807.94,
+      "openInterest": "27271.09626",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "-0.0002310269",
+      "maxLeverage": 40
+    },
+    {
+      "coin": "ETH",
+      "pair": "ETH/USD",
+      "bid": 3336.4,
+      "mid": 3336.45,
+      "ask": 3336.5,
+      "markPx": 3336.7,
+      "oraclePx": 3338.5,
+      "dayVolume_USD": 2082764340.45,
+      "openInterest": "902146.3221999999",
+      "fundingRate": {
+        "rate8h": 0.001208,
+        "rateHourly": 0.000151,
+        "rateAnnualized": 1.32
+      },
+      "premium": "-0.0005990714",
+      "maxLeverage": 25
+    },
+    {
+      "coin": "SOL",
+      "pair": "SOL/USD",
+      "bid": 144.88,
+      "mid": 144.885,
+      "ask": 144.89,
+      "markPx": 144.89,
+      "oraclePx": 144.95,
+      "dayVolume_USD": 697704441.94,
+      "openInterest": "4395131.0999999996",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "-0.0004139358",
+      "maxLeverage": 20
+    },
+    {
+      "coin": "HYPE",
+      "pair": "HYPE/USD",
+      "bid": 26.439,
+      "mid": 26.4415,
+      "ask": 26.4458,
+      "markPx": 26.444,
+      "oraclePx": 26.428,
+      "dayVolume_USD": 234711639.04,
+      "openInterest": "30616005.2000000067",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0004162252",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "XRP",
+      "pair": "XRP/USD",
+      "bid": 2.1498,
+      "mid": 2.14985,
+      "ask": 2.1499,
+      "markPx": 2.1497,
+      "oraclePx": 2.1502,
+      "dayVolume_USD": 151176271.1,
+      "openInterest": "113770716.0",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "-0.0001395219",
+      "maxLeverage": 20
+    },
+    {
+      "coin": "ZEC",
+      "pair": "ZEC/USD",
+      "bid": 414.342,
+      "mid": 414.445,
+      "ask": 414.4616,
+      "markPx": 414.48,
+      "oraclePx": 414.55,
+      "dayVolume_USD": 146411708.71,
+      "openInterest": "386877.3",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "-0.0002132433",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "FARTCOIN",
+      "pair": "FARTCOIN/USD",
+      "bid": 0.43464,
+      "mid": 0.43488,
+      "ask": 0.435,
+      "markPx": 0.43489,
+      "oraclePx": 0.43445,
+      "dayVolume_USD": 98493629.99,
+      "openInterest": "276143600.0",
+      "fundingRate": {
+        "rate8h": 0.006721,
+        "rateHourly": 0.00084,
+        "rateAnnualized": 7.36
+      },
+      "premium": "0.0004373346",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "PUMP",
+      "pair": "PUMP/USD",
+      "bid": 0.002868,
+      "mid": 0.00287,
+      "ask": 0.002872,
+      "markPx": 0.00287,
+      "oraclePx": 0.002867,
+      "dayVolume_USD": 76605812.2,
+      "openInterest": "32428631072.0",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0003487967",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "LTC",
+      "pair": "LTC/USD",
+      "bid": 79.0235,
+      "mid": 79.0295,
+      "ask": 79.0525,
+      "markPx": 79.027,
+      "oraclePx": 78.945,
+      "dayVolume_USD": 49551802.35,
+      "openInterest": "797499.3800000001",
+      "fundingRate": {
+        "rate8h": 0.00578,
+        "rateHourly": 0.000723,
+        "rateAnnualized": 6.33
+      },
+      "premium": "0.0009943632",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "kPEPE",
+      "pair": "kPEPE/USD",
+      "bid": 0.006676,
+      "mid": 0.006677,
+      "ask": 0.006678,
+      "markPx": 0.006678,
+      "oraclePx": 0.006678,
+      "dayVolume_USD": 38242214.94,
+      "openInterest": "5291812816.0",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "IP",
+      "pair": "IP/USD",
+      "bid": 3.84577,
+      "mid": 3.84965,
+      "ask": 3.85184,
+      "markPx": 3.8491,
+      "oraclePx": 3.8578,
+      "dayVolume_USD": 32719070.7,
+      "openInterest": "2947471.3999999999",
+      "fundingRate": {
+        "rate8h": -0.017085,
+        "rateHourly": -0.002136,
+        "rateAnnualized": -18.71
+      },
+      "premium": "-0.001544922",
+      "maxLeverage": 3
+    },
+    {
+      "coin": "SUI",
+      "pair": "SUI/USD",
+      "bid": 1.8492,
+      "mid": 1.84925,
+      "ask": 1.84968,
+      "markPx": 1.8492,
+      "oraclePx": 1.85,
+      "dayVolume_USD": 30018036.6,
+      "openInterest": "18293976.0",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "-0.000172973",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "BNB",
+      "pair": "BNB/USD",
+      "bid": 937.684,
+      "mid": 937.76,
+      "ask": 937.821,
+      "markPx": 937.74,
+      "oraclePx": 937.45,
+      "dayVolume_USD": 20541331.46,
+      "openInterest": "48728.346",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0002496133",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "DOGE",
+      "pair": "DOGE/USD",
+      "bid": 0.148566,
+      "mid": 0.148575,
+      "ask": 0.14858,
+      "markPx": 0.14857,
+      "oraclePx": 0.14851,
+      "dayVolume_USD": 17612650.71,
+      "openInterest": "598268082.0",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.000377079",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "LIT",
+      "pair": "LIT/USD",
+      "bid": 2.179083,
+      "mid": 2.18025,
+      "ask": 2.182189,
+      "markPx": 2.1812,
+      "oraclePx": 2.1667,
+      "dayVolume_USD": 17439766.16,
+      "openInterest": "26296034.0",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0000571514",
+      "maxLeverage": 3
+    },
+    {
+      "coin": "ENA",
+      "pair": "ENA/USD",
+      "bid": 0.253264,
+      "mid": 0.25332,
+      "ask": 0.253364,
+      "markPx": 0.25328,
+      "oraclePx": 0.25335,
+      "dayVolume_USD": 17161818.73,
+      "openInterest": "138773070.0",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "kBONK",
+      "pair": "kBONK/USD",
+      "bid": 0.011537,
+      "mid": 0.011538,
+      "ask": 0.011542,
+      "markPx": 0.011538,
+      "oraclePx": 0.01154,
+      "dayVolume_USD": 17061198.75,
+      "openInterest": "661307572.0",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "ASTER",
+      "pair": "ASTER/USD",
+      "bid": 0.742906,
+      "mid": 0.74311,
+      "ask": 0.743251,
+      "markPx": 0.74314,
+      "oraclePx": 0.743,
+      "dayVolume_USD": 13324411.41,
+      "openInterest": "76471700.0",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0",
+      "maxLeverage": 5
+    },
+    {
+      "coin": "XPL",
+      "pair": "XPL/USD",
+      "bid": 0.163866,
+      "mid": 0.163955,
+      "ask": 0.16405,
+      "markPx": 0.16401,
+      "oraclePx": 0.16395,
+      "dayVolume_USD": 12793434.07,
+      "openInterest": "325745428.0",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "PAXG",
+      "pair": "PAXG/USD",
+      "bid": 4629.913,
+      "mid": 4630.55,
+      "ask": 4630.6,
+      "markPx": 4630.6,
+      "oraclePx": 4630.6,
+      "dayVolume_USD": 12381414.73,
+      "openInterest": "16770.602",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "BCH",
+      "pair": "BCH/USD",
+      "bid": 613.862,
+      "mid": 613.98,
+      "ask": 614.053,
+      "markPx": 614.03,
+      "oraclePx": 614.45,
+      "dayVolume_USD": 11111078.29,
+      "openInterest": "25564.32",
+      "fundingRate": {
+        "rate8h": -0.001055,
+        "rateHourly": -0.000132,
+        "rateAnnualized": -1.16
+      },
+      "premium": "-0.0006461063",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "PENGU",
+      "pair": "PENGU/USD",
+      "bid": 0.013211,
+      "mid": 0.013215,
+      "ask": 0.013217,
+      "markPx": 0.013215,
+      "oraclePx": 0.013211,
+      "dayVolume_USD": 10879599.96,
+      "openInterest": "851407208.0",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0",
+      "maxLeverage": 5
+    },
+    {
+      "coin": "MON",
+      "pair": "MON/USD",
+      "bid": 0.024808,
+      "mid": 0.024821,
+      "ask": 0.024833,
+      "markPx": 0.024828,
+      "oraclePx": 0.024799,
+      "dayVolume_USD": 10023904.4,
+      "openInterest": "1622222464.0",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0003629179",
+      "maxLeverage": 5
+    },
+    {
+      "coin": "WLFI",
+      "pair": "WLFI/USD",
+      "bid": 0.182374,
+      "mid": 0.18247,
+      "ask": 0.1825,
+      "markPx": 0.18247,
+      "oraclePx": 0.1826,
+      "dayVolume_USD": 9132488.28,
+      "openInterest": "132439128.0",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "-0.0005476451",
+      "maxLeverage": 5
+    },
+    {
+      "coin": "AAVE",
+      "pair": "AAVE/USD",
+      "bid": 178.3301,
+      "mid": 178.36,
+      "ask": 178.4009,
+      "markPx": 178.37,
+      "oraclePx": 178.35,
+      "dayVolume_USD": 8903703.01,
+      "openInterest": "185032.9",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "POL",
+      "pair": "POL/USD",
+      "bid": 0.162405,
+      "mid": 0.162455,
+      "ask": 0.162532,
+      "markPx": 0.16271,
+      "oraclePx": 0.1627,
+      "dayVolume_USD": 8560457.3,
+      "openInterest": "40452160.0",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "-0.0010325753",
+      "maxLeverage": 5
+    },
+    {
+      "coin": "LINK",
+      "pair": "LINK/USD",
+      "bid": 14.11089,
+      "mid": 14.1115,
+      "ask": 14.11544,
+      "markPx": 14.111,
+      "oraclePx": 14.111,
+      "dayVolume_USD": 8253086.53,
+      "openInterest": "2186518.7999999998",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "VIRTUAL",
+      "pair": "VIRTUAL/USD",
+      "bid": 1.07208,
+      "mid": 1.0723,
+      "ask": 1.07252,
+      "markPx": 1.0722,
+      "oraclePx": 1.0724,
+      "dayVolume_USD": 7788668.49,
+      "openInterest": "12451700.8000000007",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0",
+      "maxLeverage": 5
+    },
+    {
+      "coin": "AVAX",
+      "pair": "AVAX/USD",
+      "bid": 14.74,
+      "mid": 14.7405,
+      "ask": 14.7417,
+      "markPx": 14.741,
+      "oraclePx": 14.74,
+      "dayVolume_USD": 7133589.87,
+      "openInterest": "1268567.3600000001",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "BERA",
+      "pair": "BERA/USD",
+      "bid": 0.71928,
+      "mid": 0.71929,
+      "ask": 0.71966,
+      "markPx": 0.71896,
+      "oraclePx": 0.72225,
+      "dayVolume_USD": 6798398.04,
+      "openInterest": "6594271.7999999998",
+      "fundingRate": {
+        "rate8h": -0.031771,
+        "rateHourly": -0.003971,
+        "rateAnnualized": -34.79
+      },
+      "premium": "-0.0035860159",
+      "maxLeverage": 5
+    },
+    {
+      "coin": "TAO",
+      "pair": "TAO/USD",
+      "bid": 298.15,
+      "mid": 298.23,
+      "ask": 298.317,
+      "markPx": 298.2,
+      "oraclePx": 298.1,
+      "dayVolume_USD": 6149140.54,
+      "openInterest": "71952.4",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.000167729",
+      "maxLeverage": 5
+    },
+    {
+      "coin": "ADA",
+      "pair": "ADA/USD",
+      "bid": 0.424079,
+      "mid": 0.424215,
+      "ask": 0.424238,
+      "markPx": 0.42425,
+      "oraclePx": 0.42445,
+      "dayVolume_USD": 5958516.49,
+      "openInterest": "51823742.0",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "-0.0004994699",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "TIA",
+      "pair": "TIA/USD",
+      "bid": 0.61135,
+      "mid": 0.61154,
+      "ask": 0.61163,
+      "markPx": 0.61141,
+      "oraclePx": 0.6115,
+      "dayVolume_USD": 5611784.42,
+      "openInterest": "8294782.4000000004",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "NEAR",
+      "pair": "NEAR/USD",
+      "bid": 1.85358,
+      "mid": 1.8542,
+      "ask": 1.85484,
+      "markPx": 1.8539,
+      "oraclePx": 1.855,
+      "dayVolume_USD": 5427574.74,
+      "openInterest": "7226401.2000000002",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "-0.0000862534",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "WIF",
+      "pair": "WIF/USD",
+      "bid": 0.417865,
+      "mid": 0.41794,
+      "ask": 0.418048,
+      "markPx": 0.4179,
+      "oraclePx": 0.41795,
+      "dayVolume_USD": 4651960.57,
+      "openInterest": "19434410.0",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0",
+      "maxLeverage": 5
+    },
+    {
+      "coin": "CRV",
+      "pair": "CRV/USD",
+      "bid": 0.43275,
+      "mid": 0.43287,
+      "ask": 0.43298,
+      "markPx": 0.43285,
+      "oraclePx": 0.43305,
+      "dayVolume_USD": 4496002.29,
+      "openInterest": "21617272.3999999985",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "-0.0001616442",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "ZEN",
+      "pair": "ZEN/USD",
+      "bid": 10.16,
+      "mid": 10.1625,
+      "ask": 10.1681,
+      "markPx": 10.165,
+      "oraclePx": 10.166,
+      "dayVolume_USD": 4178905.37,
+      "openInterest": "172936.0",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0",
+      "maxLeverage": 5
+    },
+    {
+      "coin": "ARB",
+      "pair": "ARB/USD",
+      "bid": 0.22374,
+      "mid": 0.2238,
+      "ask": 0.22385,
+      "markPx": 0.22375,
+      "oraclePx": 0.2237,
+      "dayVolume_USD": 4130041.3,
+      "openInterest": "27725775.3999999985",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0001788109",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "UNI",
+      "pair": "UNI/USD",
+      "bid": 5.81618,
+      "mid": 5.81855,
+      "ask": 5.82012,
+      "markPx": 5.8187,
+      "oraclePx": 5.819,
+      "dayVolume_USD": 4039470.54,
+      "openInterest": "5192335.6000000006",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "DOT",
+      "pair": "DOT/USD",
+      "bid": 2.28865,
+      "mid": 2.2892,
+      "ask": 2.29009,
+      "markPx": 2.2889,
+      "oraclePx": 2.2905,
+      "dayVolume_USD": 4009379.09,
+      "openInterest": "3443860.6000000001",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "-0.0001790002",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "VVV",
+      "pair": "VVV/USD",
+      "bid": 3.2598,
+      "mid": 3.2633,
+      "ask": 3.2666,
+      "markPx": 3.2632,
+      "oraclePx": 3.277,
+      "dayVolume_USD": 3499519.89,
+      "openInterest": "1328344.24",
+      "fundingRate": {
+        "rate8h": -0.031401,
+        "rateHourly": -0.003925,
+        "rateAnnualized": -34.38
+      },
+      "premium": "-0.0031736344",
+      "maxLeverage": 3
+    },
+    {
+      "coin": "ICP",
+      "pair": "ICP/USD",
+      "bid": 3.66686,
+      "mid": 3.66825,
+      "ask": 3.67112,
+      "markPx": 3.6678,
+      "oraclePx": 3.6675,
+      "dayVolume_USD": 3459581.92,
+      "openInterest": "727059.6",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0",
+      "maxLeverage": 5
+    },
+    {
+      "coin": "TRUMP",
+      "pair": "TRUMP/USD",
+      "bid": 5.70207,
+      "mid": 5.70335,
+      "ask": 5.70352,
+      "markPx": 5.7034,
+      "oraclePx": 5.7045,
+      "dayVolume_USD": 3375932.24,
+      "openInterest": "1703844.2",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "-0.0001717942",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "TRX",
+      "pair": "TRX/USD",
+      "bid": 0.302247,
+      "mid": 0.302295,
+      "ask": 0.302377,
+      "markPx": 0.30226,
+      "oraclePx": 0.30249,
+      "dayVolume_USD": 3360173.11,
+      "openInterest": "45342124.0",
+      "fundingRate": {
+        "rate8h": -0.001176,
+        "rateHourly": -0.000147,
+        "rateAnnualized": -1.29
+      },
+      "premium": "-0.0003735661",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "ZEREBRO",
+      "pair": "ZEREBRO/USD",
+      "bid": 0.018004,
+      "mid": 0.018015,
+      "ask": 0.018027,
+      "markPx": 0.01801,
+      "oraclePx": 0.018025,
+      "dayVolume_USD": 3198942.03,
+      "openInterest": "123660130.0",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0",
+      "maxLeverage": 3
+    },
+    {
+      "coin": "CC",
+      "pair": "CC/USD",
+      "bid": 0.142065,
+      "mid": 0.1421,
+      "ask": 0.142166,
+      "markPx": 0.14208,
+      "oraclePx": 0.14212,
+      "dayVolume_USD": 2960918.07,
+      "openInterest": "36941084.0",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0",
+      "maxLeverage": 3
+    },
+    {
+      "coin": "SPX",
+      "pair": "SPX/USD",
+      "bid": 0.62529,
+      "mid": 0.62587,
+      "ask": 0.6262,
+      "markPx": 0.62581,
+      "oraclePx": 0.6255,
+      "dayVolume_USD": 2958767.49,
+      "openInterest": "9009530.5999999996",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0",
+      "maxLeverage": 5
+    },
+    {
+      "coin": "SEI",
+      "pair": "SEI/USD",
+      "bid": 0.125998,
+      "mid": 0.126055,
+      "ask": 0.126069,
+      "markPx": 0.12606,
+      "oraclePx": 0.12605,
+      "dayVolume_USD": 2879470.48,
+      "openInterest": "38999776.0",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "MELANIA",
+      "pair": "MELANIA/USD",
+      "bid": 0.18032,
+      "mid": 0.18048,
+      "ask": 0.1806,
+      "markPx": 0.18044,
+      "oraclePx": 0.18063,
+      "dayVolume_USD": 2823665.86,
+      "openInterest": "13949251.5999999996",
+      "fundingRate": {
+        "rate8h": -0.001432,
+        "rateHourly": -0.000179,
+        "rateAnnualized": -1.57
+      },
+      "premium": "-0.0001660854",
+      "maxLeverage": 3
+    },
+    {
+      "coin": "WLD",
+      "pair": "WLD/USD",
+      "bid": 0.61011,
+      "mid": 0.61021,
+      "ask": 0.61038,
+      "markPx": 0.61016,
+      "oraclePx": 0.6101,
+      "dayVolume_USD": 2801650.75,
+      "openInterest": "11617668.0",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0000163908",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "OP",
+      "pair": "OP/USD",
+      "bid": 0.36149,
+      "mid": 0.36159,
+      "ask": 0.36165,
+      "markPx": 0.36155,
+      "oraclePx": 0.3617,
+      "dayVolume_USD": 2653749.94,
+      "openInterest": "14692100.1999999993",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "-0.0001382361",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "STRK",
+      "pair": "STRK/USD",
+      "bid": 0.09046,
+      "mid": 0.09049,
+      "ask": 0.09052,
+      "markPx": 0.0905,
+      "oraclePx": 0.09049,
+      "dayVolume_USD": 2650373.82,
+      "openInterest": "51686344.200000003",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0",
+      "maxLeverage": 5
+    },
+    {
+      "coin": "ZRO",
+      "pair": "ZRO/USD",
+      "bid": 1.64723,
+      "mid": 1.6477,
+      "ask": 1.64814,
+      "markPx": 1.6475,
+      "oraclePx": 1.6465,
+      "dayVolume_USD": 2306431.15,
+      "openInterest": "4790302.7999999998",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0004433647",
+      "maxLeverage": 5
+    },
+    {
+      "coin": "EIGEN",
+      "pair": "EIGEN/USD",
+      "bid": 0.4551,
+      "mid": 0.4555,
+      "ask": 0.4557,
+      "markPx": 0.4554,
+      "oraclePx": 0.4554,
+      "dayVolume_USD": 2281647.11,
+      "openInterest": "11087662.0",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0",
+      "maxLeverage": 5
+    },
+    {
+      "coin": "ONDO",
+      "pair": "ONDO/USD",
+      "bid": 0.415501,
+      "mid": 0.415555,
+      "ask": 0.415708,
+      "markPx": 0.41555,
+      "oraclePx": 0.41565,
+      "dayVolume_USD": 2090743.25,
+      "openInterest": "12930022.0",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "0.0",
+      "maxLeverage": 10
+    },
+    {
+      "coin": "APT",
+      "pair": "APT/USD",
+      "bid": 1.9473,
+      "mid": 1.9478,
+      "ask": 1.9482,
+      "markPx": 1.9476,
+      "oraclePx": 1.9485,
+      "dayVolume_USD": 2015652.25,
+      "openInterest": "4077825.1000000001",
+      "fundingRate": {
+        "rate8h": 0.00125,
+        "rateHourly": 0.000156,
+        "rateAnnualized": 1.37
+      },
+      "premium": "-0.0001539646",
+      "maxLeverage": 10
+    }
+  ]
+}

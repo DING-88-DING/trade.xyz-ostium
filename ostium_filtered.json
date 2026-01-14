@@ -1,0 +1,304 @@
+{
+  "total_filtered": 13,
+  "filter_criteria": "Total OI > $2,000,000",
+  "contracts": [
+    {
+      "pair": "TSLA/USD",
+      "from": "TSLA",
+      "to": "USD",
+      "group": "stocks",
+      "bid": 447.11,
+      "mid": 447.145,
+      "ask": 447.18,
+      "isMarketOpen": false,
+      "totalOI_USD": 59529185.71,
+      "longOI": "67707726490587367803194",
+      "shortOI": "65423999695613283253152",
+      "fundingRate": null,
+      "rolloverRate": {
+        "hourly": 0.000138,
+        "daily": 0.003316
+      },
+      "_raw": {
+        "curFundingLong": 0,
+        "curFundingShort": 0,
+        "rolloverFeePerBlock": 383765040
+      }
+    },
+    {
+      "pair": "XAU/USD",
+      "from": "XAU",
+      "to": "USD",
+      "group": "commodities",
+      "bid": 4637.84,
+      "mid": 4638.02,
+      "ask": 4638.3,
+      "isMarketOpen": true,
+      "totalOI_USD": 54411001.63,
+      "longOI": "6101439756583460999306",
+      "shortOI": "5630075336865063704203",
+      "fundingRate": null,
+      "rolloverRate": {
+        "hourly": 0.000194,
+        "daily": 0.004666
+      },
+      "_raw": {
+        "curFundingLong": 0,
+        "curFundingShort": 0,
+        "rolloverFeePerBlock": 540048240
+      }
+    },
+    {
+      "pair": "XAG/USD",
+      "from": "XAG",
+      "to": "USD",
+      "group": "commodities",
+      "bid": 90.31737,
+      "mid": 90.3455,
+      "ask": 90.376,
+      "isMarketOpen": true,
+      "totalOI_USD": 31101820.31,
+      "longOI": "191746376788542744092732",
+      "shortOI": "152507850665350357463207",
+      "fundingRate": null,
+      "rolloverRate": {
+        "hourly": 0.000329,
+        "daily": 0.00789
+      },
+      "_raw": {
+        "curFundingLong": 0,
+        "curFundingShort": 0,
+        "rolloverFeePerBlock": 913209330
+      }
+    },
+    {
+      "pair": "EUR/USD",
+      "from": "EUR",
+      "to": "USD",
+      "group": "forex",
+      "bid": 1.16488,
+      "mid": 1.16491,
+      "ask": 1.16494,
+      "isMarketOpen": true,
+      "totalOI_USD": 15383957.58,
+      "longOI": "6303603242656569198094984",
+      "shortOI": "6902530776785842595643448",
+      "fundingRate": null,
+      "rolloverRate": {
+        "hourly": 3.4e-05,
+        "daily": 0.000817
+      },
+      "_raw": {
+        "curFundingLong": 0,
+        "curFundingShort": 0,
+        "rolloverFeePerBlock": 94599870
+      }
+    },
+    {
+      "pair": "NDX/USD",
+      "from": "NDX",
+      "to": "USD",
+      "group": "indices",
+      "bid": 25705.26333,
+      "mid": 25705.90333,
+      "ask": 25706.60333,
+      "isMarketOpen": true,
+      "totalOI_USD": 13617347.52,
+      "longOI": "79695595637388288032",
+      "shortOI": "450040603103618480111",
+      "fundingRate": null,
+      "rolloverRate": {
+        "hourly": 0.000116,
+        "daily": 0.002774
+      },
+      "_raw": {
+        "curFundingLong": 0,
+        "curFundingShort": 0,
+        "rolloverFeePerBlock": 321041220
+      }
+    },
+    {
+      "pair": "HG/USD",
+      "from": "HG",
+      "to": "USD",
+      "group": "commodities",
+      "bid": 6.06761,
+      "mid": 6.06891,
+      "ask": 6.07021,
+      "isMarketOpen": true,
+      "totalOI_USD": 13433692.85,
+      "longOI": "964597969514646985289577",
+      "shortOI": "1248928487953631681780030",
+      "fundingRate": null,
+      "rolloverRate": {
+        "hourly": 0.000123,
+        "daily": 0.002954
+      },
+      "_raw": {
+        "curFundingLong": 0,
+        "curFundingShort": 0,
+        "rolloverFeePerBlock": 341871560
+      }
+    },
+    {
+      "pair": "NVDA/USD",
+      "from": "NVDA",
+      "to": "USD",
+      "group": "stocks",
+      "bid": 185.78,
+      "mid": 185.8,
+      "ask": 185.82,
+      "isMarketOpen": false,
+      "totalOI_USD": 3568434.68,
+      "longOI": "9157792139504692061520",
+      "shortOI": "10047991931648725923905",
+      "fundingRate": null,
+      "rolloverRate": {
+        "hourly": 0.000126,
+        "daily": 0.003035
+      },
+      "_raw": {
+        "curFundingLong": 0,
+        "curFundingShort": 0,
+        "rolloverFeePerBlock": 351271620
+      }
+    },
+    {
+      "pair": "GOOG/USD",
+      "from": "GOOG",
+      "to": "USD",
+      "group": "stocks",
+      "bid": 336.38,
+      "mid": 336.4,
+      "ask": 336.42,
+      "isMarketOpen": false,
+      "totalOI_USD": 3530061.36,
+      "longOI": "10477686834563967190381",
+      "shortOI": "15955720324921881972",
+      "fundingRate": null,
+      "rolloverRate": {
+        "hourly": 0.000282,
+        "daily": 0.006769
+      },
+      "_raw": {
+        "curFundingLong": 0,
+        "curFundingShort": 0,
+        "rolloverFeePerBlock": 783446760
+      }
+    },
+    {
+      "pair": "BTC/USD",
+      "from": "BTC",
+      "to": "USD",
+      "group": "crypto",
+      "bid": 94907.53468592526,
+      "mid": 94908.4603675,
+      "ask": 94912.9352495,
+      "isMarketOpen": true,
+      "totalOI_USD": 3433555.63,
+      "longOI": "16190118096356189197",
+      "shortOI": "19987432486160506187",
+      "fundingRate": {
+        "longPayHourly": 0.001071,
+        "shortPayHourly": 0.00087,
+        "longPay8h": 0.008565,
+        "shortPay8h": 0.00696
+      },
+      "rolloverRate": null,
+      "_raw": {
+        "curFundingLong": 2973925102,
+        "curFundingShort": -2416694579,
+        "rolloverFeePerBlock": 0
+      }
+    },
+    {
+      "pair": "SPX/USD",
+      "from": "SPX",
+      "to": "USD",
+      "group": "indices",
+      "bid": 6952.709999999999,
+      "mid": 6953.06,
+      "ask": 6953.43,
+      "isMarketOpen": true,
+      "totalOI_USD": 3026507.94,
+      "longOI": "230938007529438651502",
+      "shortOI": "204339113022471667362",
+      "fundingRate": null,
+      "rolloverRate": {
+        "hourly": 0.000117,
+        "daily": 0.002814
+      },
+      "_raw": {
+        "curFundingLong": 0,
+        "curFundingShort": 0,
+        "rolloverFeePerBlock": 325732560
+      }
+    },
+    {
+      "pair": "MSTR/USD",
+      "from": "MSTR",
+      "to": "USD",
+      "group": "stocks",
+      "bid": 173.01,
+      "mid": 173.0725,
+      "ask": 173.1325,
+      "isMarketOpen": false,
+      "totalOI_USD": 2928862.77,
+      "longOI": "12272194824581006457183",
+      "shortOI": "4650555875546950841871",
+      "fundingRate": null,
+      "rolloverRate": null,
+      "_raw": {
+        "curFundingLong": 0,
+        "curFundingShort": 0,
+        "rolloverFeePerBlock": 0
+      }
+    },
+    {
+      "pair": "CL/USD",
+      "from": "CL",
+      "to": "USD",
+      "group": "commodities",
+      "bid": 60.60333,
+      "mid": 60.62433,
+      "ask": 60.65833,
+      "isMarketOpen": true,
+      "totalOI_USD": 2837283.71,
+      "longOI": "35629118971320246750686",
+      "shortOI": "11171954227486414579299",
+      "fundingRate": null,
+      "rolloverRate": {
+        "hourly": 6.9e-05,
+        "daily": 0.001667
+      },
+      "_raw": {
+        "curFundingLong": 0,
+        "curFundingShort": 0,
+        "rolloverFeePerBlock": 192957980
+      }
+    },
+    {
+      "pair": "USD/CAD",
+      "from": "USD",
+      "to": "CAD",
+      "group": "forex",
+      "bid": 1.3882,
+      "mid": 1.38825,
+      "ask": 1.3883,
+      "isMarketOpen": true,
+      "totalOI_USD": 2431622.19,
+      "longOI": "25652585620393920556571",
+      "shortOI": "1725921112095282637699611",
+      "fundingRate": null,
+      "rolloverRate": {
+        "hourly": 7.3e-05,
+        "daily": 0.001743
+      },
+      "_raw": {
+        "curFundingLong": 0,
+        "curFundingShort": 0,
+        "rolloverFeePerBlock": 201767820
+      }
+    }
+  ]
+}

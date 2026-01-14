@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__http-server__searchDocumentation",
+      "mcp__trade__searchDocumentation",
+      "Bash(python:*)",
+      "Bash(curl:*)",
+      "WebFetch(domain:ostium-labs.gitbook.io)",
+      "Bash(pip install:*)",
+      "Bash(node:*)",
+      "Bash(uniq grep -o '\"\"from\"\":\"\"[^\"\"]*\"\"' ostium_response.json)",
+      "Bash(uniq:*)",
+      "Bash(jq:*)",
+      "mcp__ostium__searchDocumentation",
+      "WebFetch(domain:pypi.org)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)"
+    ]
+  }
+}
