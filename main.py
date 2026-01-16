@@ -1,9 +1,9 @@
-"""
+﻿"""
 DEX 费率对比系统 - 主程序
 一体化流程：获取数据 -> 处理数据 -> 启动服务器 -> 定时刷新
 
 功能：
-1. 获取 Hyperliquid 和 Ostium 数据
+1. 获取 Hyperliquid 和 Ostium 数据（复用子目录模块）
 2. 处理并过滤数据（保存在内存中）
 3. 启动 HTTP 服务器（动态提供 JSON API）
 4. 每 30 秒自动刷新数据
@@ -18,12 +18,16 @@ import time
 import threading
 import asyncio
 import os
+import sys
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from datetime import datetime
-import requests
 
 # 获取脚本所在目录
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# 将脚本目录添加到 sys.path，以便导入子目录模块
+if SCRIPT_DIR not in sys.path:
+    sys.path.insert(0, SCRIPT_DIR)
 
 # 导入配置
 try:
@@ -32,6 +36,12 @@ except ImportError:
     print("警告: 未找到 config.py，使用默认配置")
     HYPERLIQUID_API_URL = "https://api.hyperliquid.xyz"
     ARBITRUM_RPC_URL = None
+
+# ==================== 导入子目录模块 ====================
+# 复用子目录的数据获取函数，避免代码重复
+
+from hyperliquid.inspect_hyperliquid import get_all_perpetuals as hl_get_all_perpetuals
+from ostium.inspect_ostium import fetch_all_data as os_fetch_all_data
 
 
 # ==================== 配置 ====================
@@ -69,109 +79,7 @@ DATA_STORE = {
 DATA_LOCK = threading.Lock()
 
 
-# ==================== Hyperliquid 数据模块 ====================
-
-def fetch_hyperliquid_perp_dexs():
-    """获取所有永续合约 DEX"""
-    try:
-        response = requests.post(
-            f"{HYPERLIQUID_API_URL}/info",
-            headers={"Content-Type": "application/json"},
-            json={"type": "perpDexs"},
-            timeout=30
-        )
-        if response.status_code == 200:
-            return response.json()
-    except Exception as e:
-        print(f"[HL] 获取 perpDexs 失败: {e}")
-    return []
-
-
-def fetch_hyperliquid_meta_and_ctxs(dex: str = ""):
-    """获取指定 DEX 的元数据和资产上下文"""
-    try:
-        payload = {"type": "metaAndAssetCtxs"}
-        if dex:
-            payload["dex"] = dex
-        
-        response = requests.post(
-            f"{HYPERLIQUID_API_URL}/info",
-            headers={"Content-Type": "application/json"},
-            json=payload,
-            timeout=30
-        )
-        
-        if response.status_code == 200:
-            return response.json()
-    except Exception as e:
-        print(f"[HL] 获取 {dex or '主 DEX'} 数据失败: {e}")
-    return [{}, []]
-
-
-def fetch_all_hyperliquid_data():
-    """获取所有 Hyperliquid 数据（主 DEX + Builder-Deployed）"""
-    all_perpetuals = []
-    
-    # 1. 获取主 DEX
-    print("[HL] 获取主 DEX 数据...")
-    data = fetch_hyperliquid_meta_and_ctxs("")
-    meta = data[0] if len(data) > 0 else {}
-    asset_ctxs = data[1] if len(data) > 1 else []
-    universe = meta.get("universe", [])
-    
-    for idx, asset in enumerate(universe):
-        ctx = asset_ctxs[idx] if idx < len(asset_ctxs) else {}
-        all_perpetuals.append({
-            "coin": asset.get("name", ""),
-            "dex": "main",
-            "funding": ctx.get("funding"),
-            "dayNtlVlm": ctx.get("dayNtlVlm"),
-            "openInterest": ctx.get("openInterest"),
-            "markPx": ctx.get("markPx"),
-            "midPx": ctx.get("midPx"),
-            "oraclePx": ctx.get("oraclePx"),
-            "impactPxs": ctx.get("impactPxs"),
-            "maxLeverage": asset.get("maxLeverage"),
-            "premium": ctx.get("premium"),
-        })
-    
-    print(f"[HL] 主 DEX: {len(all_perpetuals)} 个合约")
-    
-    # 2. 获取 Builder-Deployed DEX
-    dexs = fetch_hyperliquid_perp_dexs()
-    for dex in dexs:
-        if dex is None:
-            continue
-        dex_name = dex.get("name", "")
-        if not dex_name:
-            continue
-        
-        data = fetch_hyperliquid_meta_and_ctxs(dex_name)
-        meta = data[0] if len(data) > 0 else {}
-        asset_ctxs = data[1] if len(data) > 1 else []
-        universe = meta.get("universe", [])
-        
-        for idx, asset in enumerate(universe):
-            ctx = asset_ctxs[idx] if idx < len(asset_ctxs) else {}
-            all_perpetuals.append({
-                "coin": asset.get("name", ""),
-                "dex": dex_name,
-                "funding": ctx.get("funding"),
-                "dayNtlVlm": ctx.get("dayNtlVlm"),
-                "openInterest": ctx.get("openInterest"),
-                "markPx": ctx.get("markPx"),
-                "midPx": ctx.get("midPx"),
-                "oraclePx": ctx.get("oraclePx"),
-                "impactPxs": ctx.get("impactPxs"),
-                "maxLeverage": asset.get("maxLeverage"),
-                "premium": ctx.get("premium"),
-            })
-        
-        if universe:
-            print(f"[HL] DEX '{dex_name}': {len(universe)} 个合约")
-    
-    return all_perpetuals
-
+# ==================== Hyperliquid 数据处理 ====================
 
 def process_hyperliquid_data(perpetuals, min_volume=HL_MIN_VOLUME):
     """处理 Hyperliquid 数据，过滤高成交量合约"""
@@ -224,34 +132,7 @@ def process_hyperliquid_data(perpetuals, min_volume=HL_MIN_VOLUME):
     return filtered
 
 
-# ==================== Ostium 数据模块 ====================
-
-async def fetch_ostium_data():
-    """获取 Ostium 数据"""
-    try:
-        from ostium_python_sdk import OstiumSDK
-        from ostium_python_sdk.config import NetworkConfig
-        
-        config = NetworkConfig.mainnet()
-        sdk = OstiumSDK(config, rpc_url=ARBITRUM_RPC_URL)
-        
-        print("[OS] 获取交易对数据...")
-        pairs = await sdk.subgraph.get_pairs()
-        
-        print("[OS] 获取价格数据...")
-        prices = await sdk.price.get_latest_prices()
-        
-        print(f"[OS] 获取到 {len(pairs)} 个交易对, {len(prices)} 个价格")
-        
-        return pairs, prices
-        
-    except ImportError:
-        print("[OS] 错误: ostium-python-sdk 未安装")
-        return [], []
-    except Exception as e:
-        print(f"[OS] 获取数据失败: {e}")
-        return [], []
-
+# ==================== Ostium 数据处理 ====================
 
 def process_ostium_data(pairs, prices, min_oi=OS_MIN_OI):
     """处理 Ostium 数据，过滤高 OI 合约"""
@@ -350,17 +231,27 @@ def refresh_data():
     print('='*50)
     
     try:
-        # 1. 获取并处理 Hyperliquid 数据
+        # 1. 获取 Hyperliquid 数据（调用子目录模块）
         print("\n[1/4] 获取 Hyperliquid 数据...")
-        hl_perpetuals = fetch_all_hyperliquid_data()
+        hl_perpetuals, _ = hl_get_all_perpetuals()
+        print(f"[HL] 获取到 {len(hl_perpetuals)} 个合约")
         
+        # 2. 处理 Hyperliquid 数据
         print("[2/4] 处理 Hyperliquid 数据...")
         hl_filtered = process_hyperliquid_data(hl_perpetuals)
         
-        # 2. 获取并处理 Ostium 数据
+        # 3. 获取 Ostium 数据（调用子目录模块）
         print("\n[3/4] 获取 Ostium 数据...")
-        pairs, prices = asyncio.run(fetch_ostium_data())
+        try:
+            os_data = asyncio.run(os_fetch_all_data())
+            pairs = os_data.get("pairs", [])
+            prices = os_data.get("prices", [])
+            print(f"[OS] 获取到 {len(pairs)} 个交易对, {len(prices)} 个价格")
+        except Exception as e:
+            print(f"[OS] 获取数据失败: {e}")
+            pairs, prices = [], []
         
+        # 4. 处理 Ostium 数据
         os_filtered = []
         if pairs:
             print("[4/4] 处理 Ostium 数据...")
@@ -368,7 +259,7 @@ def refresh_data():
         else:
             print("[OS] 无数据，跳过处理")
         
-        # 3. 更新内存数据（线程安全）
+        # 5. 更新内存数据（线程安全）
         with DATA_LOCK:
             DATA_STORE["hyperliquid"] = {
                 "total_filtered": len(hl_filtered),
