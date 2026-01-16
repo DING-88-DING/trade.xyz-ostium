@@ -18,8 +18,3 @@ HYPERLIQUID_API_URL = "https://api.hyperliquid.xyz"
 # Ostium REST API URL
 OSTIUM_REST_API_URL = "https://metadata-backend.ostium.io"
 
-# SSL 验证开关（如果遇到证书问题，设为 False）
-SSL_VERIFY = False
-
-# 请求超时时间（秒）
-REQUEST_TIMEOUT = 30

@@ -498,9 +498,9 @@
 
       // 渲染 Hyperliquid 合约卡片
       function renderHLCard(contract) {
-        const funding8h = contract.fundingRate?.rate8h;
+        const fundingHourly = contract.fundingRate?.rateHourly;
         const rateClass =
-          funding8h > 0 ? "positive" : funding8h < 0 ? "negative" : "";
+          fundingHourly > 0 ? "positive" : fundingHourly < 0 ? "negative" : "";
 
         return `
                 <div class="contract-card">
@@ -516,9 +516,9 @@
                     </div>
                     <div class="contract-stats">
                         <div class="stat-item">
-                            <span class="stat-label">8h Funding</span>
+                            <span class="stat-label">1h Funding</span>
                             <span class="stat-value ${rateClass}">${formatRate(
-          funding8h
+          fundingHourly
         )}</span>
                         </div>
                         <div class="stat-item">
@@ -575,10 +575,10 @@
 
       // 渲染共同合约对比卡片
       function renderComparisonCard(hlContract, osContract, commonName) {
-        const hlFunding = hlContract.fundingRate?.rate8h;
+        const hlFunding = hlContract.fundingRate?.rateHourly;
         const osFunding =
-          osContract.fundingRate?.longPay8h ||
-          osContract.rolloverRate?.hourly * 8;
+          osContract.fundingRate?.longPayHourly ||
+          osContract.rolloverRate?.hourly;
 
         const priceDiff =
           ((hlContract.mid - osContract.mid) / osContract.mid) * 100;
@@ -604,7 +604,7 @@
                         <span class="comp-value left">${formatRate(
                           hlFunding
                         )}</span>
-                        <span class="comp-label">8h Rate</span>
+                        <span class="comp-label">1h Rate</span>
                         <span class="comp-value right">${formatRate(
                           osFunding
                         )}</span>
@@ -656,10 +656,13 @@
       // 主函数
       async function loadData() {
         try {
+          // 添加时间戳避免缓存
+          const timestamp = Date.now();
+          
           // 加载数据
           const [hlRes, osRes] = await Promise.all([
-            fetch("hyperliquid_filtered.json"),
-            fetch("ostium_filtered.json"),
+            fetch(`hyperliquid_filtered.json?t=${timestamp}`),
+            fetch(`ostium_filtered.json?t=${timestamp}`),
           ]);
 
           const hlData = await hlRes.json();
@@ -728,10 +731,11 @@
                     `;
           }
 
-          // 更新时间
-          document.getElementById(
-            "updateTime"
-          ).textContent = `最后更新: ${new Date().toLocaleString("zh-CN")}`;
+          // 更新时间（显示数据文件的更新时间）
+          const dataTime = hlData.updated_at || osData.updated_at || new Date().toLocaleString("zh-CN");
+          document.getElementById("updateTime").textContent = `数据更新: ${dataTime}`;
+          
+          return true;
         } catch (error) {
           console.error("加载数据失败:", error);
           document.getElementById("commonList").innerHTML = `
@@ -741,11 +745,38 @@
                         <p style="font-size: 0.8rem">${error.message}</p>
                     </div>
                 `;
+          return false;
+        }
+      }
+
+      // 自动刷新配置
+      const AUTO_REFRESH_INTERVAL = 5000; // 5秒检查一次
+      let lastDataTime = null;
+
+      // 自动刷新函数
+      async function autoRefresh() {
+        try {
+          // 获取数据文件更新时间
+          const res = await fetch(`hyperliquid_filtered.json?t=${Date.now()}`);
+          const data = await res.json();
+          
+          // 检查是否有新数据
+          if (data.updated_at && data.updated_at !== lastDataTime) {
+            console.log(`[AutoRefresh] 检测到新数据: ${data.updated_at}`);
+            lastDataTime = data.updated_at;
+            await loadData();
+          }
+        } catch (e) {
+          console.error('[AutoRefresh] 检查更新失败:', e);
         }
       }
 
       // 页面加载时执行
-      loadData();
+      loadData().then(() => {
+        // 启动自动刷新
+        setInterval(autoRefresh, AUTO_REFRESH_INTERVAL);
+        console.log(`[AutoRefresh] 已启动，每 ${AUTO_REFRESH_INTERVAL/1000} 秒检查更新`);
+      });
     </script>
   </body>
 </html>
