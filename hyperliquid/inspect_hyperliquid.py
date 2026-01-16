@@ -26,7 +26,11 @@ API 文档:
 """
 
 import json
+import os
 import requests
+
+# 获取脚本所在目录（确保无论从哪个目录运行都能找到正确的文件路径）
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # ==================== 配置加载 ====================
 # 尝试从 config.py 加载 API URL，如果不存在则使用默认值
@@ -233,11 +237,12 @@ def get_all_perpetuals():
     all_perpetuals.extend(main_perps)
     all_meta["main"] = main_meta
     
-    # ===== 步骤 2: 获取所有 Builder-Deployed DEX 列表 =====
-    print("\n=== 获取 Builder-Deployed DEX 永续合约 ===")
+    # ===== 步骤 2: 获取 xyz DEX 数据（过滤掉其他 Builder DEX）=====
+    print("\n=== 获取 xyz DEX 永续合约 ===")
     dexs = get_perp_dexs()  # 返回包含 null 和各 DEX 信息的列表
     
-    # ===== 步骤 3: 遍历每个 Builder DEX 获取数据 =====
+    # ===== 步骤 3: 只获取 xyz DEX 数据 =====
+    # 过滤: 只保留 name 为 "xyz" 的 DEX
     for dex in dexs:
         # 跳过 null（代表主 DEX，已经在步骤 1 获取过了）
         if dex is None:
@@ -246,6 +251,11 @@ def get_all_perpetuals():
         # 获取 DEX 名称
         dex_name = dex.get("name", "")
         if not dex_name:
+            continue
+        
+        # 只处理 xyz DEX，跳过其他 Builder DEX
+        if dex_name != "xyz":
+            print(f"跳过 DEX: {dex_name}")
             continue
         
         # 打印 DEX 信息
@@ -310,8 +320,11 @@ def save_data(perpetuals, perp_meta):
         "perp_meta": perp_meta     # DEX 元数据配置
     }
     
+    # 构建完整路径（相对于脚本所在目录）
+    response_path = os.path.join(SCRIPT_DIR, "hyperliquid_response.json")
+    
     # 写入 JSON 文件
-    with open("hyperliquid_response.json", "w", encoding="utf-8") as f:
+    with open(response_path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
     
     print(f"\n数据已保存到 hyperliquid_response.json")
@@ -343,8 +356,9 @@ def main():
         # 提取所有合约名称（去重）
         all_names = set([p["coin"] for p in perpetuals])
         
-        # 按字母顺序排序并写入文件
-        with open("hyperliquid_assets.txt", "w", encoding="utf-8") as f:
+        # 构建完整路径并写入文件
+        assets_path = os.path.join(SCRIPT_DIR, "hyperliquid_assets.txt")
+        with open(assets_path, "w", encoding="utf-8") as f:
             for name in sorted(all_names):
                 f.write(f"{name}\n")
         
