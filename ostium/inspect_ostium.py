@@ -51,6 +51,12 @@ from ostium_python_sdk.config import NetworkConfig
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # ==================== 配置加载 ====================
+# 将父目录添加到 sys.path，以便能够 import 父目录的 config.py
+import sys
+PARENT_DIR = os.path.dirname(SCRIPT_DIR)
+if PARENT_DIR not in sys.path:
+    sys.path.insert(0, PARENT_DIR)
+
 # 尝试从 config.py 加载 Arbitrum RPC URL
 try:
     from config import ARBITRUM_RPC_URL
@@ -60,17 +66,6 @@ except ImportError:
     ARBITRUM_RPC_URL = None
 
 
-# ==================== 常量定义 ====================
-
-# 资产分类映射（根据 Ostium 协议的 groupIndex 定义）
-# groupIndex 是链上合约返回的分类索引
-GROUP_INDEX_MAP = {
-    0: "crypto",       # 加密货币（BTC, ETH 等）- 有资金费率
-    1: "forex",        # 外汇（EUR, GBP 等）- 有隔夜费
-    2: "commodities",  # 大宗商品（XAU 黄金, XAG 白银, CL 原油等）- 有隔夜费
-    3: "stocks",       # 股票（TSLA, AAPL 等）- 有隔夜费
-    4: "indices"       # 指数（SPX, NDX 等）- 有隔夜费
-}
 
 
 # ==================== 数据获取函数 ====================
@@ -125,150 +120,27 @@ async def fetch_all_data() -> Dict[str, Any]:
     return {"pairs": pairs, "prices": prices}
 
 
-# ==================== 数据分析函数 ====================
-
-def analyze_pairs(pairs: List[Dict]) -> Dict[str, Any]:
-    """
-    分析交易对数据：按资产类别分组，提取费率信息
-    
-    分析内容:
-        1. 按 groupIndex 将交易对分类到不同类别
-        2. 提取每个交易对的关键费率信息
-        3. 统计所有唯一资产名称
-    
-    费率字段说明:
-        - fundingFeePerBlockP: 每区块资金费率（crypto 资产）
-        - rolloverFeePerBlockP: 每区块隔夜费率（非 crypto 资产）
-        - openFeeP: 开仓手续费（基点）
-        - closeFeeP: 平仓手续费（基点）
-    
-    Args:
-        pairs: 从 subgraph 获取的交易对列表
-        
-    Returns:
-        dict: 分析结果
-            {
-                "categories": {
-                    "crypto": [...],      # 加密货币交易对
-                    "forex": [...],       # 外汇交易对
-                    "commodities": [...], # 大宗商品交易对
-                    "stocks": [...],      # 股票交易对
-                    "indices": [...],     # 指数交易对
-                    "other": [...]        # 未分类
-                },
-                "all_assets": ["BTC", "ETH", "USD", ...],  # 所有唯一资产
-                "total_pairs": 25                          # 交易对总数
-            }
-    """
-    print(f"\n=== Ostium 交易对分析 ===")
-    print(f"总交易对数: {len(pairs)}")
-    
-    # ===== 初始化分类容器 =====
-    # 为每个资产类别创建空列表
-    categories = {name: [] for name in GROUP_INDEX_MAP.values()}
-    categories["other"] = []  # 未知分类
-    
-    # 存储所有唯一资产名称
-    all_assets = set()
-    
-    # ===== 遍历每个交易对进行分类 =====
-    for pair in pairs:
-        # 提取资产名称
-        from_asset = pair.get("from", "")  # 基础资产（如 "BTC"）
-        to_asset = pair.get("to", "")      # 报价资产（如 "USD"）
-        group_index = pair.get("groupIndex")  # 分类索引
-        
-        # 添加到资产集合
-        all_assets.add(from_asset)
-        all_assets.add(to_asset)
-        
-        # 提取关键信息（含费率配置）
-        pair_info = {
-            "id": pair.get("id"),                          # 交易对 ID
-            "from": from_asset,                            # 基础资产
-            "to": to_asset,                                # 报价资产
-            "pair": f"{from_asset}/{to_asset}",            # 交易对名称
-            "groupIndex": group_index,                     # 分类索引
-            # 费率配置
-            "fundingFeePerBlockP": pair.get("fundingFeePerBlockP"),  # 资金费率/区块
-            "rolloverFeePerBlockP": pair.get("rolloverFeePerBlockP"), # 隔夜费/区块
-            "openFeeP": pair.get("openFeeP"),              # 开仓手续费
-            "closeFeeP": pair.get("closeFeeP"),            # 平仓手续费
-            # 杠杆限制
-            "minLeverage": pair.get("minLeverage"),        # 最小杠杆
-            "maxLeverage": pair.get("maxLeverage"),        # 最大杠杆
-        }
-        
-        # 根据 groupIndex 分类
-        category = GROUP_INDEX_MAP.get(group_index, "other")
-        categories[category].append(pair_info)
-    
-    # ===== 打印分类统计 =====
-    print(f"\n资产分类（按 groupIndex）:")
-    for name, items in categories.items():
-        if items:  # 只打印有内容的分类
-            print(f"  {name}: {len(items)}")
-    
-    print(f"\n所有唯一资产 ({len(all_assets)}): {sorted(all_assets)}")
-    
-    return {
-        "categories": categories,           # 按类别分组的交易对
-        "all_assets": sorted(list(all_assets)),  # 所有唯一资产（已排序）
-        "total_pairs": len(pairs)           # 交易对总数
-    }
-
 
 # ==================== 数据保存函数 ====================
 
-def save_data(pairs: List[Dict], prices: List[Dict], analysis: Dict[str, Any]):
+def save_data(pairs: List[Dict], prices: List[Dict]):
     """
     保存所有数据到 JSON 文件
     
     输出文件结构 (ostium_response.json):
         {
-            "pairs": [                      # 交易对原始数据
-                {
-                    "id": "0",
-                    "from": "BTC",
-                    "to": "USD",
-                    "groupIndex": 0,
-                    "longOI": "16190118096356189197",
-                    "shortOI": "19987432486160506187",
-                    "curFundingLong": 2973925102,
-                    "curFundingShort": -2416694579,
-                    "rolloverFeePerBlock": 0,
-                    ...
-                },
-                ...
-            ],
-            "prices": [                     # 价格数据
-                {
-                    "from": "BTC",
-                    "to": "USD",
-                    "bid": 94939.15,
-                    "ask": 94947.61,
-                    "mid": 94943.38,
-                    "isMarketOpen": true
-                },
-                ...
-            ],
-            "analysis": {                   # 分析结果
-                "categories": {...},
-                "all_assets": [...],
-                "total_pairs": 25
-            }
+            "pairs": [...],   # 交易对原始数据
+            "prices": [...]   # 价格数据
         }
     
     Args:
         pairs: 交易对数据列表
         prices: 价格数据列表
-        analysis: 分析结果字典
     """
     # 构建输出数据
     data = {
         "pairs": pairs,       # 交易对原始数据
-        "prices": prices,     # 价格数据
-        "analysis": analysis  # 分析结果
+        "prices": prices      # 价格数据
     }
     
     # 构建完整路径（相对于脚本所在目录）
@@ -280,12 +152,20 @@ def save_data(pairs: List[Dict], prices: List[Dict], analysis: Dict[str, Any]):
     with open(response_path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False, default=str)
     print(f"\n数据已保存到 ostium_response.json")
+    print(f"  交易对数量: {len(pairs)}")
+    print(f"  价格数据数量: {len(prices)}")
     
-    # 保存资产名称列表（便于快速查看支持的资产）
+    # 收集所有唯一资产名称并保存
+    all_assets = set()
+    for pair in pairs:
+        all_assets.add(pair.get("from", ""))
+        all_assets.add(pair.get("to", ""))
+    
     with open(assets_path, "w", encoding="utf-8") as f:
-        for asset in analysis["all_assets"]:
-            f.write(f"{asset}\n")
-    print(f"资产列表已保存到 ostium_assets.txt")
+        for asset in sorted(all_assets):
+            if asset:  # 跳过空字符串
+                f.write(f"{asset}\n")
+    print(f"资产列表已保存到 ostium_assets.txt ({len(all_assets)} 个资产)")
 
 
 # ==================== 辅助函数 ====================
@@ -317,9 +197,8 @@ async def main():
     
     执行步骤:
         1. 初始化 SDK 并获取所有数据（交易对 + 价格）
-        2. 分析交易对数据（按类别分组）
-        3. 打印 BTC 示例数据
-        4. 保存所有数据到 JSON 文件
+        2. 打印 BTC 示例数据
+        3. 保存所有数据到 JSON 文件
     
     注意: 使用 asyncio.run() 运行此异步函数
     """
@@ -334,14 +213,11 @@ async def main():
         pairs = data["pairs"]    # 交易对信息
         prices = data["prices"]  # 价格数据
         
-        # ===== 步骤 2: 分析交易对数据 =====
-        analysis = analyze_pairs(pairs)
-        
-        # ===== 步骤 3: 打印示例数据 =====
+        # ===== 步骤 2: 打印示例数据 =====
         print_sample_data(pairs)
         
-        # ===== 步骤 4: 保存数据 =====
-        save_data(pairs, prices, analysis)
+        # ===== 步骤 3: 保存数据 =====
+        save_data(pairs, prices)
         
         # 完成提示
         print("\n" + "=" * 50)

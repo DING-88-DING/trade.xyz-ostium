@@ -33,6 +33,12 @@ import requests
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # ==================== 配置加载 ====================
+# 将父目录添加到 sys.path，以便能够 import 父目录的 config.py
+import sys
+PARENT_DIR = os.path.dirname(SCRIPT_DIR)
+if PARENT_DIR not in sys.path:
+    sys.path.insert(0, PARENT_DIR)
+
 # 尝试从 config.py 加载 API URL，如果不存在则使用默认值
 try:
     from config import HYPERLIQUID_API_URL

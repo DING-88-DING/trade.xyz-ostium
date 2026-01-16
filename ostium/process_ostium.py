@@ -83,8 +83,7 @@ def load_data(filepath: str = "ostium_response.json") -> Dict[str, Any]:
                     "isMarketOpen": true
                 },
                 ...
-            ],
-            "analysis": {...}               # 分析结果（本脚本不使用）
+            ]
         }
     
     Args:
