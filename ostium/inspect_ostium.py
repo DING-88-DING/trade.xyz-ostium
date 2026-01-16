@@ -38,6 +38,7 @@ SDK 信息:
 """
 
 import json
+import os
 import asyncio
 from typing import Dict, List, Any
 
@@ -45,6 +46,9 @@ from typing import Dict, List, Any
 # Ostium Python SDK 用于与 Arbitrum 上的 Ostium 协议交互
 from ostium_python_sdk import OstiumSDK
 from ostium_python_sdk.config import NetworkConfig
+
+# 获取脚本所在目录（确保无论从哪个目录运行都能找到正确的文件路径）
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # ==================== 配置加载 ====================
 # 尝试从 config.py 加载 Arbitrum RPC URL
@@ -267,14 +271,18 @@ def save_data(pairs: List[Dict], prices: List[Dict], analysis: Dict[str, Any]):
         "analysis": analysis  # 分析结果
     }
     
+    # 构建完整路径（相对于脚本所在目录）
+    response_path = os.path.join(SCRIPT_DIR, "ostium_response.json")
+    assets_path = os.path.join(SCRIPT_DIR, "ostium_assets.txt")
+    
     # 写入 JSON 文件
     # default=str 用于处理无法序列化的对象（如 Decimal）
-    with open("ostium_response.json", "w", encoding="utf-8") as f:
+    with open(response_path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False, default=str)
     print(f"\n数据已保存到 ostium_response.json")
     
     # 保存资产名称列表（便于快速查看支持的资产）
-    with open("ostium_assets.txt", "w", encoding="utf-8") as f:
+    with open(assets_path, "w", encoding="utf-8") as f:
         for asset in analysis["all_assets"]:
             f.write(f"{asset}\n")
     print(f"资产列表已保存到 ostium_assets.txt")

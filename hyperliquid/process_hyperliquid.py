@@ -27,7 +27,11 @@ Hyperliquid 永续合约数据处理器
 """
 
 import json
+import os
 from typing import Dict, List, Any
+
+# 获取脚本所在目录（确保无论从哪个目录运行都能找到正确的文件路径）
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 # ==================== 数据加载函数 ====================
@@ -59,12 +63,14 @@ def load_data(filepath: str = "hyperliquid_response.json") -> Dict[str, Any]:
         }
     
     Args:
-        filepath: JSON 文件路径
+        filepath: JSON 文件名（相对于脚本目录）
         
     Returns:
         dict: 解析后的 JSON 数据
     """
-    with open(filepath, "r", encoding="utf-8") as f:
+    # 构建完整路径（相对于脚本所在目录）
+    full_path = os.path.join(SCRIPT_DIR, filepath)
+    with open(full_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -249,8 +255,11 @@ def save_results(contracts: List[Dict], filepath: str = "hyperliquid_filtered.js
         "contracts": contracts                        # 合约数据
     }
     
+    # 构建完整路径（相对于脚本所在目录）
+    full_path = os.path.join(SCRIPT_DIR, filepath)
+    
     # 写入 JSON 文件
-    with open(filepath, "w", encoding="utf-8") as f:
+    with open(full_path, "w", encoding="utf-8") as f:
         json.dump(result, f, indent=2, ensure_ascii=False)
     
     print(f"已保存 {len(contracts)} 个合约到 {filepath}")
