@@ -70,6 +70,7 @@ const OSTIUM_FEE_SCHEDULE = {
     XAG: 0.15,        // 白银 15 bps
     XPT: 0.20,        // 铂金 20 bps
     XPD: 0.20,        // 钯金 20 bps
+    HG: 0.15,         // 铜 15 bps
     // 能源
     CL: 0.10,         // 原油 10 bps
   },
@@ -82,7 +83,7 @@ const OSTIUM_FEE_SCHEDULE = {
   
   // 其他费用 (固定费用，单位: USD)
   other: {
-    oracleFee: 0.10,        // 预言机费: $0.10 (手动平仓时收取)
+    oracleFee: 0.10,        // 预言机费: $0.10 (开仓时收取)
     closeFee: 0,            // 平仓费: $0 (通常免费)
     // 注意: 自动止盈止损 (SL/TP) 不收取预言机费
   }
@@ -116,3 +117,12 @@ const AUTO_REFRESH_INTERVAL = 5000;
 
 // 定时刷新间隔 (毫秒)
 const TIMER_REFRESH_INTERVAL = 60000;
+
+// ============ 套利计算设置 ============
+const ARBITRAGE_CONFIG = {
+  // 下单金额 (USD)
+  positionSize: 1000,
+  
+  // 资金费率回本最大时间 (小时)
+  maxFundingHours: 12,
+};

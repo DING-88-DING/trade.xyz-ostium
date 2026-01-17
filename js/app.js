@@ -269,6 +269,62 @@ function renderOSCard(contract) {
   `;
 }
 
+// 计算套利成本和回本
+function calculateArbitrage(hlContract, osContract, hlFee, osFee, oracleFee) {
+  const size = ARBITRAGE_CONFIG.positionSize;
+  const maxHours = ARBITRAGE_CONFIG.maxFundingHours;
+  
+  // 获取 Ostium 开仓费率 (统一使用 Maker 挂单价)
+  const osOpenFeeRate = typeof osFee === 'object' ? osFee.m : osFee;
+  
+  // 计算总成本 (百分比 -> 小数)
+  // HL: 开仓 Maker + 平仓 Maker
+  // OS: 开仓 Maker + 开仓预言机费 (预言机费在开仓时收取)
+  const hlCost = size * (hlFee.m / 100) * 2;  // HL 开平都用 Maker
+  const osCost = size * (osOpenFeeRate / 100) + oracleFee;  // OS 开仓 Maker + 预言机费
+  const totalCost = hlCost + osCost;
+  
+  // 1. 价差回本：需要多大价格差（美元）才能覆盖成本
+  // 回本价格差 = 总成本 / 仓位数量 = 总成本 * 价格 / 仓位金额
+  const breakEvenSpreadUSD = totalCost * osContract.mid / size;
+  
+  // 2. 资金费率回本
+  const hlFunding = hlContract.fundingRate?.rateHourly || 0;
+  const osFunding = osContract.fundingRate?.longPayHourly || osContract.rolloverRate?.hourly || 0;
+  const fundingDiff = Math.abs(hlFunding - osFunding);  // 每小时费率差 (百分比)
+  const fundingPerHour = size * (fundingDiff / 100);  // 每小时收益 (USD)
+  const fundingHours = fundingPerHour > 0 ? totalCost / fundingPerHour : Infinity;
+  const fundingValid = fundingHours <= maxHours && fundingHours > 0;
+  
+  // 3. 当前价差（美元）
+  const currentSpreadUSD = Math.abs(hlContract.mid - osContract.mid);  // 价格差（美元）
+  const spreadProfit = currentSpreadUSD * size / osContract.mid;  // 当前价差收益（考虑仓位大小）
+  
+  // 4. 综合回本：当前价差收益 + 资金费率收益
+  const remainingCost = totalCost - spreadProfit;
+  const comboHours = remainingCost > 0 && fundingPerHour > 0 
+    ? remainingCost / fundingPerHour 
+    : (remainingCost <= 0 ? 0 : Infinity);
+  const comboValid = comboHours <= maxHours;
+  
+  // 判断是否能回本
+  const spreadCanProfit = currentSpreadUSD >= breakEvenSpreadUSD;
+  const anyCanProfit = spreadCanProfit || fundingValid || comboValid;
+  
+  return {
+    totalCost,
+    breakEvenSpreadUSD,
+    currentSpreadUSD,
+    spreadCanProfit,
+    fundingDiff,
+    fundingHours: fundingValid ? fundingHours : null,
+    fundingValid,
+    comboHours: comboValid ? comboHours : null,
+    comboValid,
+    anyCanProfit
+  };
+}
+
 // 渲染共同合约对比卡片
 function renderComparisonCard(hlContract, osContract, commonName) {
   const hlFunding = hlContract.fundingRate?.rateHourly;
@@ -278,16 +334,44 @@ function renderComparisonCard(hlContract, osContract, commonName) {
     
   const priceDiff =
     ((hlContract.mid - osContract.mid) / osContract.mid) * 100;
-  const rateDiff = hlFunding && osFunding ? hlFunding - osFunding : null;
 
   const feeObj = getHLFeeRate(hlContract);
   const osFee = getOSFeeRate(osContract);
   const oracleFee = OSTIUM_FEE_SCHEDULE.other.oracleFee;
   const priceDiffClass = priceDiff >= 0 ? "bg-pos" : "bg-neg";
-  const rateDiffClass = rateDiff >= 0 ? "bg-neg" : "bg-pos";
+
+  // 计算套利
+  const arb = calculateArbitrage(hlContract, osContract, feeObj, osFee, oracleFee);
+  
+  // 确定开仓方向
+  // HL价格 > OS价格 → HL开空，OS开多（做空贵的，做多便宜的）
+  // HL价格 < OS价格 → HL开多，OS开空
+  const hlDir = hlContract.mid > osContract.mid ? '空' : '多';
+  const osDir = hlContract.mid > osContract.mid ? '多' : '空';
+  const directionText = `HL:${hlDir} OS:${osDir}`;
+  
+  // 角标：任意方式能回本
+  const profitBadge = arb.anyCanProfit 
+    ? `<span style="position: absolute; top: -5px; right: -5px; background: var(--neon-green); color: #000; padding: 2px 6px; border-radius: 10px; font-size: 0.65rem; font-weight: bold;">💰</span>`
+    : '';
+
+  // 格式化回本时间
+  const formatHours = (h) => {
+    if (h === null || h === Infinity) return '无';
+    if (h < 1) return `${Math.round(h * 60)}m`;
+    return `${h.toFixed(1)}h`;
+  };
+  
+  // 格式化价差显示（当前价差 / 回本价差）
+  const formatSpread = () => {
+    const current = `$${arb.currentSpreadUSD.toFixed(4)}`;
+    const breakEven = `$${arb.breakEvenSpreadUSD.toFixed(4)}`;
+    return `${current} / ${breakEven}`;
+  };
 
   return `
-    <div class="comparison-card">
+    <div class="comparison-card" style="position: relative;">
+      ${profitBadge}
       <div class="comp-header">
         <span class="comp-name">${commonName}</span>
       </div>
@@ -317,6 +401,26 @@ function renderComparisonCard(hlContract, osContract, commonName) {
         <div style="display: flex; justify-content: space-between; font-size: 0.75rem;">
           <span style="color: var(--neon-yellow)">HL: ${formatFeeObj(feeObj)}</span>
           <span style="color: var(--neon-green)">OS: ${formatOSFee(osFee)} +$${oracleFee.toFixed(2)}</span>
+        </div>
+      </div>
+      
+      <!-- 套利分析行 -->
+      <div class="comp-row" style="background: rgba(147, 51, 234, 0.1); grid-template-columns: 1fr; padding: 8px;">
+        <div style="font-size: 0.7rem; line-height: 1.4;">
+          <div style="color: var(--text-dim); margin-bottom: 4px;">
+            📊 套利分析 (${ARBITRAGE_CONFIG.positionSize}u) | 成本: $${arb.totalCost.toFixed(2)} | 方向: ${directionText}
+          </div>
+          <div style="display: flex; justify-content: space-between; gap: 8px;">
+            <span class="${arb.spreadCanProfit ? 'val-pos' : ''}" title="当前价差（能否回本）">
+              ①价差: ${formatSpread()}
+            </span>
+            <span class="${arb.fundingValid ? 'val-pos' : ''}" title="通过资金费率回本时间">
+              ②费率: ${formatHours(arb.fundingHours)}
+            </span>
+            <span class="${arb.comboValid ? 'val-pos' : ''}" title="价差+资金费率综合回本时间">
+              ③综合: ${formatHours(arb.comboHours)}
+            </span>
+          </div>
         </div>
       </div>
     </div>
