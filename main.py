@@ -110,6 +110,7 @@ def process_hyperliquid_data(perpetuals, min_volume=HL_MIN_VOLUME):
         contract = {
             "coin": perp.get("coin"),
             "pair": f"{perp.get('coin')}/USD",
+            "dex": perp.get("dex"),  # 用于判断费率类别: "main" = 加密货币, "xyz" = HIP-3
             "bid": bid,
             "mid": float(mid_px) if mid_px else None,
             "ask": ask,
