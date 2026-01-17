@@ -88,7 +88,17 @@
 
     <!-- 配置文件 (必须在主脚本之前加载) -->
     <script src="js/config.js"></script>
-    <!-- 主应用脚本 -->
-    <script src="js/app.js"></script>
+    
+    <!-- 核心功能模块 (按依赖顺序加载) -->
+    <script src="js/state.js"></script>
+    <script src="js/formatters.js"></script>
+    <script src="js/fee-calculator.js"></script>
+    <script src="js/arbitrage.js"></script>
+    <script src="js/renderers.js"></script>
+    <script src="js/ui-controls.js"></script>
+    <script src="js/data-loader.js"></script>
+    
+    <!-- 主入口脚本 -->
+    <script src="js/main.js"></script>
   </body>
 </html>
