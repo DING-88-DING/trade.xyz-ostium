@@ -40,8 +40,8 @@ except ImportError:
 # ==================== 导入子目录模块 ====================
 # 复用子目录的数据获取函数，避免代码重复
 
-from hyperliquid.inspect_hyperliquid import get_all_perpetuals as hl_get_all_perpetuals
-from ostium.inspect_ostium import fetch_all_data as os_fetch_all_data
+from trade_hyperliquid.inspect_hyperliquid import get_all_perpetuals as hl_get_all_perpetuals
+from trade_ostium.inspect_ostium import fetch_all_data as os_fetch_all_data
 
 
 # ==================== 配置 ====================
@@ -332,18 +332,24 @@ class APIHTTPHandler(BaseHTTPRequestHandler):
         """处理 GET 请求"""
         path = self.path.split('?')[0]  # 移除查询参数
         
-        # API 端点：返回内存中的数据
+        # ==================== API 端点（从内存返回数据，不是文件！）====================
+        # 注意：这些路径只是 HTTP 路由，数据存储在内存 DATA_STORE 中
+        # 前端 fetch 这些路径时，服务器从内存读取并转换为 JSON 返回
+        # 磁盘上没有这些 .json 文件！
+        
         if path == '/hyperliquid_filtered.json':
+            # 从内存 DATA_STORE["hyperliquid"] 返回 JSON 数据
             with DATA_LOCK:
                 self.send_json(DATA_STORE["hyperliquid"])
             return
         
         if path == '/ostium_filtered.json':
+            # 从内存 DATA_STORE["ostium"] 返回 JSON 数据
             with DATA_LOCK:
                 self.send_json(DATA_STORE["ostium"])
             return
         
-        # 静态文件
+        # ==================== 静态文件（真实的磁盘文件）====================
         if path == '/' or path == '/index.html':
             path = '/comparison.html'
         

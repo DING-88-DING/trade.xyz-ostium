@@ -4,5 +4,14 @@ hyperliquid-python-sdk>=0.1.0
 # Ostium Python SDK
 ostium-python-sdk>=0.1.0
 
+# WebSocket 服务器
+flask>=2.3.0
+flask-socketio>=5.3.0
+python-socketio>=5.9.0
+flask-cors>=4.0.0
+
+# 异步支持
+aiohttp>=3.9.0
+
 # Common dependencies
 requests>=2.28.0

@@ -1,6 +1,7 @@
 /**
  * 数据加载模块
- * 负责从 API 加载数据、排序和匹配
+ * 从 main.py 的 HTTP API 端点获取数据、排序和匹配
+ * main.py 在内存中存储数据，通过 /hyperliquid_filtered.json 和 /ostium_filtered.json 返回
  */
 
 /**
@@ -32,9 +33,12 @@ async function loadData() {
   try {
     const timestamp = Date.now();
 
+    // 注意：这里 fetch 的是 HTTP API 路径，不是磁盘文件！
+    // main.py 从内存 DATA_STORE 中读取数据并返回 JSON
+    // 磁盘上没有这些 .json 文件
     const [hlRes, osRes] = await Promise.all([
       fetch(`hyperliquid_filtered.json?t=${timestamp}`),
-      fetch(`ostium_filtered.json?t=${ timestamp}`),
+      fetch(`ostium_filtered.json?t=${timestamp}`),
     ]);
 
     const hlData = await hlRes.json();
