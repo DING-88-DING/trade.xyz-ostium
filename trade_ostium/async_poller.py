@@ -1,18 +1,20 @@
 """
 Ostium 异步轮询器
-每2秒轮询一次 Ostium API 获取最新数据
-
-功能:
-- 异步并发请求
-- 2秒间隔轮询
-- 错误重试
+定期获取 Ostium 数据并通过回调发送
 """
 
 import asyncio
+import traceback
 from datetime import datetime
 from ostium_python_sdk import OstiumSDK
 from ostium_python_sdk.config import NetworkConfig
 import os
+
+# Arbitrum RPC URL (从环境变量或配置获取)
+ARBITRUM_RPC_URL = 'https://arb1.arbitrum.io/rpc'
+
+# 最小持仓量（美元）- 用于过滤
+MIN_OI_USD = 2_000_000
 
 
 class OstiumAsyncPoller:
@@ -89,22 +91,67 @@ class OstiumAsyncPoller:
             price_map[key] = price
         
         contracts = []
+        filtered_count = 0
         
         for pair in pairs:
             pair_name = f"{pair.get('from', '')}/{pair.get('to', '')}"
             price_data = price_map.get(pair_name, {})
             
             if price_data:
+                # 计算持仓量（OI）
+                long_oi = int(pair.get('longOI', 0))
+                short_oi = int(pair.get('shortOI', 0))
+                total_oi = (long_oi + short_oi) / 1e18
+                mid_price = price_data.get('mid', 1.0)
+                total_oi_usd = total_oi * mid_price if mid_price else 0
+                
+                # 过滤：持仓量必须大于 MIN_OI_USD
+                if total_oi_usd < MIN_OI_USD:
+                    filtered_count += 1
+                    continue
+                
+                # 获取资产组
+                group_name = pair.get('group', {}).get('name', '')
+                is_crypto = group_name == 'crypto'
+                
+                # 资金费率（仅 crypto 资产）
+                cur_funding_long = int(pair.get('curFundingLong', 0))
+                cur_funding_short = int(pair.get('curFundingShort', 0))
+                
+                # Crypto 资金费率：每秒费率 -> 每小时费率（百分比）
+                funding_long_hourly = abs(cur_funding_long) * 3600 / 1e18 * 100 if cur_funding_long else None
+                funding_short_hourly = abs(cur_funding_short) * 3600 / 1e18 * 100 if cur_funding_short else None
+                
+                # 隔夜费率（非 crypto 资产）
+                rollover_per_block = int(pair.get('rolloverFeePerBlock', 0))
+                BLOCKS_PER_HOUR = 4 * 3600  # Arbitrum 约 4 块/秒
+                rollover_hourly = abs(rollover_per_block) * BLOCKS_PER_HOUR / 1e18 * 100 if rollover_per_block else None
+                
                 contracts.append({
                     'pair': pair_name,
                     'from': pair.get('from', ''),
                     'to': pair.get('to', ''),
-                    'group': pair.get('group', {}).get('name', ''),
+                    'group': group_name,
                     'bid': price_data.get('bid', 0),
                     'mid': price_data.get('mid', 0),
                     'ask': price_data.get('ask', 0),
-                    # TODO: 添加其他字段如 OI, funding rate 等
+                    'totalOI_USD': round(total_oi_usd, 2),
+                    'longOI': pair.get('longOI'),
+                    'shortOI': pair.get('shortOI'),
+                    'fundingRate': {
+                        'longPayHourly': round(funding_long_hourly, 6) if funding_long_hourly else None,
+                        'shortPayHourly': round(funding_short_hourly, 6) if funding_short_hourly else None,
+                        'longPay8h': round(funding_long_hourly * 8, 6) if funding_long_hourly else None,
+                        'shortPay8h': round(funding_short_hourly * 8, 6) if funding_short_hourly else None,
+                    } if is_crypto and (funding_long_hourly or funding_short_hourly) else None,
+                    'rolloverRate': {
+                        'hourly': round(rollover_hourly, 6) if rollover_hourly else None,
+                        'daily': round(rollover_hourly * 24, 6) if rollover_hourly else None,
+                    } if not is_crypto and rollover_hourly else None,
                 })
+        
+        if filtered_count > 0:
+            print(f'[OS Poller] 🔍 过滤掉 {filtered_count} 个低 OI 合约（< ${MIN_OI_USD:,}）')
         
         return contracts
 

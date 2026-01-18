@@ -5,7 +5,7 @@
 
 // WebSocket 配置
 const WS_CONFIG = {
-  url: 'http://localhost:5001',  // WebSocket 服务器地址
+  url: 'http://localhost:8080',  // WebSocket 服务器地址
   reconnectDelay: 3000,           // 重连延迟
   pingInterval: 30000             // 心跳间隔
 };

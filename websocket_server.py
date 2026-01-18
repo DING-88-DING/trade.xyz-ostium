@@ -160,10 +160,10 @@ if __name__ == '__main__':
     
     # 启动服务器
     print(f'\n✅ 服务器已启动!')
-    print(f'✅ WebSocket: ws://localhost:5001')
-    print(f'✅ 前端页面: http://localhost:5001')
-    print(f'\n📱 在浏览器打开: http://localhost:5001')
+    print(f'✅ WebSocket: ws://localhost:8080')
+    print(f'✅ 前端页面: http://localhost:8080')
+    print(f'\n📱 在浏览器打开: http://localhost:8080')
     print('\n按 Ctrl+C 停止服务器\n')
     
     # 启动 Flask + WebSocket 服务器
-    socketio.run(app, host='0.0.0.0', port=5001, debug=False, allow_unsafe_werkzeug=True)
+    socketio.run(app, host='0.0.0.0', port=8080, debug=False, allow_unsafe_werkzeug=True)

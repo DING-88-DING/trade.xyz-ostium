@@ -246,9 +246,11 @@ body {
 /* 中间列的卡片以网格布局显示 */
 .common .column-body {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 0.5rem;
   align-content: start;
+  /* 确保卡片不会重叠 */
+  grid-auto-rows: min-content;
 }
 
 /* ================= 卡片样式 ================= */
@@ -262,6 +264,11 @@ body {
   position: relative;
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 中间列（对比卡片）不需要 margin-bottom，因为使用网格布局 */
+.common .comparison-card {
+  margin-bottom: 0;
 }
 
 /* 悬停效果 */
@@ -368,7 +375,9 @@ body {
 .comparison-card {
   display: flex;
   flex-direction: column;
-  height: fit-content;
+  height: auto;
+  /* 确保卡片内容完全可见，不重叠 */
+  align-self: start;
 }
 
 .comp-header {
