@@ -14,7 +14,7 @@ import os
 ARBITRUM_RPC_URL = 'https://arb1.arbitrum.io/rpc'
 
 # 最小持仓量（美元）- 用于过滤
-MIN_OI_USD = 2_000_000
+MIN_OI_USD = 1_000_000  # 1M 美元
 
 
 class OstiumAsyncPoller:

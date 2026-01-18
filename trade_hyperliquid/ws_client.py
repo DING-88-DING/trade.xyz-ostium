@@ -18,7 +18,7 @@ class HyperliquidWSClient:
     """Hyperliquid WebSocket 客户端（原生 WebSocket）"""
     
     # 过滤条件：最小24小时成交量（美元）
-    MIN_VOLUME_USD = 2_000_000
+    MIN_VOLUME_USD = 1_000_000  # 1M 美元
     
     def __init__(self, callback):
         """
@@ -233,6 +233,7 @@ class HyperliquidWSClient:
             # 匹配前端期望的数据格式
             contracts.append({
                 'coin': coin,
+                'dex': 'main',  # 主站标记
                 'bid': bid,
                 'mid': mid,
                 'ask': ask,
@@ -251,12 +252,17 @@ class HyperliquidWSClient:
             funding = meta.get('funding')
             open_interest = meta.get('openInterest')
             
-            # 过滤：交易量必须大于 MIN_VOLUME_USD
+            # xyz dex 的股票、外汇等资产交易量可能很低，使用更低的门槛
+            # 使用 1M 美元门槛（比主站的 2M 低）
+            MIN_XYZ_VOLUME = 1_000_000  # xyz dex 最小交易量 1M
+            
             if day_volume:
                 try:
                     volume_usd = float(day_volume)
-                    if volume_usd < self.MIN_VOLUME_USD:
+                    if volume_usd < MIN_XYZ_VOLUME:
                         filtered_count += 1
+                        # 打印被过滤的 xyz 资产
+                        print(f'[HL WS] ⚠️ 过滤 xyz 资产: {coin} (交易量: ${volume_usd:,.2f})')
                         continue
                 except (ValueError, TypeError):
                     continue
@@ -273,6 +279,7 @@ class HyperliquidWSClient:
             
             contracts.append({
                 'coin': coin,
+                'dex': 'xyz',  # xyz dex 标记
                 'bid': bid,
                 'mid': mid,
                 'ask': ask,
