@@ -133,6 +133,7 @@ function updateHyperliquidData(data) {
   const hlList = document.getElementById("hlList");
   if (hlList) {
     hlList.innerHTML = GLOBAL_HL_DATA.map(renderHLCard).join("");
+    reapplyFilter('hlList');  // 重新应用搜索过滤
   }
   
   const hlCount = document.getElementById("hlCount");
@@ -157,6 +158,7 @@ function updateOstiumData(data) {
   const osList = document.getElementById("osList");
   if (osList) {
     osList.innerHTML = GLOBAL_OS_DATA.map(renderOSCard).join("");
+    reapplyFilter('osList');  // 重新应用搜索过滤
   }
   
   const osCount = document.getElementById("osCount");
@@ -233,6 +235,7 @@ function updateComparisonList() {
     commonList.innerHTML = commonPairs
       .map((p) => renderComparisonCard(p.hl, p.os, p.name))
       .join("");
+    reapplyFilter('commonList');  // 重新应用搜索过滤
   }
 }
 

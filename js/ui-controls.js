@@ -39,3 +39,26 @@ function filterList(input, listId) {
     card.style.display = text.includes(query) ? "" : "none";
   }
 }
+
+/**
+ * 重新应用搜索过滤器
+ * 在数据刷新后调用，保持搜索状态
+ */
+function reapplyFilter(listId) {
+  // 根据 listId 找到对应的搜索框
+  const list = document.getElementById(listId);
+  if (!list) return;
+  
+  // 找到搜索框（在同一个 column 下）
+  const column = list.closest('.column');
+  if (!column) return;
+  
+  const searchInput = column.querySelector('.search-input');
+  if (!searchInput) return;
+  
+  // 如果有搜索内容，重新应用过滤
+  const query = searchInput.value.trim();
+  if (query) {
+    filterList(searchInput, listId);
+  }
+}
