@@ -261,8 +261,6 @@ class HyperliquidWSClient:
                     volume_usd = float(day_volume)
                     if volume_usd < MIN_XYZ_VOLUME:
                         filtered_count += 1
-                        # 打印被过滤的 xyz 资产
-                        print(f'[HL WS] ⚠️ 过滤 xyz 资产: {coin} (交易量: ${volume_usd:,.2f})')
                         continue
                 except (ValueError, TypeError):
                     continue
