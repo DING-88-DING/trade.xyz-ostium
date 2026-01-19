@@ -109,7 +109,7 @@ const PRIORITY_ASSETS = [
 
 // ============ 过滤设置 ============
 // 最小成交量阈值 (USD)
-const MIN_VOLUME_THRESHOLD = 2000000;
+const MIN_VOLUME_THRESHOLD = 1000000;
 
 // ============ 自动刷新设置 ============
 // 自动刷新间隔 (毫秒)

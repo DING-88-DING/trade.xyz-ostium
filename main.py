@@ -53,8 +53,8 @@ SERVER_PORT = 8080
 REFRESH_INTERVAL = 30
 
 # 过滤条件
-HL_MIN_VOLUME = 2_000_000    # Hyperliquid 最小24h成交量
-OS_MIN_OI = 2_000_000        # Ostium 最小 OI
+HL_MIN_VOLUME = 1_000_000    # Hyperliquid 最小24h成交量 (1M)
+OS_MIN_OI = 1_000_000        # Ostium 最小 OI (1M)
 
 
 # ==================== 内存数据存储 ====================
