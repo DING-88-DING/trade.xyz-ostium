@@ -22,39 +22,63 @@
 
 ### 1. 环境准备
 
-确保您的系统已安装：
+确保您的系统环境满足以下要求：
 
-- Python 3.8+
-- pip (Python 包管理工具)
+- **操作系统**: Windows / macOS / Linux
+- **Python 版本**: Python 3.8 或更高版本
+  - 可以在终端输入 `python --version` 检查版本
+- **包管理工具**: pip
+  - 可以在终端输入 `pip --version` 检查
 
-### 2. 快速启动 (推荐)
+### 2. 安装依赖
 
-我们推荐使用 **WebSocket 实时模式**，它可以提供更流畅的用户体验。
+本项目包含 `requirements.txt` 文件，您可以一键安装所有必需的依赖包。
 
-在项目根目录下运行：
-
-```bash
-python websocket_server.py
-```
-
-该脚本会自动：
-
-1.  **检查并安装** 可能会缺失的 Python 依赖 (如 `flask`, `socketio` 等)。
-2.  启动 WebSocket 服务器。
-3.  自动在后台连接 Hyperliquid 和 Ostium 数据源。
-
-启动成功后，打开浏览器访问：[http://localhost:8080](http://localhost:8080)
-
-### 3. 轻量级启动 (备选)
-
-如果您只需要简单的静态展示或服务器资源受限，可以使用 **HTTP 轮询模式**：
+**手动安装（推荐）：**
+打开命令行终端（Terminal / CMD / PowerShell），进入项目根目录，运行：
 
 ```bash
-python main.py
+pip install -r requirements.txt
 ```
 
-- 该模式每 **30秒** 刷新一次数据。
-- 访问地址同为：[http://localhost:8080/comparison.html](http://localhost:8080/comparison.html)
+**依赖包说明**：
+
+- `flask`, `flask-socketio`, `python-socketio`, `flask-cors`: 用于构建 WebSocket 后端服务器。
+- `hyperliquid-python-sdk`: 官方 Hyperliquid 交易与数据接口 SDK。
+- `ostium-python-sdk`: 官方 Ostium 数据接口 SDK。
+- `aiohttp`: 用于异步 HTTP 请求。
+- `requests`: 用于同步 HTTP 请求。
+
+### 3. 运行方式
+
+#### A. 实时模式 (推荐 - WebSocket)
+
+这是最佳体验模式，支持毫秒级数据推送。
+
+1.  **启动服务器**：
+
+    ```bash
+    python websocket_server.py
+    ```
+
+    > **提示**：该脚本在启动时也会自动检查依赖，如果发现缺失会尝试自动安装。
+
+2.  **访问页面**：
+    打开浏览器访问：[http://localhost:8080](http://localhost:8080)
+
+#### B. 轮询模式 (备选 - HTTP)
+
+如果您只需要简单的静态展示，或者服务器资源非常有限（不支持 WebSocket），可以使用此模式。
+
+1.  **启动脚本**：
+
+    ```bash
+    python main.py
+    ```
+
+2.  **访问页面**：
+    访问：[http://localhost:8080/comparison.html](http://localhost:8080/comparison.html)
+    - 该模式下数据每 **30秒** 自动刷新一次。
 
 ## 📂 项目结构
 
