@@ -38,6 +38,7 @@ env/
 # 临时文件
 *.tmp
 tmpclaude-*
+*.claude
 
 # 输出文件（可选，如果不想提交数据文件可以取消注释）
 # hyperliquid_response.json

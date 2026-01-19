@@ -107,14 +107,6 @@ const PRIORITY_ASSETS = [
   "XAU", "XAG", "HG", "NDX"
 ];
 
-// ============ 过滤设置 ============
-// 最小成交量阈值 (USD)
-const MIN_VOLUME_THRESHOLD = 1000000;
-
-// ============ 自动刷新设置 ============
-// 自动刷新间隔 (毫秒)
-const AUTO_REFRESH_INTERVAL = 5000;
-
 // 定时刷新间隔 (毫秒)
 const TIMER_REFRESH_INTERVAL = 60000;
 
