@@ -100,11 +100,62 @@ trade.xyz-ostium/
 
 ## ⚙️ 配置说明
 
-您可以在 `main.py` 或 `config.py` 中修改以下参数来调整监控灵敏度：
+在使用本系统之前，**您必须配置 Arbitrum RPC URL**，因为 Ostium SDK 依赖链上数据。
+
+1.  **复制配置模板**：
+    将 `config.example.py` 复制为 `config.py` (如果尚未存在)。
+
+2.  **编辑配置文件** (`config.py`)：
+
+    ```python
+    # Arbitrum RPC URL（用于 Ostium SDK）
+    # 推荐从 Alchemy 或 Infura 获取免费的 API Key
+    ARBITRUM_RPC_URL = "https://arb-mainnet.g.alchemy.com/v2/YOUR_API_KEY"
+
+    # Hyperliquid API URL
+    HYPERLIQUID_API_URL = "https://api.hyperliquid.xyz"
+    ```
+
+    > **重要**: 如果不配置有效的 `ARBITRUM_RPC_URL`，Ostium 数据将无法加载！
+
+您还可以修改以下参数来调整监控灵敏度（在 `main.py` 中）：
 
 - `HL_MIN_VOLUME`: Hyperliquid 最小 24h 成交量过滤阈值 (默认 1,000,000 USD)。
 - `OS_MIN_OI`: Ostium 最小持仓量过滤阈值 (默认 1,000,000 USD)。
 - `REFRESH_INTERVAL`: HTTP 轮询模式下的刷新间隔 (默认 30 秒)。
+
+## 📊 数据逻辑与费率说明
+
+### 1. 资产匹配 (Name Mapping)
+
+系统会自动处理不同交易所的命名差异，以确保正确对比：
+
+- **黄金**: Hyperliquid (`GOLD`) ⟷ Ostium (`XAU`)
+- **白银**: Hyperliquid (`SILVER`) ⟷ Ostium (`XAG`)
+- **铜**: Hyperliquid (`COPPER`) ⟷ Ostium (`HG`)
+- **纳指**: Hyperliquid (`XYZ100`) ⟷ Ostium (`NDX`)
+
+### 2. 费率计算 (Fee Schedule)
+
+本系统内置了详细的费率表（可在 `js/config.js` 中查看和修改）：
+
+- **Hyperliquid**:
+  - 区分 **VIP 0 - VIP 6** 等级。
+  - 区分 **Taker** 和 **Maker** 费率。
+  - 区分 **Main** (Crypto) 和 **HIP-3** (High Impact Perps - Forex/Commodities) 资产类别。
+  - _默认配置_: 包含了 4% 的 Referral 折扣。
+
+- **Ostium**:
+  - **Crypto**: 采用 Maker/Taker 机制。
+  - **Forex/Commodities**: 采用固定开仓费 (如 Forex 3bps, Gold 3bps, Oil 10bps)。
+  - **其他费用**: 包含 $0.10 的预言机费用 (Oracle Fee)。
+
+### 3. 套利计算假设
+
+在计算“预估收益”和“回本时间”时，系统默认假设：
+
+- **仓位大小**: $1,000 USD
+- **资金费率**: 假设当前费率在未来 12 小时内保持不变。
 
 ## 🧩 架构设计
 
