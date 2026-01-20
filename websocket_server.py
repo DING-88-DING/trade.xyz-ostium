@@ -45,6 +45,17 @@ def check_and_install_dependencies():
 # 运行依赖检查
 check_and_install_dependencies()
 
+# ==================== 配置加载 ====================
+# 尝试从 config.py 加载配置并注入环境变量
+try:
+    import os
+    import config
+    if hasattr(config, 'ARBITRUM_RPC_URL') and config.ARBITRUM_RPC_URL:
+        os.environ['ARBITRUM_RPC_URL'] = config.ARBITRUM_RPC_URL
+        print(f'[Config] 已加载 ARBITRUM_RPC_URL: {config.ARBITRUM_RPC_URL[:20]}...')
+except ImportError:
+    print("警告: 未找到 config.py，将使用默认 RPC")
+
 # 导入依赖
 from flask import Flask, send_from_directory
 from flask_socketio import SocketIO, emit

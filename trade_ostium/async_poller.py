@@ -10,8 +10,30 @@ from ostium_python_sdk import OstiumSDK
 from ostium_python_sdk.config import NetworkConfig
 import os
 
-# Arbitrum RPC URL (从环境变量或配置获取)
-ARBITRUM_RPC_URL = 'https://arb1.arbitrum.io/rpc'
+# Arbitrum RPC URL (优先级：环境变量 > config.py > 默认公共节点)
+ARBITRUM_RPC_URL = os.getenv('ARBITRUM_RPC_URL')
+
+if not ARBITRUM_RPC_URL:
+    # 如果环境变量未设置，尝试从父目录 config.py 读取
+    try:
+        import sys
+        # 添加父目录到 sys.path
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        parent_dir = os.path.dirname(current_dir)
+        if parent_dir not in sys.path:
+            sys.path.insert(0, parent_dir)
+            
+        import config
+        if hasattr(config, 'ARBITRUM_RPC_URL') and config.ARBITRUM_RPC_URL:
+            ARBITRUM_RPC_URL = config.ARBITRUM_RPC_URL
+            print(f'[OS Poller] 使用 config.py 中的 RPC: {ARBITRUM_RPC_URL[:20]}...')
+    except ImportError:
+        pass
+
+# 如果仍然没有，使用默认公共节点
+if not ARBITRUM_RPC_URL:
+    ARBITRUM_RPC_URL = 'https://arb1.arbitrum.io/rpc'
+    print('[OS Poller] ⚠️ 使用默认公共 RPC (可能不稳定)')
 
 # 最小持仓量（美元）- 用于过滤
 MIN_OI_USD = 1_000_000  # 1M 美元
@@ -34,6 +56,7 @@ class OstiumAsyncPoller:
         
         # 初始化 SDK
         config = NetworkConfig.mainnet()
+        print(f'[OS Poller] 正在连接 RPC: {rpc_url}')
         self.sdk = OstiumSDK(config, rpc_url=rpc_url)
         
         print(f'[OS Poller] 初始化完成，轮询间隔: {interval}秒')
