@@ -107,8 +107,8 @@ const PRIORITY_ASSETS = [
   "XAU", "XAG", "HG", "NDX"
 ];
 
-// 定时刷新间隔 (毫秒)
-const TIMER_REFRESH_INTERVAL = 60000;
+// 定时刷新间隔 (毫秒) - 与后端 main.py 的 REFRESH_INTERVAL 保持一致
+const TIMER_REFRESH_INTERVAL = 30000;
 
 // ============ 套利计算设置 ============
 const ARBITRAGE_CONFIG = {

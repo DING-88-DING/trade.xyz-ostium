@@ -8,7 +8,7 @@
   - **Hyperliquid**：监控 24小时成交量大于设定阈值（默认 $1M）的合约。
   - **Ostium**：监控总持仓量（Total OI）大于设定阈值（默认 $1M）的合约。
 - **智能跨平台对比**：
-  - 自动识别两个平台的共有资产（如 BTC, ETH 等）。
+  - 自动识别两个平台的共有资产（如 BTC, ETH, GOLD 等）。
   - **套利监控 (Arbitrage Monitor)**：并排显示同一种资产在两个平台的资金费率，方便发现 Funding Rate Arbitrage 机会。
 - **多模式运行**：
   - **WebSocket 实时模式**：基于 `Flask-SocketIO`，实现毫秒级数据推送。
@@ -17,6 +17,87 @@
   - **VIP 费率等级调整**：支持动态切换 VIP 0 - VIP 6 费率层级，实时重新计算预估收益。
   - **自动依赖管理**：无需手动安装繁杂依赖，启动脚本会自动检测并安装 python 库。
   - **排序与过滤**：支持按字母、成交量、OI、资金费率等多种维度排序。
+
+## 🏗️ 项目架构
+
+```
+trade.xyz-ostium/
+├── main.py                    # HTTP 轮询模式启动脚本 (轻量，每30秒刷新)
+├── websocket_server.py        # WebSocket 实时模式启动脚本 (推荐，毫秒级推送)
+├── comparison.html            # 前端主页面（三栏布局）
+├── config.py                  # 配置文件 (RPC URL 等)
+├── config.example.py          # 配置文件模板
+├── requirements.txt           # Python 依赖列表
+│
+├── trade_hyperliquid/         # Hyperliquid 数据源模块
+│   ├── ws_client.py           # WebSocket 实时订阅客户端
+│   ├── inspect_hyperliquid.py # REST API 数据获取
+│   ├── process_hyperliquid.py # 数据处理逻辑
+│   └── DATA_SCHEMA.md         # 数据结构文档
+│
+├── trade_ostium/              # Ostium 数据源模块
+│   ├── async_poller.py        # 异步轮询器（每2秒）
+│   ├── inspect_ostium.py      # Subgraph 数据获取
+│   ├── process_ostium.py      # 数据处理逻辑
+│   └── DATA_SCHEMA.md         # 数据结构文档
+│
+├── js/                        # 前端逻辑模块
+│   ├── config.js              # 费率表配置（VIP 0-6）
+│   ├── arbitrage.js           # 套利计算核心算法
+│   ├── websocket-client.js    # WebSocket 客户端
+│   ├── fee-calculator.js      # 费率计算
+│   ├── renderers.js           # UI 渲染
+│   ├── data-loader.js         # HTTP 轮询数据加载
+│   └── formatters.js          # 数据格式化工具
+│
+└── css/                       # 样式文件
+    └── comparison.css         # 主页面样式（深色模式）
+```
+
+## 🔧 技术栈
+
+| 组件           | 技术                                           |
+| -------------- | ---------------------------------------------- |
+| **后端**       | Python 3.8+, Flask + Flask-SocketIO            |
+| **数据源 SDK** | `hyperliquid-python-sdk`, `ostium-python-sdk`  |
+| **异步处理**   | `asyncio`, `threading`, `websockets`           |
+| **前端**       | 原生 JavaScript (Vanilla JS)，CSS 变量深色模式 |
+| **区块链 RPC** | Arbitrum Mainnet（用于 Ostium SDK）            |
+
+## 📡 数据流设计
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                          数据源层                                │
+├─────────────────────────────┬───────────────────────────────────┤
+│   Hyperliquid API           │   Ostium Subgraph (Arbitrum)      │
+│   (WebSocket 订阅)           │   (每2秒轮询)                      │
+└─────────────┬───────────────┴───────────────┬───────────────────┘
+              │                               │
+              ▼                               ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                          后端处理层                              │
+├─────────────────────────────┬───────────────────────────────────┤
+│   ws_client.py              │   async_poller.py                 │
+│   (Hyperliquid WebSocket)   │   (Ostium 异步轮询器)              │
+└─────────────┬───────────────┴───────────────┬───────────────────┘
+              │                               │
+              ▼                               ▼
+┌─────────────────────────────────────────────────────────────────┐
+│              websocket_server.py (Flask-SocketIO)               │
+│              数据聚合 + 实时广播                                  │
+└─────────────────────────────┬───────────────────────────────────┘
+                              │
+                              ▼ Socket.IO 推送
+┌─────────────────────────────────────────────────────────────────┐
+│                          前端展示层                              │
+├─────────────────────────────────────────────────────────────────┤
+│   comparison.html                                               │
+│   ├── Hyperliquid 列表 (左栏)                                    │
+│   ├── Arbitrage Monitor (中栏) - 共有资产对比                     │
+│   └── Ostium 列表 (右栏)                                         │
+└─────────────────────────────────────────────────────────────────┘
+```
 
 ## 🛠️ 安装与运行
 
@@ -43,11 +124,15 @@ pip install -r requirements.txt
 
 **依赖包说明**：
 
-- `flask`, `flask-socketio`, `python-socketio`, `flask-cors`: 用于构建 WebSocket 后端服务器。
-- `hyperliquid-python-sdk`: 官方 Hyperliquid 交易与数据接口 SDK。
-- `ostium-python-sdk`: 官方 Ostium 数据接口 SDK。
-- `aiohttp`: 用于异步 HTTP 请求。
-- `requests`: 用于同步 HTTP 请求。
+| 包名                                    | 用途                         |
+| --------------------------------------- | ---------------------------- |
+| `flask`, `flask-socketio`, `flask-cors` | WebSocket 后端服务器         |
+| `python-socketio`                       | Socket.IO 协议支持           |
+| `hyperliquid-python-sdk`                | Hyperliquid 官方数据接口 SDK |
+| `ostium-python-sdk`                     | Ostium 官方数据接口 SDK      |
+| `aiohttp`                               | 异步 HTTP 请求               |
+| `requests`                              | 同步 HTTP 请求               |
+| `websockets`                            | WebSocket 客户端             |
 
 ### 3. 运行方式
 
@@ -80,51 +165,41 @@ pip install -r requirements.txt
     访问：[http://localhost:8080/comparison.html](http://localhost:8080/comparison.html)
     - 该模式下数据每 **30秒** 自动刷新一次。
 
-## 📂 项目结构
-
-```
-trade.xyz-ostium/
-├── main.py                 # HTTP 轮询模式启动脚本 (轻量)
-├── websocket_server.py     # WebSocket 实时模式启动脚本 (推荐)
-├── comparison.html         # 前端主页面
-├── config.py               # 配置文件 (API URL 等)
-├── js/                     # 前端逻辑
-│   ├── websocket-client.js # WebSocket 客户端逻辑
-│   ├── data-loader.js      # HTTP 轮询数据加载逻辑
-│   ├── arbitrage.js        # 套利计算逻辑
-│   ├── fee-calculator.js   # 费率计算核心算法
-│   └── ...
-├── trade_hyperliquid/      # Hyperliquid 数据源模块
-└── trade_ostium/           # Ostium 数据源模块
-```
-
 ## ⚙️ 配置说明
 
 在使用本系统之前，**您必须配置 Arbitrum RPC URL**，因为 Ostium SDK 依赖链上数据。
 
-1.  **复制配置模板**：
-    将 `config.example.py` 复制为 `config.py` (如果尚未存在)。
+### 1. 复制配置模板
 
-2.  **编辑配置文件** (`config.py`)：
+将 `config.example.py` 复制为 `config.py` (如果尚未存在)。
 
-    ```python
-    # Arbitrum RPC URL（用于 Ostium SDK）
-    # 推荐从 Alchemy 或 Infura 获取免费的 API Key
-    ARBITRUM_RPC_URL = "https://arb-mainnet.g.alchemy.com/v2/YOUR_API_KEY"
+### 2. 编辑配置文件 (`config.py`)
 
-    # Hyperliquid API URL
-    HYPERLIQUID_API_URL = "https://api.hyperliquid.xyz"
-    ```
+```python
+# Arbitrum RPC URL（用于 Ostium SDK）
+# 推荐从 Alchemy 或 Infura 获取免费的 API Key
+ARBITRUM_RPC_URL = "https://arb-mainnet.g.alchemy.com/v2/YOUR_API_KEY"
 
-    > **重要**: 如果不配置有效的 `ARBITRUM_RPC_URL`，Ostium 数据将无法加载！
+# Hyperliquid API URL
+HYPERLIQUID_API_URL = "https://api.hyperliquid.xyz"
+```
 
-您还可以修改以下参数来调整监控灵敏度（在 `main.py` 中）：
+> **重要**: 如果不配置有效的 `ARBITRUM_RPC_URL`，Ostium 数据将无法加载！
 
-- `HL_MIN_VOLUME`: Hyperliquid 最小 24h 成交量过滤阈值 (默认 1,000,000 USD)。
-- `OS_MIN_OI`: Ostium 最小持仓量过滤阈值 (默认 1,000,000 USD)。
-- `REFRESH_INTERVAL`: HTTP 轮询模式下的刷新间隔 (默认 30 秒)。
+### 3. 可选参数调整
 
-### 3. RPC 连接逻辑
+您还可以修改以下参数来调整监控灵敏度（在对应文件中）：
+
+| 参数                     | 文件                             | 默认值        | 说明                                        |
+| ------------------------ | -------------------------------- | ------------- | ------------------------------------------- |
+| `HL_MIN_VOLUME`          | `main.py`                        | 1,000,000 USD | Hyperliquid 最小 24h 成交量过滤阈值         |
+| `OS_MIN_OI`              | `main.py`                        | 1,000,000 USD | Ostium 最小持仓量过滤阈值                   |
+| `REFRESH_INTERVAL`       | `main.py`                        | 30 秒         | HTTP 轮询模式下后端刷新间隔                 |
+| `TIMER_REFRESH_INTERVAL` | `js/config.js`                   | 30000 ms      | HTTP 轮询模式下前端刷新间隔（需与后端一致） |
+| `MIN_VOLUME_USD`         | `trade_hyperliquid/ws_client.py` | 1,000,000 USD | WebSocket 模式下的过滤阈值                  |
+| `MIN_OI_USD`             | `trade_ostium/async_poller.py`   | 1,000,000 USD | Ostium 轮询器的过滤阈值                     |
+
+### 4. RPC 连接优先级
 
 系统按照以下优先级连接 Arbitrum RPC 节点：
 
@@ -140,50 +215,110 @@ trade.xyz-ostium/
 
 系统会自动处理不同交易所的命名差异，以确保正确对比：
 
-- **黄金**: Hyperliquid (`GOLD`) ⟷ Ostium (`XAU`)
-- **白银**: Hyperliquid (`SILVER`) ⟷ Ostium (`XAG`)
-- **铜**: Hyperliquid (`COPPER`) ⟷ Ostium (`HG`)
-- **纳指**: Hyperliquid (`XYZ100`) ⟷ Ostium (`NDX`)
+| 资产 | Hyperliquid 名称 | Ostium 名称 |
+| ---- | ---------------- | ----------- |
+| 黄金 | GOLD             | XAU         |
+| 白银 | SILVER           | XAG         |
+| 铜   | COPPER           | HG          |
+| 纳指 | XYZ100           | NDX         |
 
 ### 2. 费率计算 (Fee Schedule)
 
 本系统内置了详细的费率表（可在 `js/config.js` 中查看和修改）：
 
-- **Hyperliquid**:
-  - 区分 **VIP 0 - VIP 6** 等级。
-  - 区分 **Taker** 和 **Maker** 费率。
-  - 区分 **Main** (Crypto) 和 **HIP-3** (High Impact Perps - Forex/Commodities) 资产类别。
-  - _默认配置_: 包含了 4% 的 Referral 折扣。
+**Hyperliquid**:
 
-- **Ostium**:
-  - **Crypto**: 采用 Maker/Taker 机制。
-  - **Forex/Commodities**: 采用固定开仓费 (如 Forex 3bps, Gold 3bps, Oil 10bps)。
-  - **其他费用**: 包含 $0.10 的预言机费用 (Oracle Fee)。
+- 区分 **VIP 0 - VIP 6** 等级
+- 区分 **Taker** 和 **Maker** 费率
+- 区分 **Main** (Crypto) 和 **HIP-3** (High Impact Perps - Forex/Commodities) 资产类别
+- _默认配置_: 包含了 4% 的 Referral 折扣
 
-### 3. 套利计算假设
+**Ostium**:
 
-在计算“预估收益”和“回本时间”时，系统默认假设：
+- **Crypto**: 采用 Maker/Taker 机制 (Maker 3bps, Taker 10bps)
+- **Forex/Commodities**: 采用固定开仓费
+  - Forex: 3 bps
+  - Gold (XAU): 3 bps
+  - Silver (XAG): 15 bps
+  - Oil (CL): 10 bps
+- **其他费用**: 包含 $0.10 的预言机费用 (Oracle Fee)
+
+### 3. 套利计算逻辑
+
+套利计算模块 (`js/arbitrage.js`) 支持两种费率模式：
+
+| 模式      | 说明                                      |
+| --------- | ----------------------------------------- |
+| **Maker** | 使用 mid 价格计算，假设挂单成交           |
+| **Taker** | 使用 bid/ask 价格计算，反映市价单真实成本 |
+
+计算内容包括：
+
+- **价差套利**：当前价差 vs 回本所需价差
+- **资金费率套利**：根据费率差异计算回本时间
+- **综合套利**：价差收益 + 资金费率收益的组合计算
+
+**默认假设**（可在 `js/config.js` 中修改）：
 
 - **仓位大小**: $1,000 USD
-- **资金费率**: 假设当前费率在未来 12 小时内保持不变。
+- **资金费率**: 假设当前费率在未来 12 小时内保持不变
 
-## 🧩 架构设计
+## 💡 核心模块说明
 
-- **后端**:
-  - 采用 **Flask + Socket.IO** 构建实时推送服务。
-  - 利用 `asyncio` 和 `threading` 实现多数据源并发采集，互不阻塞。
-  - **Hyperliquid** 数据通过 WebSocket 订阅实现实时更新。
-  - **Ostium** 数据通过高频轮询 (每 2 秒) 模拟实时更新。
-- **前端**:
-  - 原生 JavaScript (Vanilla JS) 实现，无复杂的构建流程，修改即生效。
-  - CSS 变量实现深色模式和响应式布局。
+### trade_hyperliquid 模块
+
+| 文件                     | 功能                                                   |
+| ------------------------ | ------------------------------------------------------ |
+| `ws_client.py`           | WebSocket 客户端，订阅 `allDexsAssetCtxs` 获取实时数据 |
+| `inspect_hyperliquid.py` | REST API 调用，获取合约元数据                          |
+| `process_hyperliquid.py` | 数据处理和格式化                                       |
+
+**数据特点**：
+
+- 支持主站加密货币 + xyz DEX（外汇/大宗商品）
+- WebSocket 订阅实现毫秒级更新
+
+### trade_ostium 模块
+
+| 文件                | 功能                            |
+| ------------------- | ------------------------------- |
+| `async_poller.py`   | 异步轮询器，每 2 秒获取一次数据 |
+| `inspect_ostium.py` | Subgraph 查询接口               |
+| `process_ostium.py` | 数据处理和格式化                |
+
+**数据特点**：
+
+- 通过 `ostium-python-sdk` 连接 Subgraph
+- 支持 Crypto、Forex、Commodities、Stocks、Indices 五大类资产
+- 区分资金费率（Crypto）和隔夜费率（传统资产）
+
+## 🧩 前端模块说明
+
+| 文件                  | 功能                                     |
+| --------------------- | ---------------------------------------- |
+| `config.js`           | 费率配置、名称映射、套利参数             |
+| `arbitrage.js`        | 套利计算核心算法（Maker/Taker 两种方案） |
+| `websocket-client.js` | Socket.IO 客户端，处理实时数据推送       |
+| `fee-calculator.js`   | 根据 VIP 等级计算实际费率                |
+| `renderers.js`        | UI 渲染逻辑（三栏布局）                  |
+| `data-loader.js`      | HTTP 轮询模式的数据加载                  |
+| `formatters.js`       | 数字格式化、时间格式化等工具函数         |
 
 ## ⚠️ 注意事项
 
-- 因为 Ostium 涉及外汇(Forex)和大宗商品(Commodities)交易，部分市场在周末可能会休市。
-- 显示的资金费率已年化处理，方便直观对比。
-- 本工具仅供参考，不构成投资建议。
+1. **RPC 配置必须**：需要配置有效的 `ARBITRUM_RPC_URL`（从 Alchemy/Infura 获取），否则 Ostium 数据无法加载
+2. **市场休市**：因为 Ostium 涉及外汇 (Forex) 和大宗商品 (Commodities) 交易，部分市场在周末可能会休市
+3. **费率已年化**：显示的资金费率已年化处理，方便直观对比
+4. **仅供参考**：本工具仅供参考，不构成投资建议
+
+## 📝 更新日志
+
+### 2026-01-20
+
+- 修复 `websocket_server.py` 未正确加载 `config.py` 的问题
+- 优化 `async_poller.py` RPC 配置读取逻辑
+- 更新 README 文档结构
 
 ---
 
-_Built with ❤️ for generic trading._
+_Built with ❤️ for crypto trading._
