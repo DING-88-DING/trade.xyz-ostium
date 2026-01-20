@@ -205,7 +205,11 @@ HYPERLIQUID_API_URL = "https://api.hyperliquid.xyz"
 
 1.  **环境变量** (`ARBITRUM_RPC_URL`)：优先级最高。
 2.  **配置文件** (`config.py`)：如果环境变量未设置，尝试读取此文件。
-3.  **默认公用节点**：如果以上均未配置，使用默认公共节点 (可能不稳定)。
+3.  **默认公用节点**：如果以上均未配置，使用默认公共节点：
+    ```
+    https://arb1.arbitrum.io/rpc
+    ```
+    > ⚠️ 该公共节点可能不稳定，请求频率高时可能会被限流，建议配置私有 RPC。
 
 > **修复日志 (2026-01-20)**: 修复了 `websocket_server.py` 未正确加载 `config.py` 导致 `async_poller.py` 无法获取私有 RPC 节点的问题。现在程序会自动将配置注入环境变量。
 
