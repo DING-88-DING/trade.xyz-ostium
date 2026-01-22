@@ -35,7 +35,8 @@ trade.xyz-ostium/
 │   ├── arbitrage_engine.py    # 套利引擎核心类
 │   ├── arbitrage_calculator.py# 套利计算器
 │   ├── fee_calculator.py      # 费率计算器
-│   └── fee_config.py          # 费率配置表 (VIP 0-6)
+│   ├── fee_config.py          # 费率配置表 (VIP 0-6, 预期收敛价差)
+│   └── notifier.py            # 🆕 桌面通知模块 (plyer)
 │
 ├── trade_hyperliquid/         # Hyperliquid 数据源模块
 │   ├── ws_client.py           # WebSocket 实时订阅客户端
@@ -346,6 +347,19 @@ HYPERLIQUID_API_URL = "https://api.hyperliquid.xyz"
 - 🆕 **后端套利引擎**：新增 `arbitrage/` 模块，将套利计算逻辑迁移到后端
 - 🆕 **HTTP 轮询模式完善**：`main.py` 现已集成 ArbitrageEngine，支持套利数据
 - 🆕 **前端 HTTP 客户端**：新增 `http-client.js` 和 `comparison-http.html`
+- 🆕 **桌面通知功能**：新增 `arbitrage/notifier.py` 模块
+  - 使用 `plyer` 库实现跨平台桌面通知（Windows Toast / Mac Notification Center）
+  - 监控资产：GOLD、SILVER、COPPER、XYZ100
+  - 1 分钟冷却防重复通知
+  - Windows 平台支持音效提示
+- 🆕 **预期收敛价差 (Expected Spread)**：
+  - 配置位置：`arbitrage/fee_config.py` → `ARBITRAGE_CONFIG['expected_spread']`
+  - COPPER: $0.002，XYZ100: $10（价差通常不会收敛到 0）
+  - 新增字段：`profitableSpread = 当前价差 - 预期收敛价差`
+- 🆕 **调整后判断（严格模式）**：
+  - `adjustedSpreadCanProfit`：可盈利价差 ≥ 回本价差
+  - 盈利图标 💰 和桌面通知仅在 `adjustedSpreadCanProfit = true` 时触发
+  - 前端显示格式：`$22.38/$16.79($26.79)` = 当前/回本(预期+回本)
 - 修复 HL 费率精度问题：`round(fee, 4)` 改为 `round(fee, 6)`，确保能显示 0.00768% 等精度
 - 前端费率显示精度优化：`toFixed(3)` 改为 `toFixed(5)`
 - 统一前后端轮询间隔为 5 秒
