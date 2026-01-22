@@ -43,14 +43,17 @@ except ImportError:
 from trade_hyperliquid.inspect_hyperliquid import get_all_perpetuals as hl_get_all_perpetuals
 from trade_ostium.inspect_ostium import fetch_all_data as os_fetch_all_data
 
+# 导入套利引擎
+from arbitrage import ArbitrageEngine
+
 
 # ==================== 配置 ====================
 
 # 服务器配置
 SERVER_PORT = 8080
 
-# 数据刷新间隔（秒）
-REFRESH_INTERVAL = 30
+# 数据刷新间隔（秒）- 与前端轮询间隔保持一致
+REFRESH_INTERVAL = 5
 
 # 过滤条件
 HL_MIN_VOLUME = 1_000_000    # Hyperliquid 最小24h成交量 (1M)
@@ -77,6 +80,10 @@ DATA_STORE = {
 
 # 数据锁（线程安全）
 DATA_LOCK = threading.Lock()
+
+# ==================== 套利引擎实例 ====================
+# 创建全局套利引擎实例 (VIP 0 等级)
+arbitrage_engine = ArbitrageEngine(vip_tier=0)
 
 
 # ==================== Hyperliquid 数据处理 ====================
@@ -260,24 +267,38 @@ def refresh_data():
         else:
             print("[OS] 无数据，跳过处理")
         
-        # 5. 更新内存数据（线程安全）
+        # 5. 使用套利引擎处理数据（添加费率信息）
+        print("[5/6] 套利引擎处理数据...")
         with DATA_LOCK:
+            # 更新套利引擎数据（会自动添加费率信息）
+            arbitrage_engine.update_hl_data(hl_filtered)
+            arbitrage_engine.update_os_data(os_filtered)
+            
+            # 获取处理后的数据（包含费率和排序）
+            hl_data = arbitrage_engine.get_hl_data()
+            os_data = arbitrage_engine.get_os_data()
+            common_pairs = arbitrage_engine.get_common_pairs()
+            
+            # 6. 更新内存数据
+            print("[6/6] 更新内存数据...")
             DATA_STORE["hyperliquid"] = {
-                "total_filtered": len(hl_filtered),
+                "total_filtered": len(hl_data['contracts']),
                 "filter_criteria": f"24h Volume > ${HL_MIN_VOLUME:,}",
                 "updated_at": timestamp,
-                "contracts": hl_filtered
+                "contracts": hl_data['contracts']
             }
             DATA_STORE["ostium"] = {
-                "total_filtered": len(os_filtered),
+                "total_filtered": len(os_data['contracts']),
                 "filter_criteria": f"Total OI > ${OS_MIN_OI:,}",
                 "updated_at": timestamp,
-                "contracts": os_filtered
+                "contracts": os_data['contracts']
             }
+            DATA_STORE["common_pairs"] = common_pairs
         
         print(f"\n✓ 数据刷新完成")
-        print(f"   Hyperliquid: {len(hl_filtered)} 个合约")
-        print(f"   Ostium: {len(os_filtered)} 个合约")
+        print(f"   Hyperliquid: {len(hl_data['contracts'])} 个合约")
+        print(f"   Ostium: {len(os_data['contracts'])} 个合约")
+        print(f"   共同资产: {len(common_pairs.get('pairs', []))} 个配对")
         
     except Exception as e:
         print(f"\n✗ 数据刷新失败: {e}")
@@ -349,9 +370,16 @@ class APIHTTPHandler(BaseHTTPRequestHandler):
                 self.send_json(DATA_STORE["ostium"])
             return
         
+        if path == '/common_pairs.json':
+            # 返回共同资产套利数据
+            with DATA_LOCK:
+                self.send_json(DATA_STORE.get("common_pairs", {}))
+            return
+        
         # ==================== 静态文件（真实的磁盘文件）====================
+        # HTTP 模式使用 comparison-http.html（不需要 Socket.IO）
         if path == '/' or path == '/index.html':
-            path = '/comparison.html'
+            path = '/comparison-http.html'
         
         # 确定文件路径和类型
         filepath = os.path.join(SCRIPT_DIR, path.lstrip('/'))
@@ -377,9 +405,13 @@ def start_server():
     server = HTTPServer(('0.0.0.0', SERVER_PORT), APIHTTPHandler)
     
     print(f"\n🌐 HTTP 服务器已启动:")
-    print(f"   本地访问: http://localhost:{SERVER_PORT}/comparison.html")
-    print(f"   API 端点: /hyperliquid_filtered.json, /ostium_filtered.json")
+    print(f"   本地访问: http://localhost:{SERVER_PORT}/")
+    print(f"   API 端点:")
+    print(f"     - /hyperliquid_filtered.json (HL 数据)")
+    print(f"     - /ostium_filtered.json (OS 数据)")
+    print(f"     - /common_pairs.json (套利数据)")
     print(f"🔄 数据刷新间隔: {REFRESH_INTERVAL} 秒")
+    print(f"💡 套利引擎: 已启用 (VIP {arbitrage_engine.vip_tier})")
     print(f"💾 数据存储: 内存（不写入文件）")
     print(f"\n按 Ctrl+C 停止服务器\n")
     

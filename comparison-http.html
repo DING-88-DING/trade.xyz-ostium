@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DEX 合约费率对比 | HTTP 模式</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/comparison.css" />
+  </head>
+  <body>
+    <!-- 头部 -->
+    <header class="header">
+      <div class="logo">
+        <span style="color: var(--neon-blue)">⚡</span> DEX RATE
+        <span style="font-size: 0.8em; opacity: 0.8; font-weight: 400">MONITOR</span>
+        <span style="font-size: 0.6em; opacity: 0.5; margin-left: 0.5rem;">[HTTP]</span>
+      </div>
+      
+      <!-- 费率等级选择器 -->
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <div class="tier-selector">
+          <label style="color: var(--text-dim); font-size: 0.75rem; margin-right: 0.5rem;">FEE TIER:</label>
+          <select id="tierSelect" onchange="updateTier()" style="background: rgba(0,0,0,0.3); color: var(--neon-yellow); border: 1px solid var(--glass-border); border-radius: 4px; padding: 2px 5px; font-family: monospace;">
+            <option value="0">VIP 0 (<$100k/$5M)</option>
+            <option value="1">VIP 1 (>$5M)</option>
+            <option value="2">VIP 2 (>$25M)</option>
+            <option value="3">VIP 3 (>$100M)</option>
+            <option value="4">VIP 4 (>$500M)</option>
+            <option value="5">VIP 5 (>$2B)</option>
+            <option value="6">VIP 6 (>$7B)</option>
+          </select>
+        </div>
+        <span id="ws-status" style="font-size: 0.7rem; padding: 2px 6px; border-radius: 3px; background: rgba(255,0,0,0.1);">🔴 连接中...</span>
+        <div class="update-time" id="updateTime">INITIALIZING SYSTEM...</div>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="columns">
+        <!-- 左栏：Hyperliquid -->
+        <div class="column hyperliquid">
+          <div class="column-header">
+            <div class="column-title">
+              <span class="dot hl-dot"></span>
+              Hyperliquid
+            </div>
+            <span class="column-count" id="hlCount">0 ASSETS</span>
+          </div>
+          <div class="search-bar">
+            <input type="text" class="search-input" placeholder="Search Asset..." oninput="filterList(this, 'hlList')">
+          </div>
+          <div class="column-body" id="hlList"></div>
+        </div>
+
+        <!-- 中栏：共同合约对比 -->
+        <div class="column common">
+          <div class="column-header">
+            <div class="column-title">
+              <span class="dot com-dot"></span>
+              ARBITRAGE MONITOR
+            </div>
+            <span class="column-count" id="commonCount">0 PAIRS</span>
+          </div>
+          <div class="search-bar">
+            <input type="text" class="search-input" placeholder="Search Pair..." oninput="filterList(this, 'commonList')">
+          </div>
+          <div class="column-body" id="commonList"></div>
+        </div>
+
+        <!-- 右栏：Ostium -->
+        <div class="column ostium">
+          <div class="column-header">
+            <div class="column-title">
+              <span class="dot os-dot"></span>
+              Ostium
+            </div>
+            <span class="column-count" id="osCount">0 ASSETS</span>
+          </div>
+          <div class="search-bar">
+            <input type="text" class="search-input" placeholder="Search Asset..." oninput="filterList(this, 'osList')">
+          </div>
+          <div class="column-body" id="osList"></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 核心模块 (无需 Socket.IO) -->
+    <script src="js/state.js"></script>
+    <script src="js/formatters.js"></script>
+    <script src="js/renderers.js"></script>
+    <script src="js/ui-controls.js"></script>
+    
+    <!-- HTTP 轮询客户端 -->
+    <script src="js/http-client.js"></script>
+    
+    <!-- 主入口 -->
+    <script src="js/main-http.js"></script>
+  </body>
+</html>
