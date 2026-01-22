@@ -22,12 +22,20 @@
 
 ```
 trade.xyz-ostium/
-├── main.py                    # HTTP 轮询模式启动脚本 (轻量，每30秒刷新)
+├── main.py                    # HTTP 轮询模式启动脚本 (每5秒刷新)
 ├── websocket_server.py        # WebSocket 实时模式启动脚本 (推荐，毫秒级推送)
-├── comparison.html            # 前端主页面（三栏布局）
+├── comparison.html            # 前端主页面 - WebSocket 模式
+├── comparison-http.html       # 前端主页面 - HTTP 轮询模式
 ├── config.py                  # 配置文件 (RPC URL 等)
 ├── config.example.py          # 配置文件模板
 ├── requirements.txt           # Python 依赖列表
+│
+├── arbitrage/                 # 🆕 套利引擎模块 (后端计算)
+│   ├── __init__.py            # 模块入口
+│   ├── arbitrage_engine.py    # 套利引擎核心类
+│   ├── arbitrage_calculator.py# 套利计算器
+│   ├── fee_calculator.py      # 费率计算器
+│   └── fee_config.py          # 费率配置表 (VIP 0-6)
 │
 ├── trade_hyperliquid/         # Hyperliquid 数据源模块
 │   ├── ws_client.py           # WebSocket 实时订阅客户端
@@ -42,13 +50,14 @@ trade.xyz-ostium/
 │   └── DATA_SCHEMA.md         # 数据结构文档
 │
 ├── js/                        # 前端逻辑模块
-│   ├── config.js              # 费率表配置（VIP 0-6）
-│   ├── arbitrage.js           # 套利计算核心算法
-│   ├── websocket-client.js    # WebSocket 客户端
-│   ├── fee-calculator.js      # 费率计算
+│   ├── state.js               # 全局状态管理
+│   ├── formatters.js          # 数据格式化工具
 │   ├── renderers.js           # UI 渲染
-│   ├── data-loader.js         # HTTP 轮询数据加载
-│   └── formatters.js          # 数据格式化工具
+│   ├── ui-controls.js         # 用户交互控制
+│   ├── websocket-client.js    # WebSocket 客户端
+│   ├── http-client.js         # HTTP 轮询客户端
+│   ├── main-websocket.js      # WebSocket 模式入口
+│   └── main-http.js           # HTTP 模式入口
 │
 └── css/                       # 样式文件
     └── comparison.css         # 主页面样式（深色模式）
@@ -162,8 +171,9 @@ pip install -r requirements.txt
     ```
 
 2.  **访问页面**：
-    访问：[http://localhost:8080/comparison.html](http://localhost:8080/comparison.html)
-    - 该模式下数据每 **30秒** 自动刷新一次。
+    访问：[http://localhost:8080/](http://localhost:8080/)
+    - 该模式下数据每 **5秒** 自动刷新一次。
+    - 注意：HTTP 模式不支持实时 VIP 等级切换，需修改 `main.py` 后重启。
 
 ## ⚙️ 配置说明
 
@@ -190,14 +200,14 @@ HYPERLIQUID_API_URL = "https://api.hyperliquid.xyz"
 
 您还可以修改以下参数来调整监控灵敏度（在对应文件中）：
 
-| 参数                     | 文件                             | 默认值        | 说明                                        |
-| ------------------------ | -------------------------------- | ------------- | ------------------------------------------- |
-| `HL_MIN_VOLUME`          | `main.py`                        | 1,000,000 USD | Hyperliquid 最小 24h 成交量过滤阈值         |
-| `OS_MIN_OI`              | `main.py`                        | 1,000,000 USD | Ostium 最小持仓量过滤阈值                   |
-| `REFRESH_INTERVAL`       | `main.py`                        | 30 秒         | HTTP 轮询模式下后端刷新间隔                 |
-| `TIMER_REFRESH_INTERVAL` | `js/config.js`                   | 30000 ms      | HTTP 轮询模式下前端刷新间隔（需与后端一致） |
-| `MIN_VOLUME_USD`         | `trade_hyperliquid/ws_client.py` | 1,000,000 USD | WebSocket 模式下的过滤阈值                  |
-| `MIN_OI_USD`             | `trade_ostium/async_poller.py`   | 1,000,000 USD | Ostium 轮询器的过滤阈值                     |
+| 参数               | 文件                             | 默认值        | 说明                                |
+| ------------------ | -------------------------------- | ------------- | ----------------------------------- |
+| `HL_MIN_VOLUME`    | `main.py`                        | 1,000,000 USD | Hyperliquid 最小 24h 成交量过滤阈值 |
+| `OS_MIN_OI`        | `main.py`                        | 1,000,000 USD | Ostium 最小持仓量过滤阈值           |
+| `REFRESH_INTERVAL` | `main.py`                        | 5 秒          | HTTP 轮询模式下后端刷新间隔         |
+| `pollInterval`     | `js/http-client.js`              | 5000 ms       | HTTP 轮询模式下前端刷新间隔         |
+| `MIN_VOLUME_USD`   | `trade_hyperliquid/ws_client.py` | 1,000,000 USD | WebSocket 模式下的过滤阈值          |
+| `MIN_OI_USD`       | `trade_ostium/async_poller.py`   | 1,000,000 USD | Ostium 轮询器的过滤阈值             |
 
 ### 4. RPC 连接优先级
 
@@ -262,6 +272,8 @@ HYPERLIQUID_API_URL = "https://api.hyperliquid.xyz"
 - **资金费率套利**：根据费率差异计算回本时间
 - **综合套利**：价差收益 + 资金费率收益的组合计算
 
+> 🆕 **后端套利计算**：套利逻辑已迁移到后端 `arbitrage/` 模块，确保费率计算精度 (支持 0.00768% 精度显示)。
+
 **默认假设**（可在 `js/config.js` 中修改）：
 
 - **仓位大小**: $1,000 USD
@@ -298,15 +310,27 @@ HYPERLIQUID_API_URL = "https://api.hyperliquid.xyz"
 
 ## 🧩 前端模块说明
 
-| 文件                  | 功能                                     |
-| --------------------- | ---------------------------------------- |
-| `config.js`           | 费率配置、名称映射、套利参数             |
-| `arbitrage.js`        | 套利计算核心算法（Maker/Taker 两种方案） |
-| `websocket-client.js` | Socket.IO 客户端，处理实时数据推送       |
-| `fee-calculator.js`   | 根据 VIP 等级计算实际费率                |
-| `renderers.js`        | UI 渲染逻辑（三栏布局）                  |
-| `data-loader.js`      | HTTP 轮询模式的数据加载                  |
-| `formatters.js`       | 数字格式化、时间格式化等工具函数         |
+| 文件                  | 功能                               |
+| --------------------- | ---------------------------------- |
+| `state.js`            | 全局状态管理（数据缓存）           |
+| `formatters.js`       | 数字格式化、时间格式化等工具函数   |
+| `renderers.js`        | UI 渲染逻辑（卡片、列表渲染）      |
+| `ui-controls.js`      | 用户交互控制（搜索过滤等）         |
+| `websocket-client.js` | WebSocket 客户端，处理实时数据推送 |
+| `http-client.js`      | HTTP 轮询客户端，定时获取数据      |
+| `main-websocket.js`   | WebSocket 模式入口                 |
+| `main-http.js`        | HTTP 模式入口                      |
+
+> 📝 **注意**：套利计算和费率计算已迁移到后端 `arbitrage/` 模块。
+
+### arbitrage 模块 (🆕 后端套利引擎)
+
+| 文件                      | 功能                                        |
+| ------------------------- | ------------------------------------------- |
+| `arbitrage_engine.py`     | 套利引擎核心类，整合数据采集和套利计算      |
+| `arbitrage_calculator.py` | 套利计算器，计算价差/费率/综合套利          |
+| `fee_calculator.py`       | 费率计算器，根据 VIP 等级和资产类型计算费率 |
+| `fee_config.py`           | 费率配置表 (VIP 0-6, Referral 折扣等)       |
 
 ## ⚠️ 注意事项
 
@@ -316,6 +340,15 @@ HYPERLIQUID_API_URL = "https://api.hyperliquid.xyz"
 4. **仅供参考**：本工具仅供参考，不构成投资建议
 
 ## 📝 更新日志
+
+### 2026-01-22
+
+- 🆕 **后端套利引擎**：新增 `arbitrage/` 模块，将套利计算逻辑迁移到后端
+- 🆕 **HTTP 轮询模式完善**：`main.py` 现已集成 ArbitrageEngine，支持套利数据
+- 🆕 **前端 HTTP 客户端**：新增 `http-client.js` 和 `comparison-http.html`
+- 修复 HL 费率精度问题：`round(fee, 4)` 改为 `round(fee, 6)`，确保能显示 0.00768% 等精度
+- 前端费率显示精度优化：`toFixed(3)` 改为 `toFixed(5)`
+- 统一前后端轮询间隔为 5 秒
 
 ### 2026-01-20
 
