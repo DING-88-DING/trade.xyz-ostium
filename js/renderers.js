@@ -1,15 +1,22 @@
 /**
  * 卡片渲染模块
  * 负责渲染 Hyperliquid、Ostium 和对比卡片
+ * 
+ * 注意: 所有数据（包括费率）都从后端下发
  */
 
 /**
  * 渲染 Hyperliquid 合约卡片
+ * @param {Object} contract - 合约数据（包含后端计算的 fee 字段）
  */
 function renderHLCard(contract) {
   const fundingHourly = contract.fundingRate?.rateHourly;
   const rateClass = getValClass(fundingHourly);
-  const feeObj = getHLFeeRate(contract);
+  
+  // 使用后端下发的费率数据
+  const fee = contract.fee || { t: 0, m: 0 };
+  // 使用 toFixed(5) 确保能显示完整精度, 如 0.00768%
+  const feeDisplay = `${fee.t.toFixed(5)}% / ${fee.m.toFixed(5)}%`;
 
   return `
     <div class="contract-card">
@@ -18,7 +25,7 @@ function renderHLCard(contract) {
         <span class="contract-group">PERP</span>
       </div>
       
-      <!-- 价格行：独立显示 -->
+      <!-- 价格行 -->
       <div style="margin-bottom: 0.4rem; padding-bottom: 0.4rem; border-bottom: 1px dashed rgba(255, 255, 255, 0.05);">
         <span class="data-label" style="font-size: 0.6rem; text-transform: uppercase; color: rgba(255, 255, 255, 0.4);">Bid / Mid / Ask</span>
         <div style="margin-top: 0.2rem; font-size: 0.75rem;">
@@ -28,7 +35,7 @@ function renderHLCard(contract) {
         </div>
       </div>
       
-      <!-- 数据网格：2列布局 -->
+      <!-- 数据网格 -->
       <div class="data-grid">
         <div class="data-item" style="align-items: flex-start;">
           <span class="data-label">1h Rate</span>
@@ -41,7 +48,7 @@ function renderHLCard(contract) {
         <div class="data-item" style="grid-column: span 2;">
           <span class="data-label">Taker/Maker Fee</span>
           <span class="data-value" style="color: var(--neon-yellow); font-size: 0.75rem;">
-            ${formatFeeObj(feeObj)}
+            ${feeDisplay}
           </span>
         </div>
       </div>
@@ -51,6 +58,7 @@ function renderHLCard(contract) {
 
 /**
  * 渲染 Ostium 合约卡片
+ * @param {Object} contract - 合约数据（包含后端计算的 fee 字段）
  */
 function renderOSCard(contract) {
   const hasFunding = contract.fundingRate?.longPayHourly;
@@ -61,16 +69,24 @@ function renderOSCard(contract) {
   const rateClass = getValClass(hasFunding ? rate : -rate);
   const group = (contract.group || '').toLowerCase();
   
-  // 计算 Ostium 交易费
-  const osFee = getOSFeeRate(contract);
-  const oracleFee = OSTIUM_FEE_SCHEDULE.other.oracleFee;
-  
-  // 加密货币显示 Maker/Taker，传统资产显示 Open Fee + Oracle Fee
+  // 使用后端下发的费率数据
+  const fee = contract.fee || {};
+  const oracleFee = fee.oracle || 0.10;
   const isCrypto = group === 'crypto' || group === 'cryptocurrency';
-  const feeLabel = isCrypto ? "Taker/Maker Fee" : "Fees (Open/Oracle)";
-  const feeDisplay = isCrypto 
-    ? formatOSFee(osFee)
-    : `${formatOSFee(osFee)} / $${oracleFee.toFixed(2)}`;
+  
+  let feeLabel, feeDisplay;
+  if (isCrypto) {
+    // 加密货币显示 Taker/Maker
+    const t = fee.t || 0;
+    const m = fee.m || 0;
+    feeLabel = "Taker/Maker Fee";
+    feeDisplay = `${t.toFixed(2)}% / ${m.toFixed(2)}%`;
+  } else {
+    // 传统资产显示 Open Fee + Oracle
+    const openFee = fee.rate || 0;
+    feeLabel = "Fees (Open/Oracle)";
+    feeDisplay = `${openFee.toFixed(2)}% / $${oracleFee.toFixed(2)}`;
+  }
 
   return `
     <div class="contract-card">
@@ -79,7 +95,7 @@ function renderOSCard(contract) {
         <span class="contract-group">${contract.group || "N/A"}</span>
       </div>
       
-      <!-- 价格行：独立显示 -->
+      <!-- 价格行 -->
       <div style="margin-bottom: 0.4rem; padding-bottom: 0.4rem; border-bottom: 1px dashed rgba(255, 255, 255, 0.05);">
         <span class="data-label" style="font-size: 0.6rem; text-transform: uppercase; color: rgba(255, 255, 255, 0.4);">Bid / Mid / Ask</span>
         <div style="margin-top: 0.2rem; font-size: 0.75rem;">
@@ -89,7 +105,7 @@ function renderOSCard(contract) {
         </div>
       </div>
       
-      <!-- 数据网格：2列布局 -->
+      <!-- 数据网格 -->
       <div class="data-grid">
         <div class="data-item" style="align-items: flex-start;">
           <span class="data-label">${rateLabel}</span>
@@ -111,9 +127,29 @@ function renderOSCard(contract) {
 }
 
 /**
- * 渲染共同合约对比卡片
+ * 渲染共同合约对比卡片（使用后端计算的套利数据）
+ * @param {Object} pairData - 包含 hl, os, name, arbitrage 的数据对象
  */
-function renderComparisonCard(hlContract, osContract, commonName) {
+function renderComparisonCardWithArbitrage(pairData) {
+  const hlContract = pairData.hl;
+  const osContract = pairData.os;
+  const commonName = pairData.name;
+  const arb = pairData.arbitrage;
+  
+  // 如果没有套利数据，显示加载中
+  if (!arb) {
+    return `
+      <div class="comparison-card" style="position: relative;">
+        <div class="comp-header">
+          <span class="comp-name">${commonName}</span>
+        </div>
+        <div style="padding: 1rem; text-align: center; color: var(--text-dim);">
+          ⏳ 计算中...
+        </div>
+      </div>
+    `;
+  }
+  
   const hlFunding = hlContract.fundingRate?.rateHourly;
   const osFunding =
     osContract.fundingRate?.longPayHourly ||
@@ -122,45 +158,52 @@ function renderComparisonCard(hlContract, osContract, commonName) {
   const priceDiff =
     ((hlContract.mid - osContract.mid) / osContract.mid) * 100;
 
-  const feeObj = getHLFeeRate(hlContract);
-  const osFee = getOSFeeRate(osContract);
-  const oracleFee = OSTIUM_FEE_SCHEDULE.other.oracleFee;
   const priceDiffClass = priceDiff >= 0 ? "bg-pos" : "bg-neg";
 
-  // 计算套利
-  const arb = calculateArbitrage(hlContract, osContract, feeObj, osFee, oracleFee);
+  // 使用后端下发的费率（用于显示）
+  const hlFee = hlContract.fee || { t: 0, m: 0 };
+  const osFee = osContract.fee || {};
+  const oracleFee = osFee.oracle || 0.10;
   
+  // 格式化 HL 费率显示
+  // 使用 toFixed(5) 确保能显示完整精度, 如 0.00768%
+  const hlFeeDisplay = `${hlFee.t.toFixed(5)}%/${hlFee.m.toFixed(5)}%`;
+  
+  // 格式化 OS 费率显示
+  const osFeeDisplay = osFee.rate !== undefined 
+    ? `${osFee.rate.toFixed(2)}%` 
+    : `${(osFee.t || 0).toFixed(2)}%/${(osFee.m || 0).toFixed(2)}%`;
+
   // 确定开仓方向
-  // HL价格 > OS价格 → HL开空，OS开多（做空贵的，做多便宜的）
-  // HL价格 < OS价格 → HL开多，OS开空
   const hlDir = hlContract.mid > osContract.mid ? '空' : '多';
   const osDir = hlContract.mid > osContract.mid ? '多' : '空';
   const directionText = `HL:${hlDir} OS:${osDir}`;
   
-  // 角标：任意方式能回本（Maker 或 Taker）
-  const profitBadge = (arb.maker.anyCanProfit || arb.taker.anyCanProfit)
+  // 角标：任意方式能回本
+  const profitBadge = (arb.maker?.anyCanProfit || arb.taker?.anyCanProfit)
     ? `<span style="position: absolute; top: -5px; right: -5px; background: var(--neon-green); color: #000; padding: 2px 6px; border-radius: 10px; font-size: 0.65rem; font-weight: bold;">💰</span>`
     : '';
 
   // 格式化回本时间
   const formatHours = (h) => {
-    if (h === null || h === Infinity) return '无';
+    if (h === null || h === undefined || h === Infinity) return '无';
     if (h < 1) return `${Math.round(h * 60)}m`;
     return `${h.toFixed(1)}h`;
   };
   
-  // 格式化价差显示（当前价差 / 回本价差）
-  const formatSpreadMaker = () => {
-    const current = `$${arb.maker.currentSpreadUSD.toFixed(4)}`;
-    const breakEven = `$${arb.maker.breakEvenSpreadUSD.toFixed(4)}`;
+  // 格式化价差显示
+  const formatSpread = (arbResult) => {
+    if (!arbResult) return '-';
+    const current = `$${(arbResult.currentSpreadUSD || 0).toFixed(4)}`;
+    const breakEven = `$${(arbResult.breakEvenSpreadUSD || 0).toFixed(4)}`;
     return `${current} / ${breakEven}`;
   };
 
-  const formatSpreadTaker = () => {
-    const current = `$${arb.taker.currentSpreadUSD.toFixed(4)}`;
-    const breakEven = `$${arb.taker.breakEvenSpreadUSD.toFixed(4)}`;
-    return `${current} / ${breakEven}`;
-  };
+  const makerData = arb.maker || {};
+  const takerData = arb.taker || {};
+  
+  // 仓位大小（从后端套利数据获取，或使用默认值）
+  const positionSize = 1000;
 
   return `
     <div class="comparison-card" style="position: relative;">
@@ -169,7 +212,7 @@ function renderComparisonCard(hlContract, osContract, commonName) {
         <span class="comp-name">${commonName}</span>
       </div>
       
-      <!-- 价格行 (Bid/Mid/Ask) -->
+      <!-- 价格行 -->
       <div class="comp-row" style="grid-template-columns: 1fr; padding: 6px;">
         <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem;">
           <div style="text-align: left;">
@@ -202,46 +245,46 @@ function renderComparisonCard(hlContract, osContract, commonName) {
       <!-- 交易费行 -->
       <div class="comp-row" style="background: rgba(255, 238, 0, 0.05); grid-template-columns: 1fr;">
         <div style="display: flex; justify-content: space-between; font-size: 0.75rem;">
-          <span style="color: var(--neon-yellow)">HL: ${formatFeeObj(feeObj)}</span>
-          <span style="color: var(--neon-green)">OS: ${formatOSFee(osFee)} +$${oracleFee.toFixed(2)}</span>
+          <span style="color: var(--neon-yellow)">HL: ${hlFeeDisplay}</span>
+          <span style="color: var(--neon-green)">OS: ${osFeeDisplay} +$${oracleFee.toFixed(2)}</span>
         </div>
       </div>
       
-      <!-- 套利分析行 - Maker 方案 -->
+      <!-- Maker 方案 -->
       <div class="comp-row" style="background: rgba(74, 222, 128, 0.08); grid-template-columns: 1fr; padding: 6px;">
         <div style="font-size: 0.65rem; line-height: 1.3;">
           <div style="color: var(--text-dim); margin-bottom: 3px;">
-            💚 Maker (${ARBITRAGE_CONFIG.positionSize}u) | 成本: $${arb.maker.totalCost.toFixed(2)} | 方向: ${directionText}
+            💚 Maker (${positionSize}u) | 成本: $${(makerData.totalCost || 0).toFixed(2)} | 方向: ${directionText}
           </div>
           <div style="display: flex; justify-content: space-between; gap: 6px;">
-            <span class="${arb.maker.spreadCanProfit ? 'val-pos' : ''}" title="当前价差 vs 回本价差">
-              ①价差: ${formatSpreadMaker()}
+            <span class="${makerData.spreadCanProfit ? 'val-pos' : ''}" title="当前价差 vs 回本价差">
+              ①价差: ${formatSpread(makerData)}
             </span>
-            <span class="${arb.maker.fundingValid ? 'val-pos' : ''}" title="资金费率回本时间">
-              ②费率: ${formatHours(arb.maker.fundingHours)}
+            <span class="${makerData.fundingValid ? 'val-pos' : ''}" title="资金费率回本时间">
+              ②费率: ${formatHours(makerData.fundingHours)}
             </span>
-            <span class="${arb.maker.comboValid ? 'val-pos' : ''}" title="综合回本时间">
-              ③综合: ${formatHours(arb.maker.comboHours)}
+            <span class="${makerData.comboValid ? 'val-pos' : ''}" title="综合回本时间">
+              ③综合: ${formatHours(makerData.comboHours)}
             </span>
           </div>
         </div>
       </div>
       
-      <!-- 套利分析行 - Taker 方案 -->
+      <!-- Taker 方案 -->
       <div class="comp-row" style="background: rgba(251, 191, 36, 0.08); grid-template-columns: 1fr; padding: 6px;">
         <div style="font-size: 0.65rem; line-height: 1.3;">
           <div style="color: var(--text-dim); margin-bottom: 3px;">
-            🧡 Taker (${ARBITRAGE_CONFIG.positionSize}u) | 成本: $${arb.taker.totalCost.toFixed(2)} | 方向: ${directionText}
+            🧡 Taker (${positionSize}u) | 成本: $${(takerData.totalCost || 0).toFixed(2)} | 方向: ${directionText}
           </div>
           <div style="display: flex; justify-content: space-between; gap: 6px;">
-            <span class="${arb.taker.spreadCanProfit ? 'val-pos' : ''}" title="当前价差 vs 回本价差">
-              ①价差: ${formatSpreadTaker()}
+            <span class="${takerData.spreadCanProfit ? 'val-pos' : ''}" title="当前价差 vs 回本价差">
+              ①价差: ${formatSpread(takerData)}
             </span>
-            <span class="${arb.taker.fundingValid ? 'val-pos' : ''}" title="资金费率回本时间">
-              ②费率: ${formatHours(arb.taker.fundingHours)}
+            <span class="${takerData.fundingValid ? 'val-pos' : ''}" title="资金费率回本时间">
+              ②费率: ${formatHours(takerData.fundingHours)}
             </span>
-            <span class="${arb.taker.comboValid ? 'val-pos' : ''}" title="综合回本时间">
-              ③综合: ${formatHours(arb.taker.comboHours)}
+            <span class="${takerData.comboValid ? 'val-pos' : ''}" title="综合回本时间">
+              ③综合: ${formatHours(takerData.comboHours)}
             </span>
           </div>
         </div>

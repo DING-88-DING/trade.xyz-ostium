@@ -231,6 +231,8 @@ class HyperliquidWSClient:
                 print(f'[HL WS] 🔍 BTC 数据: dayVolume={day_volume}, funding={funding}, OI={open_interest}')
             
             # 匹配前端期望的数据格式
+            # 注意: funding 需要乘以 100 转换为百分比
+            funding_hourly = float(funding) * 100 if funding else 0
             contracts.append({
                 'coin': coin,
                 'dex': 'main',  # 主站标记
@@ -239,7 +241,7 @@ class HyperliquidWSClient:
                 'ask': ask,
                 'dayVolume_USD': float(day_volume) if day_volume else 0,  # 前端期望字段名
                 'fundingRate': {
-                    'rateHourly': float(funding) if funding else 0  # 前端期望格式
+                    'rateHourly': round(funding_hourly, 6)  # 百分比格式
                 },
                 'openInterest': float(open_interest) if open_interest else 0,
             })
@@ -275,6 +277,8 @@ class HyperliquidWSClient:
             if 'GOLD' in coin:
                 print(f'[HL WS] 🔍 {coin} 数据: dayVolume={day_volume}, funding={funding}, OI={open_interest}')
             
+            # 注意: funding 需要乘以 100 转换为百分比
+            funding_hourly = float(funding) * 100 if funding else 0
             contracts.append({
                 'coin': coin,
                 'dex': 'xyz',  # xyz dex 标记
@@ -283,7 +287,7 @@ class HyperliquidWSClient:
                 'ask': ask,
                 'dayVolume_USD': float(day_volume) if day_volume else 0,
                 'fundingRate': {
-                    'rateHourly': float(funding) if funding else 0
+                    'rateHourly': round(funding_hourly, 6)  # 百分比格式
                 },
                 'openInterest': float(open_interest) if open_interest else 0,
             })

@@ -1,6 +1,7 @@
 """
 WebSocket 服务器
 实时推送 Hyperliquid 和 Ostium 数据给前端
+集成套利引擎，在后端完成套利计算
 
 运行: python websocket_server.py
 """
@@ -61,10 +62,13 @@ from flask import Flask, send_from_directory
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 import asyncio
-from threading import Thread
+from threading import Thread, Lock
 import time
 import json
 import os
+
+# 导入套利引擎
+from arbitrage import ArbitrageEngine
 
 # 创建 Flask 应用，配置静态文件服务
 app = Flask(__name__, 
@@ -82,7 +86,12 @@ def index():
     """返回首页"""
     return send_from_directory('.', 'comparison.html')
 
-# 全局数据存储
+# ==================== 套利引擎实例 ====================
+# 创建全局套利引擎实例
+arbitrage_engine = ArbitrageEngine(vip_tier=0)
+engine_lock = Lock()  # 线程锁，保证数据一致性
+
+# 全局数据存储（保持兼容性）
 DATA_STORE = {
     'hyperliquid': {'contracts': [], 'updated_at': ''},
     'ostium': {'contracts': [], 'updated_at': ''}
@@ -99,8 +108,14 @@ def handle_connect():
     connected_clients += 1
     print(f'[WebSocket] 客户端已连接，当前连接数: {connected_clients}')
     
-    # 发送当前数据
-    emit('initial_data', DATA_STORE)
+    # 发送当前数据（包含套利计算结果）
+    with engine_lock:
+        initial_data = {
+            'hyperliquid': arbitrage_engine.get_hl_data(),
+            'ostium': arbitrage_engine.get_os_data(),
+            'common_pairs': arbitrage_engine.get_common_pairs()
+        }
+    emit('initial_data', initial_data)
 
 
 @socketio.on('disconnect')
@@ -117,14 +132,67 @@ def handle_ping():
     emit('pong')
 
 
+@socketio.on('set_vip_tier')
+def handle_set_vip_tier(data):
+    """
+    处理前端发送的 VIP 等级变更
+    
+    Args:
+        data: {'tier': int} VIP 等级 (0-6)
+    """
+    tier = data.get('tier', 0)
+    print(f'[WebSocket] 收到 VIP 等级变更请求: {tier}')
+    
+    with engine_lock:
+        arbitrage_engine.set_vip_tier(tier)
+        # 重新广播套利数据
+        common_pairs_data = arbitrage_engine.get_common_pairs()
+    
+    # 广播更新后的套利数据给所有客户端
+    socketio.emit('common_pairs_update', common_pairs_data)
+    print(f'[WebSocket] VIP 等级已更新为 {tier}，已重新广播套利数据')
+
+
 def broadcast_data(platform, data):
-    """广播数据给所有连接的客户端"""
-    DATA_STORE[platform] = data
+    """
+    广播数据给所有连接的客户端
+    集成套利引擎进行计算
+    """
+    global DATA_STORE
+    
+    contracts = data.get('contracts', [])
+    
+    with engine_lock:
+        # 更新套利引擎数据（会添加费率信息）
+        if platform == 'hyperliquid':
+            arbitrage_engine.update_hl_data(contracts)
+            # 获取处理后的数据（包含费率和排序）
+            platform_data = arbitrage_engine.get_hl_data()
+        elif platform == 'ostium':
+            arbitrage_engine.update_os_data(contracts)
+            # 获取处理后的数据（包含费率和排序）
+            platform_data = arbitrage_engine.get_os_data()
+        else:
+            platform_data = {
+                'contracts': contracts,
+                'updated_at': data.get('updated_at', '')
+            }
+        
+        DATA_STORE[platform] = platform_data
+        
+        # 获取套利计算结果
+        common_pairs_data = arbitrage_engine.get_common_pairs()
+    
+    # 广播平台数据
     socketio.emit('data_update', {
         'platform': platform,
-        'data': data
+        'data': platform_data
     })
-    print(f'[WebSocket] 已广播 {platform} 数据给 {connected_clients} 个客户端')
+    
+    # 广播套利数据（每次数据更新都推送最新套利结果）
+    socketio.emit('common_pairs_update', common_pairs_data)
+    
+    print(f'[WebSocket] 已广播 {platform} 数据和套利结果给 {connected_clients} 个客户端')
 
 
 def start_hyperliquid_ws():
@@ -159,7 +227,7 @@ def start_ostium_poller():
 
 if __name__ == '__main__':
     print('=' * 50)
-    print('🚀 启动实时数据服务器')
+    print('🚀 启动实时数据服务器 (带套利引擎)')
     print('=' * 50)
     
     # 在后台线程启动数据源
@@ -173,6 +241,7 @@ if __name__ == '__main__':
     print(f'\n✅ 服务器已启动!')
     print(f'✅ WebSocket: ws://localhost:8080')
     print(f'✅ 前端页面: http://localhost:8080')
+    print(f'✅ 套利引擎: 已启用')
     print(f'\n📱 在浏览器打开: http://localhost:8080')
     print('\n按 Ctrl+C 停止服务器\n')
     

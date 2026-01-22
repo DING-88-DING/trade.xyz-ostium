@@ -8,7 +8,6 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <!-- 外部样式表 -->
     <link rel="stylesheet" href="css/comparison.css" />
   </head>
   <body>
@@ -33,7 +32,6 @@
             <option value="6">VIP 6 (>$7B)</option>
           </select>
         </div>
-        <!-- WebSocket 连接状态 -->
         <span id="ws-status" style="font-size: 0.7rem; padding: 2px 6px; border-radius: 3px; background: rgba(255,0,0,0.1);">🔴 连接中...</span>
         <div class="update-time" id="updateTime">INITIALIZING SYSTEM...</div>
       </div>
@@ -91,26 +89,16 @@
     <!-- Socket.IO 客户端 -->
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     
-    <!-- 配置文件 (必须在主脚本之前加载) -->
-    <script src="js/config.js"></script>
-    
-    <!-- 核心功能模块 (按依赖顺序加载) -->
+    <!-- 核心模块 -->
     <script src="js/state.js"></script>
     <script src="js/formatters.js"></script>
-    <script src="js/fee-calculator.js"></script>
-    <script src="js/arbitrage.js"></script>
     <script src="js/renderers.js"></script>
     <script src="js/ui-controls.js"></script>
-    <script src="js/data-loader.js"></script>
     
-    <!-- WebSocket 实时数据客户端 -->
+    <!-- WebSocket 客户端 -->
     <script src="js/websocket-client.js"></script>
     
-    <!-- 主入口脚本 -->
-    <!-- 轮询模式（需要 python main.py）： -->
-    <!-- <script src="js/main.js"></script> -->
-    
-    <!-- WebSocket 模式（需要 python websocket_server.py）： -->
+    <!-- 主入口 -->
     <script src="js/main-websocket.js"></script>
   </body>
 </html>

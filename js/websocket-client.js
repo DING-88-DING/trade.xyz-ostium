@@ -1,6 +1,7 @@
 /**
  * WebSocket 实时数据客户端
  * 连接后端 WebSocket 服务器，接收实时数据更新
+ * 支持 VIP 等级同步和后端套利计算结果展示
  */
 
 // WebSocket 配置
@@ -15,6 +16,9 @@ let socket = null;
 
 // 连接状态
 let isConnected = false;
+
+// 全局套利数据缓存（从后端接收）
+let GLOBAL_COMMON_PAIRS_DATA = null;
 
 /**
  * 初始化 WebSocket 连接
@@ -34,6 +38,12 @@ function initWebSocket() {
     console.log('[WebSocket] ✅ 已连接');
     isConnected = true;
     updateConnectionStatus(true);
+    
+    // 连接成功后，发送当前 VIP 等级
+    const tierSelect = document.getElementById('tierSelect');
+    if (tierSelect) {
+      sendVipTier(parseInt(tierSelect.value));
+    }
   });
   
   // 断开连接
@@ -46,13 +56,19 @@ function initWebSocket() {
   // 接收初始数据
   socket.on('initial_data', (data) => {
     console.log('[WebSocket] 接收初始数据:', data);
-    handleDataUpdate(data);
+    handleInitialData(data);
   });
   
   // 接收实时数据更新
   socket.on('data_update', (update) => {
     console.log(`[WebSocket] 实时更新 [${update.platform}]:`, update.data);
     handlePlatformUpdate(update.platform, update.data);
+  });
+  
+  // 接收套利数据更新（新增）
+  socket.on('common_pairs_update', (data) => {
+    console.log('[WebSocket] 接收套利数据更新:', data);
+    handleCommonPairsUpdate(data);
   });
   
   // 心跳响应
@@ -67,6 +83,17 @@ function initWebSocket() {
   
   // 启动心跳
   startHeartbeat();
+}
+
+/**
+ * 发送 VIP 等级给后端
+ * @param {number} tier - VIP 等级 (0-6)
+ */
+function sendVipTier(tier) {
+  if (socket && isConnected) {
+    console.log('[WebSocket] 发送 VIP 等级:', tier);
+    socket.emit('set_vip_tier', { tier: tier });
+  }
 }
 
 /**
@@ -97,14 +124,20 @@ function updateConnectionStatus(connected) {
 }
 
 /**
- * 处理完整数据更新
+ * 处理初始数据（包含套利计算结果）
  */
-function handleDataUpdate(data) {
+function handleInitialData(data) {
+  // 处理 Hyperliquid 数据
   if (data.hyperliquid) {
     updateHyperliquidData(data.hyperliquid);
   }
+  // 处理 Ostium 数据
   if (data.ostium) {
     updateOstiumData(data.ostium);
+  }
+  // 处理套利数据（新增）
+  if (data.common_pairs) {
+    handleCommonPairsUpdate(data.common_pairs);
   }
 }
 
@@ -117,9 +150,49 @@ function handlePlatformUpdate(platform, data) {
   } else if (platform === 'ostium') {
     updateOstiumData(data);
   }
+}
+
+/**
+ * 处理套利数据更新（从后端接收计算结果）
+ */
+function handleCommonPairsUpdate(data) {
+  if (!data || !data.pairs) return;
   
-  // 更新对比列表
-  updateComparisonList();
+  // 缓存套利数据
+  GLOBAL_COMMON_PAIRS_DATA = data;
+  
+  const pairs = data.pairs;
+  const vipTier = data.vip_tier;
+  
+  // 更新计数
+  const commonCount = document.getElementById("commonCount");
+  if (commonCount) {
+    commonCount.textContent = `${pairs.length} 对`;
+  }
+  
+  // 渲染套利列表
+  const commonList = document.getElementById("commonList");
+  if (commonList) {
+    if (pairs.length > 0) {
+      commonList.innerHTML = pairs
+        .map((p) => renderComparisonCardWithArbitrage(p))
+        .join("");
+      reapplyFilter('commonList');
+    } else {
+      commonList.innerHTML = `
+        <div class="empty-state">
+          <div class="emoji">🔍</div>
+          <p>暂无共同合约</p>
+          <p style="font-size: 0.8rem">请确保两个数据源都已连接</p>
+        </div>
+      `;
+    }
+  }
+  
+  // 更新时间
+  if (data.updated_at) {
+    updateTimestamp('ARB', data.updated_at);
+  }
 }
 
 /**
@@ -128,12 +201,13 @@ function handlePlatformUpdate(platform, data) {
 function updateHyperliquidData(data) {
   if (!data || !data.contracts) return;
   
-  GLOBAL_HL_DATA = sortByPriority([...data.contracts], 'coin');
+  // 后端已经排序，直接使用
+  GLOBAL_HL_DATA = [...data.contracts];
   
   const hlList = document.getElementById("hlList");
   if (hlList) {
     hlList.innerHTML = GLOBAL_HL_DATA.map(renderHLCard).join("");
-    reapplyFilter('hlList');  // 重新应用搜索过滤
+    reapplyFilter('hlList');
   }
   
   const hlCount = document.getElementById("hlCount");
@@ -141,7 +215,6 @@ function updateHyperliquidData(data) {
     hlCount.textContent = `${GLOBAL_HL_DATA.length} 合约`;
   }
   
-  // 更新时间
   if (data.updated_at) {
     updateTimestamp('HL', data.updated_at);
   }
@@ -153,12 +226,13 @@ function updateHyperliquidData(data) {
 function updateOstiumData(data) {
   if (!data || !data.contracts) return;
   
-  GLOBAL_OS_DATA = sortByPriority([...data.contracts], 'from');
+  // 后端已经排序，直接使用
+  GLOBAL_OS_DATA = [...data.contracts];
   
   const osList = document.getElementById("osList");
   if (osList) {
     osList.innerHTML = GLOBAL_OS_DATA.map(renderOSCard).join("");
-    reapplyFilter('osList');  // 重新应用搜索过滤
+    reapplyFilter('osList');
   }
   
   const osCount = document.getElementById("osCount");
@@ -166,76 +240,8 @@ function updateOstiumData(data) {
     osCount.textContent = `${GLOBAL_OS_DATA.length} 合约`;
   }
   
-  // 更新时间
   if (data.updated_at) {
     updateTimestamp('OS', data.updated_at);
-  }
-}
-
-/**
- * 更新对比列表
- */
-function updateComparisonList() {
-  if (GLOBAL_HL_DATA.length === 0 || GLOBAL_OS_DATA.length === 0) {
-    return;
-  }
-  
-  // 找出共同合约
-  const commonPairs = [];
-  const hlMap = {};
-
-  GLOBAL_HL_DATA.forEach((c) => {
-    const coin = c.coin.includes(":") ? c.coin.split(":")[1] : c.coin;
-    hlMap[coin.toUpperCase()] = c;
-  });
-
-  GLOBAL_OS_DATA.forEach((osContract) => {
-    const osName = osContract.from.toUpperCase();
-    const hlName = NAME_MAPPING[osName] || osName;
-
-    if (hlMap[hlName]) {
-      commonPairs.push({
-        hl: hlMap[hlName],
-        os: osContract,
-        name: osName === hlName ? osName : `${hlName} / ${osName}`,
-      });
-    }
-  });
-
-  // 保存到全局
-  GLOBAL_COMMON_PAIRS = commonPairs;
-
-  // 渲染
-  const commonCount = document.getElementById("commonCount");
-  const commonList = document.getElementById("commonList");
-  
-  if (commonCount) {
-    commonCount.textContent = `${commonPairs.length} 对`;
-  }
-
-  if (commonList && commonPairs.length > 0) {
-    // 排序
-    commonPairs.sort((a, b) => {
-      const aName = a.os.from.toUpperCase();
-      const bName = b.os.from.toUpperCase();
-      const aIsPriority = PRIORITY_ASSETS.some(p => aName.includes(p));
-      const bIsPriority = PRIORITY_ASSETS.some(p => bName.includes(p));
-      
-      if (aIsPriority && !bIsPriority) return -1;
-      if (!aIsPriority && bIsPriority) return 1;
-      if (aIsPriority && bIsPriority) {
-        const aIdx = PRIORITY_ASSETS.findIndex(p => aName.includes(p));
-        const bIdx = PRIORITY_ASSETS.findIndex(p => bName.includes(p));
-        return aIdx - bIdx;
-      }
-      return 0;
-    });
-
-    
-    commonList.innerHTML = commonPairs
-      .map((p) => renderComparisonCard(p.hl, p.os, p.name))
-      .join("");
-    reapplyFilter('commonList');  // 重新应用搜索过滤
   }
 }
 
@@ -246,5 +252,19 @@ function updateTimestamp(platform, timestamp) {
   const updateTime = document.getElementById("updateTime");
   if (updateTime) {
     updateTime.textContent = `UPDATED: ${timestamp} [${platform}]`;
+  }
+}
+
+/**
+ * VIP 等级变更时调用（绑定到 UI 控件）
+ */
+function updateTier() {
+  const tierSelect = document.getElementById('tierSelect');
+  if (tierSelect) {
+    const tier = parseInt(tierSelect.value);
+    console.log('[UI] VIP 等级变更:', tier);
+    
+    // 发送给后端重新计算
+    sendVipTier(tier);
   }
 }
