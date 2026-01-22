@@ -32,6 +32,7 @@ from .fee_config import (
 from .fee_calculator import FeeCalculator           # 费率计算器
 from .arbitrage_calculator import ArbitrageCalculator   # 套利计算器
 from .arbitrage_engine import ArbitrageEngine       # 套利引擎（主入口）
+from .notifier import ArbitrageNotifier, get_notifier   # 套利通知器
 
 # ==================== 定义公开接口 ====================
 # __all__ 列表定义了当别人使用 "from arbitrage import *" 时会导入哪些内容

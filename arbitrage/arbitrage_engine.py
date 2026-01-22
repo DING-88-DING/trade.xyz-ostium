@@ -35,6 +35,7 @@ from datetime import datetime  # 用于生成时间戳
 from .fee_config import NAME_MAPPING, REVERSE_NAME_MAPPING, PRIORITY_ASSETS
 from .fee_calculator import FeeCalculator
 from .arbitrage_calculator import ArbitrageCalculator
+from .notifier import get_notifier
 
 
 class ArbitrageEngine:
@@ -260,6 +261,13 @@ class ArbitrageEngine:
         
         # ---- 步骤6: 保存结果 ----
         self.common_pairs = common_pairs
+        
+        # ---- 步骤7: 检查套利机会并发送通知 ----
+        try:
+            notifier = get_notifier()
+            notifier.check_and_notify(common_pairs)
+        except Exception as e:
+            print(f'[ArbitrageEngine] 通知检查失败: {e}')
     
     def _calculate_pair_arbitrage(
         self, 

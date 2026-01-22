@@ -191,6 +191,14 @@ ARBITRAGE_CONFIG = {
     # 如果通过资金费率差异回本需要超过这个时间，则认为不值得
     # 因为费率可能会变化，时间太长风险太大
     'max_funding_hours': 12,    # 默认 12 小时
+    
+    # 监控的资产列表（HL 名称）
+    # 当这些资产出现套利机会时会发送通知
+    'monitored_assets': ['GOLD', 'SILVER', 'COPPER', 'XYZ100'],
+    
+    # 通知冷却时间（秒）
+    # 同一资产在此时间内不会重复发送通知
+    'notification_cooldown': 60,
 }
 
 
