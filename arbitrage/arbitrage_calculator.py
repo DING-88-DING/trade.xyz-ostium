@@ -77,7 +77,8 @@ class ArbitrageCalculator:
         os_cost: float,
         hl_contract: Dict[str, Any],
         os_contract: Dict[str, Any],
-        order_type: str = 'maker'
+        order_type: str = 'maker',
+        expected_spread: float = 0
     ) -> Dict[str, Any]:
         """
         计算单一方案的套利数据
@@ -107,6 +108,8 @@ class ArbitrageCalculator:
                 - comboHours: 综合回本时间 (小时)
                 - comboValid: 综合回本是否可行
                 - anyCanProfit: 任意方式能否回本
+                - expectedSpread: 预期收敛价差 (美元)
+                - profitableSpread: 可盈利价差 = 当前价差 - 预期收敛价差
         """
         # ==================== 准备工作 ====================
         size = self.position_size           # 仓位大小
@@ -176,6 +179,12 @@ class ArbitrageCalculator:
         # 反推: 如果手续费是 $X，需要的价差 = $X / 10个 = $X * $100 / $1000
         break_even_spread_usd = total_cost * avg_price / size if size > 0 else 0
         
+        # ==================== 计算可盈利价差 ====================
+        # 可盈利价差 = 当前价差 - 预期收敛价差
+        # 因为价差通常会收敛到预期值，而不是 0
+        # 例如: XYZ100 当前价差 $25，预期收敛到 $20，实际可盈利 = $25 - $20 = $5
+        profitable_spread = max(0, current_spread_usd - expected_spread)
+        
         # ==================== 资金费率回本计算 ====================
         # 资金费率 (Funding Rate) 是永续合约特有的机制
         # 每隔一段时间，多头和空头之间会有费用转移
@@ -219,7 +228,7 @@ class ArbitrageCalculator:
             funding_valid = False
         
         # ==================== 计算价差收益 ====================
-        # 如果当前价差能带来多少利润
+        # 使用当前价差计算收益
         spread_profit = current_spread_usd * size / avg_price if avg_price > 0 else 0
         
         # ==================== 综合回本计算 ====================
@@ -239,21 +248,31 @@ class ArbitrageCalculator:
         combo_valid = combo_hours <= max_hours
         
         # ==================== 判断是否能回本 ====================
+        # 原版判断（基于当前价差收敛到0）
         spread_can_profit = current_spread_usd >= break_even_spread_usd
         any_can_profit = spread_can_profit or funding_valid or combo_valid
+        
+        # 调整后判断（基于可盈利价差，考虑预期收敛）
+        # 用于通知和盈利图标显示
+        adjusted_spread_can_profit = profitable_spread >= break_even_spread_usd
+        adjusted_any_can_profit = adjusted_spread_can_profit or funding_valid or combo_valid
         
         # ==================== 返回结果 ====================
         return {
             'totalCost': round(total_cost, 4),                  # 总成本
             'breakEvenSpreadUSD': round(break_even_spread_usd, 6),  # 回本价差
             'currentSpreadUSD': round(current_spread_usd, 6),   # 当前价差
-            'spreadCanProfit': spread_can_profit,               # 价差能否回本
+            'expectedSpread': round(expected_spread, 6),        # 预期收敛价差
+            'profitableSpread': round(profitable_spread, 6),    # 可盈利价差
+            'spreadCanProfit': spread_can_profit,               # 价差能否回本（原版）
+            'adjustedSpreadCanProfit': adjusted_spread_can_profit,  # 价差能否回本（调整后）
             'fundingDiff': round(funding_diff, 6),              # 费率差异
             'fundingHours': round(funding_hours, 2) if funding_valid else None,  # 费率回本时间
             'fundingValid': funding_valid,                      # 费率回本是否可行
             'comboHours': round(combo_hours, 2) if combo_valid else None,  # 综合回本时间
             'comboValid': combo_valid,                          # 综合回本是否可行
-            'anyCanProfit': any_can_profit                      # 任意方式能否回本
+            'anyCanProfit': any_can_profit,                     # 任意方式能否回本（原版）
+            'adjustedAnyCanProfit': adjusted_any_can_profit     # 任意方式能否回本（调整后）
         }
     
     def calculate_arbitrage(
@@ -261,7 +280,8 @@ class ArbitrageCalculator:
         hl_contract: Dict[str, Any],
         os_contract: Dict[str, Any],
         hl_fee: Dict[str, float],
-        os_fee: Dict[str, Any]
+        os_fee: Dict[str, Any],
+        expected_spread: float = 0
     ) -> Dict[str, Any]:
         """
         计算套利成本和回本
@@ -276,6 +296,8 @@ class ArbitrageCalculator:
             os_fee (dict): Ostium 费率，格式取决于资产类型:
                           - 加密货币: {'t': Taker, 'm': Maker, 'oracle': 预言机费}
                           - 传统资产: {'rate': 固定费率, 'oracle': 预言机费}
+            expected_spread (float): 预期收敛价差 (美元)，不同资产的价差
+                                    通常不会收敛到0，而是收敛到这个值
         
         Returns:
             dict: 包含两种方案的套利分析:
@@ -310,9 +332,9 @@ class ArbitrageCalculator:
         # OS: 传统资产只收开仓费 + 预言机费
         os_cost_maker = size * (os_rate_maker / 100) + oracle_fee
         
-        # 调用单方案计算
+        # 调用单方案计算，传入预期收敛价差
         maker_result = self.calculate_single_arbitrage(
-            hl_cost_maker, os_cost_maker, hl_contract, os_contract, 'maker'
+            hl_cost_maker, os_cost_maker, hl_contract, os_contract, 'maker', expected_spread
         )
         
         # ========== 方案2: Taker (吃单) 费率 ==========
@@ -328,8 +350,9 @@ class ArbitrageCalculator:
         hl_cost_taker = size * (hl_fee['t'] / 100) * 2
         os_cost_taker = size * (os_rate_taker / 100) + oracle_fee
         
+        # 调用单方案计算，传入预期收敛价差
         taker_result = self.calculate_single_arbitrage(
-            hl_cost_taker, os_cost_taker, hl_contract, os_contract, 'taker'
+            hl_cost_taker, os_cost_taker, hl_contract, os_contract, 'taker', expected_spread
         )
         
         # 返回两种方案

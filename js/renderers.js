@@ -179,8 +179,8 @@ function renderComparisonCardWithArbitrage(pairData) {
   const osDir = hlContract.mid > osContract.mid ? '多' : '空';
   const directionText = `HL:${hlDir} OS:${osDir}`;
   
-  // 角标：任意方式能回本
-  const profitBadge = (arb.maker?.anyCanProfit || arb.taker?.anyCanProfit)
+  // 角标：价差能够盈利（严格模式，只检查价差，不含费率和综合回本）
+  const profitBadge = (arb.maker?.adjustedSpreadCanProfit || arb.taker?.adjustedSpreadCanProfit)
     ? `<span style="position: absolute; top: -5px; right: -5px; background: var(--neon-green); color: #000; padding: 2px 6px; border-radius: 10px; font-size: 0.65rem; font-weight: bold;">💰</span>`
     : '';
 
@@ -192,11 +192,23 @@ function renderComparisonCardWithArbitrage(pairData) {
   };
   
   // 格式化价差显示
+  // 格式: 当前价差 / 回本价差 (预期+回本)
   const formatSpread = (arbResult) => {
     if (!arbResult) return '-';
-    const current = `$${(arbResult.currentSpreadUSD || 0).toFixed(4)}`;
-    const breakEven = `$${(arbResult.breakEvenSpreadUSD || 0).toFixed(4)}`;
-    return `${current} / ${breakEven}`;
+    const current = arbResult.currentSpreadUSD || 0;
+    const breakEven = arbResult.breakEvenSpreadUSD || 0;
+    const expected = arbResult.expectedSpread || 0;
+    
+    // 基础显示：当前价差 / 回本价差
+    let result = `$${current.toFixed(4)}/$${breakEven.toFixed(4)}`;
+    
+    // 如果有预期收敛价差，添加 (预期+回本) 到后面
+    if (expected > 0) {
+      const expectedPlusBreakEven = expected + breakEven;
+      result += `($${expectedPlusBreakEven.toFixed(4)})`;
+    }
+    
+    return result;
   };
 
   const makerData = arb.maker || {};

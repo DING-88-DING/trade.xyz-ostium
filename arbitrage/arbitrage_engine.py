@@ -32,7 +32,7 @@ from typing import Dict, List, Any, Optional
 from datetime import datetime  # 用于生成时间戳
 
 # 从同目录的其他模块导入
-from .fee_config import NAME_MAPPING, REVERSE_NAME_MAPPING, PRIORITY_ASSETS
+from .fee_config import NAME_MAPPING, REVERSE_NAME_MAPPING, PRIORITY_ASSETS, ARBITRAGE_CONFIG
 from .fee_calculator import FeeCalculator
 from .arbitrage_calculator import ArbitrageCalculator
 from .notifier import get_notifier
@@ -296,9 +296,17 @@ class ArbitrageEngine:
         os_group = os_contract.get('group', 'crypto')
         os_fee = self.fee_calculator.get_os_fee(os_asset, os_group)
         
+        # ---- 获取预期收敛价差 ----
+        # 不同资产的价差通常不会收敛到 0，而是收敛到一个常见值
+        expected_spread_config = ARBITRAGE_CONFIG.get('expected_spread', {})
+        
+        # 处理 xyz: 前缀（HIP-3 资产的 coin 名称格式为 "xyz:GOLD"）
+        coin_key = coin.replace('xyz:', '') if coin.startswith('xyz:') else coin
+        expected_spread = expected_spread_config.get(coin_key, 0)  # 默认为 0
+        
         # ---- 调用套利计算器 ----
         return self.arbitrage_calculator.calculate_arbitrage(
-            hl_contract, os_contract, hl_fee, os_fee
+            hl_contract, os_contract, hl_fee, os_fee, expected_spread
         )
     
     def _sort_by_priority(self, pairs: List[Dict]) -> List[Dict]:

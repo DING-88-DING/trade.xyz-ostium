@@ -145,9 +145,9 @@ class ArbitrageNotifier:
             if not arb:
                 continue
             
-            # 检查是否有套利机会（价差能盈利）
-            maker_spread_profit = arb.get('maker', {}).get('spreadCanProfit', False)
-            taker_spread_profit = arb.get('taker', {}).get('spreadCanProfit', False)
+            # 检查是否有套利机会（使用调整后的判断，考虑预期收敛价差）
+            maker_spread_profit = arb.get('maker', {}).get('adjustedSpreadCanProfit', False)
+            taker_spread_profit = arb.get('taker', {}).get('adjustedSpreadCanProfit', False)
             
             if not (maker_spread_profit or taker_spread_profit):
                 continue
