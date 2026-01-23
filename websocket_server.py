@@ -225,7 +225,15 @@ def start_ostium_poller():
     loop.run_until_complete(start_os_poller(callback, interval=2))
 
 
-if __name__ == '__main__':
+def run_server(host='0.0.0.0', port=8080):
+    """
+    启动 WebSocket 服务器
+    可被外部模块（如 launcher.py）调用
+    
+    Args:
+        host: 监听地址，默认 0.0.0.0
+        port: 监听端口，默认 8080
+    """
     print('=' * 50)
     print('🚀 启动实时数据服务器 (带套利引擎)')
     print('=' * 50)
@@ -239,11 +247,16 @@ if __name__ == '__main__':
     
     # 启动服务器
     print(f'\n✅ 服务器已启动!')
-    print(f'✅ WebSocket: ws://localhost:8080')
-    print(f'✅ 前端页面: http://localhost:8080')
+    print(f'✅ WebSocket: ws://localhost:{port}')
+    print(f'✅ 前端页面: http://localhost:{port}')
     print(f'✅ 套利引擎: 已启用')
-    print(f'\n📱 在浏览器打开: http://localhost:8080')
+    print(f'\n📱 在浏览器打开: http://localhost:{port}')
     print('\n按 Ctrl+C 停止服务器\n')
     
     # 启动 Flask + WebSocket 服务器
-    socketio.run(app, host='0.0.0.0', port=8080, debug=False, allow_unsafe_werkzeug=True)
+    socketio.run(app, host=host, port=port, debug=False, allow_unsafe_werkzeug=True)
+
+
+if __name__ == '__main__':
+    run_server()
+
