@@ -111,7 +111,43 @@ trade.xyz-ostium/
 
 ## 🛠️ 安装与运行
 
-### 1. 环境准备
+本系统提供两种使用方式：**独立可执行版本（推荐）** 和 **Python 源码运行**。
+
+---
+
+### 方式一：使用独立可执行版本（无需 Python 环境）
+
+适合不想安装 Python 的用户，双击即可运行。
+
+#### 获取可执行文件
+
+1. 从 [Releases](../../releases) 下载适合您系统的压缩包：
+   - Windows: `DEX费率对比系统-Windows.zip`
+   - macOS: `DEX费率对比系统-Mac.zip`
+
+2. 解压到任意目录
+
+#### 运行步骤
+
+1. **（可选）配置 RPC**：
+   - 不配置也能运行（使用公共节点）
+   - 推荐配置私有 RPC 获得更稳定体验：
+     - 复制 `config.example.py` 为 `config.py`
+     - 编辑 `config.py`，填入 Arbitrum RPC URL（从 [Alchemy](https://www.alchemy.com/) 或 [Infura](https://www.infura.io/) 获取免费 API Key）
+
+2. **运行程序**：
+   - Windows: 双击 `DEX费率对比系统.exe`
+   - macOS: 双击 `DEX费率对比系统.app`
+
+3. **访问界面**：浏览器将自动打开 http://localhost:8080
+
+---
+
+### 方式二：从源码运行（开发者模式）
+
+适合开发者或需要自定义功能的用户。
+
+#### 1. 环境准备
 
 确保您的系统环境满足以下要求：
 
@@ -341,6 +377,15 @@ HYPERLIQUID_API_URL = "https://api.hyperliquid.xyz"
 4. **仅供参考**：本工具仅供参考，不构成投资建议
 
 ## 📝 更新日志
+
+### 2026-01-23
+
+- 🚀 **独立打包发布**：
+  - 支持将系统打包为 Windows 独立可执行文件 (.exe)，无需安装 Python
+  - 新增 `build.py` 一键打包脚本，自动处理依赖和 SSL 证书
+  - 新增 `launcher.py` 启动器，自动打开浏览器
+- 🔒 **安全性增强**：会自动排除包含私钥的配置文件，防止泄露
+- 📝 **文档更新**：完善了安装运行说明，增加打包版本使用指南
 
 ### 2026-01-22
 
