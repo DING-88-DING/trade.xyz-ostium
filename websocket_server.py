@@ -47,15 +47,58 @@ def check_and_install_dependencies():
 check_and_install_dependencies()
 
 # ==================== 配置加载 ====================
-# 尝试从 config.py 加载配置并注入环境变量
+# 增强版配置加载：支持从 .exe 所在目录加载 config.py
 try:
     import os
-    import config
+    import sys
+
+    # 确定程序运行的基础目录
+    # 如果是打包后的环境 (PyInstaller)，sys.executable 是 .exe 的路径
+    # 如果是脚本环境，使用当前工作目录
+    if getattr(sys, 'frozen', False):
+        application_path = os.path.dirname(sys.executable)
+    else:
+        application_path = os.path.dirname(os.path.abspath(__file__))
+
+    # 将基础目录添加到 sys.path 的最前面，确保优先加载外部的 config.py
+    if application_path not in sys.path:
+        sys.path.insert(0, application_path)
+
+    print(f'[Config] 正在从以下路径搜索配置: {application_path}')
+
+    # 尝试重新加载 config (如果之前已经导入过)
+    import importlib
+    try:
+        import config
+        importlib.reload(config)
+    except ImportError:
+        # 如果还是找不到，可能是第一次导入失败，尝试直接导入
+        import config
+
     if hasattr(config, 'ARBITRUM_RPC_URL') and config.ARBITRUM_RPC_URL:
-        os.environ['ARBITRUM_RPC_URL'] = config.ARBITRUM_RPC_URL
-        print(f'[Config] 已加载 ARBITRUM_RPC_URL: {config.ARBITRUM_RPC_URL[:20]}...')
+        # 增加有效性校验
+        rpc_url = config.ARBITRUM_RPC_URL
+        if "YOUR_API_KEY" in rpc_url or "your-api-key" in rpc_url:
+            print(f'[Config] ⚠️ 检测到 config.py 中的 RPC URL 包含占位符: {rpc_url}')
+
+            # 尝试使用配置中的默认兜底 RPC
+            default_rpc = getattr(config, 'DEFAULT_ARBITRUM_RPC', 'https://arb1.arbitrum.io/rpc')
+            print(f'[Config] ⚠️ 将使用兜底公共节点: {default_rpc}')
+            os.environ['ARBITRUM_RPC_URL'] = default_rpc
+        else:
+            os.environ['ARBITRUM_RPC_URL'] = rpc_url
+            print(f'[Config] ✅ 成功加载 ARBITRUM_RPC_URL: {rpc_url[:20]}...')
+    else:
+        print('[Config] ⚠️ config.py 中未找到 ARBITRUM_RPC_URL')
+        # 尝试使用配置中的默认兜底 RPC
+        default_rpc = getattr(config, 'DEFAULT_ARBITRUM_RPC', 'https://arb1.arbitrum.io/rpc')
+        print(f'[Config] 将使用兜底公共节点: {default_rpc}')
+        os.environ['ARBITRUM_RPC_URL'] = default_rpc
+
 except ImportError:
     print("警告: 未找到 config.py，将使用默认 RPC")
+except Exception as e:
+    print(f"配置加载出错: {e}")
 
 # 导入依赖
 from flask import Flask, send_from_directory

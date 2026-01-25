@@ -24,16 +24,30 @@ if not ARBITRUM_RPC_URL:
             sys.path.insert(0, parent_dir)
             
         import config
+        # 获取默认兜底 RPC (优先从配置读取，没有则用硬编码)
+        default_rpc = getattr(config, 'DEFAULT_ARBITRUM_RPC', 'https://arb1.arbitrum.io/rpc')
+
         if hasattr(config, 'ARBITRUM_RPC_URL') and config.ARBITRUM_RPC_URL:
-            ARBITRUM_RPC_URL = config.ARBITRUM_RPC_URL
-            print(f'[OS Poller] 使用 config.py 中的 RPC: {ARBITRUM_RPC_URL[:20]}...')
+            rpc_url = config.ARBITRUM_RPC_URL
+            # 增加有效性校验
+            if "YOUR_API_KEY" in rpc_url or "your-api-key" in rpc_url:
+                print(f'[OS Poller] ⚠️ 检测到 config.py 中的 RPC URL 包含占位符，忽略该配置')
+                ARBITRUM_RPC_URL = default_rpc
+                print(f'[OS Poller] 将使用兜底公共节点: {ARBITRUM_RPC_URL}')
+            else:
+                ARBITRUM_RPC_URL = rpc_url
+                print(f'[OS Poller] 使用 config.py 中的 RPC: {ARBITRUM_RPC_URL[:20]}...')
+        else:
+            # 如果 config 中没有 ARBITRUM_RPC_URL，直接使用兜底
+            ARBITRUM_RPC_URL = default_rpc
+
     except ImportError:
         pass
 
-# 如果仍然没有，使用默认公共节点
+# 如果仍然没有（ImportError 或者其他情况），使用硬编码默认节点
 if not ARBITRUM_RPC_URL:
     ARBITRUM_RPC_URL = 'https://arb1.arbitrum.io/rpc'
-    print('[OS Poller] ⚠️ 使用默认公共 RPC (可能不稳定)')
+    print('[OS Poller] ⚠️ 使用内置硬编码 RPC (可能不稳定)')
 
 # 最小持仓量（美元）- 用于过滤
 MIN_OI_USD = 1_000_000  # 1M 美元

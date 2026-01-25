@@ -12,6 +12,10 @@
 # 3. 复制 API Key 填入下方
 ARBITRUM_RPC_URL = "https://arb-mainnet.g.alchemy.com/v2/YOUR_API_KEY"
 
+# 默认公共 RPC（兜底用）
+# 当上面的 ARBITRUM_RPC_URL 未配置或无效时使用
+DEFAULT_ARBITRUM_RPC = "https://arb1.arbitrum.io/rpc"
+
 # Hyperliquid API URL
 HYPERLIQUID_API_URL = "https://api.hyperliquid.xyz"
 

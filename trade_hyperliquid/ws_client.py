@@ -29,32 +29,35 @@ class HyperliquidWSClient:
         self.meta_data = {}  # 存储元数据（包含交易量等信息）
         self.xyz_meta_data = {}  # 存储 xyz dex 元数据
         self.ws = None  # WebSocket 连接
-        
+
         # 缓存 universe（币种列表），避免重复请求
         self.universes = {}  # {dex_name: universe}
         self._init_universes()
-        
-    
+
+
     def _init_universes(self):
         """初始化：获取并缓存所有 dex 的 universe（币种列表）"""
         try:
+            print(f'[HL WS] 🔄 正在更新 Universe 映射...')
             # 获取主 dex
             response = requests.post(
                 f"{HYPERLIQUID_API_URL}/info",
                 headers={"Content-Type": "application/json"},
-                json={"type": "meta"}
+                json={"type": "meta"},
+                timeout=10 # 添加超时防止阻塞太久
             )
             if response.status_code == 200:
                 main_meta = response.json()
                 self.universes[''] = main_meta.get('universe', [])
                 print(f'[HL WS] ✅ 已缓存主 dex universe: {len(self.universes[""])} 个资产')
-            
+
             # 获取 xyz dex
             try:
                 xyz_response = requests.post(
                     f"{HYPERLIQUID_API_URL}/info",
                     headers={"Content-Type": "application/json"},
-                    json={"type": "meta", "dex": "xyz"}
+                    json={"type": "meta", "dex": "xyz"},
+                    timeout=10
                 )
                 if xyz_response.status_code == 200:
                     xyz_meta = xyz_response.json()
@@ -62,20 +65,76 @@ class HyperliquidWSClient:
                     print(f'[HL WS] ✅ 已缓存 xyz dex universe: {len(self.universes["xyz"])} 个资产')
             except Exception as e:
                 print(f'[HL WS] ⚠️ 获取 xyz dex universe 失败: {e}')
-                self.universes['xyz'] = []
+                # 如果失败保留旧值，不轻易清空，除非是第一次
+                if 'xyz' not in self.universes:
+                    self.universes['xyz'] = []
+
         except Exception as e:
             print(f'[HL WS] ⚠️ 获取主 dex universe 失败: {e}')
-            self.universes[''] = []
-    
+            if '' not in self.universes:
+                self.universes[''] = []
+
+    async def _monitor_universe_updates(self):
+        """
+        后台任务：定期(每60秒)无条件刷新 Universe 映射
+        确保资产列表是最新的，防止上新币导致数据错位
+        """
+        print('[HL WS] 🕵️ 启动 Universe 自动刷新任务 (每60秒)')
+        while True:
+            try:
+                await asyncio.sleep(60)  # 每 60 秒刷新一次
+
+                # 在 executor 中运行同步的 requests 请求，避免阻塞 asyncio 循环
+                loop = asyncio.get_running_loop()
+
+                # 定义获取数据的函数
+                def fetch_meta(dex=""):
+                    try:
+                        payload = {"type": "meta"}
+                        if dex:
+                            payload["dex"] = dex
+
+                        resp = requests.post(
+                            f"{HYPERLIQUID_API_URL}/info",
+                            headers={"Content-Type": "application/json"},
+                            json=payload,
+                            timeout=5
+                        )
+                        if resp.status_code == 200:
+                            return resp.json().get('universe', [])
+                        return None
+                    except Exception:
+                        return None
+
+                # 1. 刷新主站
+                new_main_universe = await loop.run_in_executor(None, fetch_meta, "")
+                if new_main_universe:
+                    self.universes[''] = new_main_universe
+                    # print(f'[HL WS] 🔄 主站 Universe 已刷新 ({len(new_main_universe)} 个资产)')
+
+                # 2. 刷新 xyz
+                new_xyz_universe = await loop.run_in_executor(None, fetch_meta, "xyz")
+                if new_xyz_universe:
+                    self.universes['xyz'] = new_xyz_universe
+                    # print(f'[HL WS] 🔄 xyz Universe 已刷新 ({len(new_xyz_universe)} 个资产)')
+
+            except Exception as e:
+                print(f'[HL WS] ⚠️ 自动刷新任务出错: {e}')
+                # 出错不中断循环
+                continue
+
     async def start(self):
         """启动 WebSocket 订阅"""
         print('[HL WS] 开始连接 WebSocket...')
-        
+
+        # 启动后台巡检任务
+        asyncio.create_task(self._monitor_universe_updates())
+
         try:
             async with websockets.connect(HYPERLIQUID_WS_URL) as websocket:
                 self.ws = websocket
                 print(f'[HL WS] ✅ 已连接到 {HYPERLIQUID_WS_URL}')
-                
+
                 # 发送订阅消息
                 subscribe_msg = {
                     "method": "subscribe",
@@ -85,7 +144,7 @@ class HyperliquidWSClient:
                 }
                 await websocket.send(json.dumps(subscribe_msg))
                 print('[HL WS] ✅ 已发送 allDexsAssetCtxs 订阅请求')
-                
+
                 # 持续接收消息
                 async for message in websocket:
                     try:
@@ -93,7 +152,7 @@ class HyperliquidWSClient:
                         self.on_message(data)
                     except Exception as e:
                         print(f'[HL WS] ⚠️ 处理消息失败: {e}')
-                        
+
         except Exception as e:
             print(f'[HL WS] ❌ WebSocket 连接失败: {e}')
             import traceback
@@ -115,35 +174,37 @@ class HyperliquidWSClient:
     
     def on_all_dexs_asset_ctxs(self, message):
         """处理 allDexsAssetCtxs 数据（所有 dex 的资产上下文）"""
-        print(f'[HL WS] 🐞 收到消息: channel={message.get("channel")}')
-        
+        # print(f'[HL WS] 🐞 收到消息: channel={message.get("channel")}')
+
         if message.get('channel') == 'allDexsAssetCtxs' and 'data' in message:
             data = message['data']
             ctxs = data.get('ctxs', [])
-            
+
             # ctxs[0] 是主站: ["", [{...}, {...}, ...]]
             # ctxs[7] 是 xyz: ["xyz", [{...}, {...}, ...]]
             # 只处理主站和 xyz
-            
+
             for dex_entry in ctxs:
                 if not dex_entry or len(dex_entry) < 2:
                     continue
-                
+
                 dex_name = dex_entry[0]  # "" 或 "xyz"
                 asset_ctxs_array = dex_entry[1]  # 资产数据数组
-                
+
                 # 只处理主站 ("") 和 xyz
                 if dex_name not in ['', 'xyz']:
                     continue
-                
+
                 if not isinstance(asset_ctxs_array, list):
                     continue
-                
+
                 # 获取缓存的 universe
                 universe = self.universes.get(dex_name, [])
+
+                # 如果本地还没获取到 universe，先跳过
                 if not universe:
                     continue
-                
+
                 # 遍历资产数组，与 universe 按索引匹配
                 for idx, ctx in enumerate(asset_ctxs_array):
                     if idx >= len(universe) or not isinstance(ctx, dict):
