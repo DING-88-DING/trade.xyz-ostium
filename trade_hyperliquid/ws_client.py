@@ -124,39 +124,57 @@ class HyperliquidWSClient:
                 continue
 
     async def start(self):
-        """启动 WebSocket 订阅"""
+        """启动 WebSocket 订阅,支持自动重连"""
         print('[HL WS] 开始连接 WebSocket...')
 
-        # 启动后台巡检任务
+        # 启动后台巡检任务(只启动一次)
         asyncio.create_task(self._monitor_universe_updates())
 
-        try:
-            async with websockets.connect(HYPERLIQUID_WS_URL) as websocket:
-                self.ws = websocket
-                print(f'[HL WS] ✅ 已连接到 {HYPERLIQUID_WS_URL}')
+        # 重连参数
+        reconnect_delay = 1  # 初始重连延迟(秒)
+        max_reconnect_delay = 60  # 最大重连延迟(秒)
+        
+        # 无限重连循环
+        while True:
+            try:
+                async with websockets.connect(HYPERLIQUID_WS_URL) as websocket:
+                    self.ws = websocket
+                    print(f'[HL WS] ✅ 已连接到 {HYPERLIQUID_WS_URL}')
+                    
+                    # 连接成功,重置重连延迟
+                    reconnect_delay = 1
 
-                # 发送订阅消息
-                subscribe_msg = {
-                    "method": "subscribe",
-                    "subscription": {
-                        "type": "allDexsAssetCtxs"
+                    # 发送订阅消息
+                    subscribe_msg = {
+                        "method": "subscribe",
+                        "subscription": {
+                            "type": "allDexsAssetCtxs"
+                        }
                     }
-                }
-                await websocket.send(json.dumps(subscribe_msg))
-                print('[HL WS] ✅ 已发送 allDexsAssetCtxs 订阅请求')
+                    await websocket.send(json.dumps(subscribe_msg))
+                    print('[HL WS] ✅ 已发送 allDexsAssetCtxs 订阅请求')
 
-                # 持续接收消息
-                async for message in websocket:
-                    try:
-                        data = json.loads(message)
-                        self.on_message(data)
-                    except Exception as e:
-                        print(f'[HL WS] ⚠️ 处理消息失败: {e}')
+                    # 持续接收消息
+                    async for message in websocket:
+                        try:
+                            data = json.loads(message)
+                            self.on_message(data)
+                        except Exception as e:
+                            print(f'[HL WS] ⚠️ 处理消息失败: {e}')
 
-        except Exception as e:
-            print(f'[HL WS] ❌ WebSocket 连接失败: {e}')
-            import traceback
-            traceback.print_exc()
+            except websockets.exceptions.ConnectionClosed:
+                print(f'[HL WS] ⚠️ 连接已关闭,将在 {reconnect_delay} 秒后重连...')
+            except Exception as e:
+                print(f'[HL WS] ❌ WebSocket 连接失败: {e}')
+                import traceback
+                traceback.print_exc()
+            
+            # 等待后重连
+            await asyncio.sleep(reconnect_delay)
+            
+            # 指数退避:每次重连延迟翻倍,但不超过最大值
+            reconnect_delay = min(reconnect_delay * 2, max_reconnect_delay)
+            print(f'[HL WS] 🔄 正在尝试重新连接...(下次重连延迟: {reconnect_delay}秒)')
     
     
     def on_message(self, message):
