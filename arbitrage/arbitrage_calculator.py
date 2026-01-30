@@ -355,8 +355,14 @@ class ArbitrageCalculator:
             hl_cost_taker, os_cost_taker, hl_contract, os_contract, 'taker', expected_spread
         )
         
-        # 返回两种方案
+        # ==================== 生成自动交易信号 ====================
+        # 自动交易信号: 仅基于 taker 方案的调整后价差判断
+        # 因为自动交易全部使用市价单(taker),不使用限价单(maker)
+        auto_trading_signal = taker_result.get('adjustedSpreadCanProfit', False)
+        
+        # 返回两种方案 + 自动交易信号
         return {
             'maker': maker_result,
-            'taker': taker_result
+            'taker': taker_result,
+            'autoTradingSignal': auto_trading_signal  # 🆕 专用于自动交易判断
         }
