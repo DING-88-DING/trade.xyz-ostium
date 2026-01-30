@@ -173,7 +173,7 @@ REVERSE_NAME_MAPPING = {v: k for k, v in NAME_MAPPING.items()}
 # 因为它们是跨平台套利最有价值的资产
 PRIORITY_ASSETS = [
     # Hyperliquid 资产名
-    'GOLD', 'SILVER', 'COPPER', 'XYZ100',
+    'GOLD', 'SILVER', 'COPPER', 'XYZ100', 'CL',
     # Ostium 资产名 (有些可能重复，但不影响)
     'XAU', 'XAG', 'HG', 'NDX'
 ]
@@ -194,7 +194,7 @@ ARBITRAGE_CONFIG = {
     
     # 监控的资产列表（HL 名称）
     # 当这些资产出现套利机会时会发送通知
-    'monitored_assets': ['GOLD', 'SILVER', 'COPPER', 'XYZ100'],
+    'monitored_assets': ['GOLD', 'SILVER', 'COPPER', 'XYZ100', 'CL'],
     
     # 通知冷却时间（秒）
     # 同一资产在此时间内不会重复发送通知
@@ -205,7 +205,7 @@ ARBITRAGE_CONFIG = {
     # 计算套利时会将这个值作为"目标价差"
     # 格式: {'资产名(HL名)': 预期价差(USD)}
     'expected_spread': {
-        'GOLD': 0,       # 黄金: 通常收敛到 $0
+        'GOLD': 2,       # 黄金: 通常收敛到 $2
         'SILVER': 0,     # 白银: 通常收敛到 $0
         'COPPER': 0.002, # 铜: 通常收敛到 $0.002
         'XYZ100': 10,    # 纳指100: 通常收敛到 $10

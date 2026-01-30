@@ -265,7 +265,7 @@ def start_ostium_poller():
     # 在新线程中运行异步事件循环
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    loop.run_until_complete(start_os_poller(callback, interval=2))
+    loop.run_until_complete(start_os_poller(callback, interval=1))
 
 
 def run_server(host='0.0.0.0', port=8080):

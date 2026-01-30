@@ -56,7 +56,7 @@ MIN_OI_USD = 1_000_000  # 1M 美元
 class OstiumAsyncPoller:
     """Ostium 异步轮询器"""
     
-    def __init__(self, callback, interval=2):
+    def __init__(self, callback, interval=1):
         """
         初始化
         :param callback: 数据回调函数
