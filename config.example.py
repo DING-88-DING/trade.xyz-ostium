@@ -133,3 +133,106 @@ TRADING_CONFIG = {
 - 设置合理的风控参数
 - 定期检查持仓和交易记录
 """
+
+# ============ 费率与套利配置 (可覆盖默认值) ============
+# 以下配置原定义在 arbitrage/fee_config.py 中
+# 在此定义会覆盖默认配置，无需重新打包
+
+# Referral 折扣 (推荐人返佣)
+# 范围: 0-100，默认 4 表示 4% 的折扣
+REFERRAL_DISCOUNT = 4
+
+# Hyperliquid 费率表
+FEE_SCHEDULE = {
+    # 主流加密货币
+    'perps_base': {
+        0: {'t': 0.045, 'm': 0.015},
+        1: {'t': 0.04, 'm': 0.012},
+        2: {'t': 0.035, 'm': 0.008},
+        3: {'t': 0.03, 'm': 0.004},
+        4: {'t': 0.028, 'm': 0.0},
+        5: {'t': 0.026, 'm': 0.0},
+        6: {'t': 0.024, 'm': 0.0},
+    },
+    # HIP-3 Growth Mode (高折扣模式: 外汇, 银, 铜, 纳指)
+    'hip3_growth': {
+        0: {'t': 0.009, 'm': 0.003},
+        1: {'t': 0.008, 'm': 0.0024},
+        2: {'t': 0.007, 'm': 0.0016},
+        3: {'t': 0.006, 'm': 0.0008},
+        4: {'t': 0.0056, 'm': 0.0},
+        5: {'t': 0.0052, 'm': 0.0},
+        6: {'t': 0.0048, 'm': 0.0},
+    },
+    # HIP-3 Standard (黄金)
+    'hip3_standard': {
+        0: {'t': 0.090, 'm': 0.030},
+        1: {'t': 0.080, 'm': 0.024},
+        2: {'t': 0.070, 'm': 0.016},
+        3: {'t': 0.060, 'm': 0.008},
+        4: {'t': 0.056, 'm': 0.0},
+        5: {'t': 0.052, 'm': 0.0},
+        6: {'t': 0.048, 'm': 0.0},
+    },
+}
+
+# Ostium 费率表
+OSTIUM_FEE_SCHEDULE = {
+    'traditional': {
+        'forex': 0.03,      # 3 bps
+        'indices': 0.05,    # 5 bps
+        'stocks': 0.05,     # 5 bps
+        'XAU': 0.03,        # 黄金 3 bps
+        'XAG': 0.15,        # 白银 15 bps
+        'XPT': 0.20,        # 铂金 20 bps
+        'XPD': 0.20,        # 钯金 20 bps
+        'HG': 0.15,         # 铜 15 bps
+        'CL': 0.10,         # 原油 10 bps
+    },
+    'crypto': {
+        'm': 0.03,      # Maker 3 bps
+        't': 0.10,      # Taker 10 bps
+    },
+    'other': {
+        'oracle_fee': 0.10,     # 预言机费 /usr/bin/bash.10
+        'close_fee': 0,         # 平仓费 /usr/bin/bash
+    }
+}
+
+# 资产名称映射 (Ostium -> Hyperliquid)
+NAME_MAPPING = {
+    'XAU': 'GOLD',
+    'XAG': 'SILVER',
+    'HG': 'COPPER',
+    'NDX': 'XYZ100',
+}
+
+# 优先显示资产
+PRIORITY_ASSETS = [
+    'GOLD', 'SILVER', 'COPPER', 'XYZ100', 'CL',
+    'XAU', 'XAG', 'HG', 'NDX', 'CL'
+]
+
+# 套利计算设置
+ARBITRAGE_CONFIG = {
+    'position_size': 1000,      # 下单金额 (USD)
+    'max_funding_hours': 12,    # 资金费率回本最大时间 (小时)
+    'monitored_assets': ['GOLD', 'SILVER', 'COPPER', 'XYZ100', 'CL'],
+    'notification_cooldown': 60,
+    # 预期收敛价差 (USD)
+    'expected_spread': {
+        'GOLD': 4,
+        'SILVER': 0.3,
+        'COPPER': 0.002,
+        'XYZ100': 20,
+        'CL': 0.06,
+    },
+}
+
+# HIP-3 资产定义
+HIP3_ASSETS = [
+    'GOLD', 'SILVER', 'COPPER',
+    'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF',
+    'XYZ100',
+]
+HIP3_STANDARD_ASSETS = ['GOLD']

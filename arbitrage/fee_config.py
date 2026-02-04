@@ -175,7 +175,7 @@ PRIORITY_ASSETS = [
     # Hyperliquid 资产名
     'GOLD', 'SILVER', 'COPPER', 'XYZ100', 'CL',
     # Ostium 资产名 (有些可能重复，但不影响)
-    'XAU', 'XAG', 'HG', 'NDX'
+    'XAU', 'XAG', 'HG', 'NDX', 'CL'
 ]
 
 
@@ -229,3 +229,44 @@ HIP3_ASSETS = [
 # 这些资产使用 hip3_standard 费率 (无折扣)
 # 目前只有 GOLD，其他 HIP-3 资产都使用 hip3_growth (有折扣)
 HIP3_STANDARD_ASSETS = ['GOLD']
+
+
+# ============ 从 config.py 覆盖默认值 (可选) ============
+try:
+    import config as _user_config
+except Exception:
+    _user_config = None
+
+def _merge_config(default_cfg, user_cfg):
+    """递归合并配置字典，支持部分更新"""
+    for k, v in user_cfg.items():
+        if isinstance(v, dict) and k in default_cfg and isinstance(default_cfg[k], dict):
+            _merge_config(default_cfg[k], v)
+        else:
+            default_cfg[k] = v
+
+if _user_config:
+    # 1. 简单变量和列表：直接覆盖 (完全替换)
+    REFERRAL_DISCOUNT = getattr(_user_config, 'REFERRAL_DISCOUNT', REFERRAL_DISCOUNT)
+    PRIORITY_ASSETS = getattr(_user_config, 'PRIORITY_ASSETS', PRIORITY_ASSETS)
+    HIP3_ASSETS = getattr(_user_config, 'HIP3_ASSETS', HIP3_ASSETS)
+    HIP3_STANDARD_ASSETS = getattr(_user_config, 'HIP3_STANDARD_ASSETS', HIP3_STANDARD_ASSETS)
+
+    # 2. 字典配置：智能合并 (支持只写需要修改的项)
+    if hasattr(_user_config, 'FEE_SCHEDULE'):
+        _merge_config(FEE_SCHEDULE, _user_config.FEE_SCHEDULE)
+
+    if hasattr(_user_config, 'OSTIUM_FEE_SCHEDULE'):
+        _merge_config(OSTIUM_FEE_SCHEDULE, _user_config.OSTIUM_FEE_SCHEDULE)
+
+    if hasattr(_user_config, 'NAME_MAPPING'):
+        # 更新映射表
+        _merge_config(NAME_MAPPING, _user_config.NAME_MAPPING)
+
+    if hasattr(_user_config, 'ARBITRAGE_CONFIG'):
+        _merge_config(ARBITRAGE_CONFIG, _user_config.ARBITRAGE_CONFIG)
+
+# 反向映射 (Hyperliquid -> Ostium)
+# 使用 Python 字典推导式自动生成反向映射
+# 例如: {'GOLD': 'XAU', 'SILVER': 'XAG', ...}
+REVERSE_NAME_MAPPING = {v: k for k, v in NAME_MAPPING.items()}

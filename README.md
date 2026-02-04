@@ -246,6 +246,8 @@ HYPERLIQUID_API_URL = "https://api.hyperliquid.xyz"
 | `MIN_VOLUME_USD`   | `trade_hyperliquid/ws_client.py` | 1,000,000 USD | WebSocket 模式下的过滤阈值          |
 | `MIN_OI_USD`       | `trade_ostium/async_poller.py`   | 1,000,000 USD | Ostium 轮询器的过滤阈值             |
 
+> **提示**: 现在您可以在 `config.py` 中直接修改 **费率表 (FEE_SCHEDULE)**、**套利参数 (ARBITRAGE_CONFIG)** 和 **预期收敛价差** 等高级配置，无需修改源代码或重新打包。
+
 ### 4. RPC 连接优先级与兜底机制
 
 系统按照以下优先级连接 Arbitrum RPC 节点：
