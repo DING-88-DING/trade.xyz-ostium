@@ -8,6 +8,7 @@ import json
 import requests
 from datetime import datetime
 import websockets
+from trade_hyperliquid.filters import is_hyperliquid_asset_excluded
 
 # Hyperliquid WebSocket 地址
 HYPERLIQUID_WS_URL = "wss://api.hyperliquid.xyz/ws"
@@ -277,9 +278,14 @@ class HyperliquidWSClient:
         """构建合约列表"""
         contracts = []
         filtered_count = 0
+        excluded_count = 0
         
         # 1. 处理主站资产
         for coin, meta in self.meta_data.items():
+            if is_hyperliquid_asset_excluded(coin):
+                excluded_count += 1
+                continue
+
             day_volume = meta.get('dayVolume')
             mid_px = meta.get('midPx')
             impact_pxs = meta.get('impactPxs')
@@ -327,6 +333,10 @@ class HyperliquidWSClient:
         
         # 2. 处理 xyz dex 资产
         for coin, meta in self.xyz_meta_data.items():
+            if is_hyperliquid_asset_excluded(coin):
+                excluded_count += 1
+                continue
+
             day_volume = meta.get('dayVolume')
             mid_px = meta.get('midPx')
             impact_pxs = meta.get('impactPxs')
@@ -375,6 +385,9 @@ class HyperliquidWSClient:
             print(f'[HL WS] 🔍 过滤掉 {filtered_count} 个低交易量合约（< ${self.MIN_VOLUME_USD:,}）')
         
         print(f'[HL WS] 📤 发送 {len(contracts)} 个合约数据')
+        if excluded_count > 0:
+            print(f'[HL WS] 排除 {excluded_count} 个命中过滤配置的合约')
+
         return contracts
 
 

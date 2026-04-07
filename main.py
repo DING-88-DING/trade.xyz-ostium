@@ -41,6 +41,7 @@ except ImportError:
 # 复用子目录的数据获取函数，避免代码重复
 
 from trade_hyperliquid.inspect_hyperliquid import get_all_perpetuals as hl_get_all_perpetuals
+from trade_hyperliquid.filters import is_hyperliquid_asset_excluded
 from trade_ostium.inspect_ostium import fetch_all_data as os_fetch_all_data
 
 # 导入套利引擎
@@ -57,7 +58,7 @@ REFRESH_INTERVAL = 5
 
 # 过滤条件
 HL_MIN_VOLUME = 1_000_000    # Hyperliquid 最小24h成交量 (1M)
-OS_MIN_OI = 1_000_000        # Ostium 最小 OI (1M)
+OS_MIN_VOLUME = 1_000_000    # Ostium 最小24h成交量 (1M)
 
 
 # ==================== 内存数据存储 ====================
@@ -72,7 +73,7 @@ DATA_STORE = {
     },
     "ostium": {
         "total_filtered": 0,
-        "filter_criteria": f"Total OI > ${OS_MIN_OI:,}",
+        "filter_criteria": f"24h Volume > ${OS_MIN_VOLUME:,}",
         "updated_at": None,
         "contracts": []
     }
@@ -93,6 +94,13 @@ def process_hyperliquid_data(perpetuals, min_volume=HL_MIN_VOLUME):
     filtered = []
     
     for perp in perpetuals:
+        coin = perp.get("coin")
+        dex = perp.get("dex")
+
+        # 按配置排除不需要展示的 HL 合约。
+        if is_hyperliquid_asset_excluded(coin):
+            continue
+
         day_volume = perp.get("dayNtlVlm")
         if not day_volume:
             continue
@@ -115,9 +123,9 @@ def process_hyperliquid_data(perpetuals, min_volume=HL_MIN_VOLUME):
         oracle_px = perp.get("oraclePx")
         
         contract = {
-            "coin": perp.get("coin"),
-            "pair": f"{perp.get('coin')}/USD",
-            "dex": perp.get("dex"),  # 用于判断费率类别: "main" = 加密货币, "xyz" = HIP-3
+            "coin": coin,
+            "pair": f"{coin}/USD",
+            "dex": dex,  # 用于判断费率类别: "main" = 加密货币, "xyz" = HIP-3
             "bid": bid,
             "mid": float(mid_px) if mid_px else None,
             "ask": ask,
@@ -142,8 +150,10 @@ def process_hyperliquid_data(perpetuals, min_volume=HL_MIN_VOLUME):
 
 # ==================== Ostium 数据处理 ====================
 
-def process_ostium_data(pairs, prices, min_oi=OS_MIN_OI):
-    """处理 Ostium 数据，过滤高 OI 合约"""
+def process_ostium_data(pairs, prices, volume_map=None, min_volume=OS_MIN_VOLUME):
+    """处理 Ostium 数据，按 24h 成交量过滤合约"""
+    volume_map = volume_map or {}
+
     # 创建价格映射
     price_map = {}
     for price in prices:
@@ -169,9 +179,11 @@ def process_ostium_data(pairs, prices, min_oi=OS_MIN_OI):
         price_data = price_map.get(pair_name, {})
         mid_price = price_data.get("mid", 1.0)
         total_oi_usd = total_oi * mid_price if mid_price else 0
+        pair_id = str(pair.get("id", "")).strip()
+        day_volume_usd = float(volume_map.get(pair_id, 0) or 0)
         
-        # 过滤
-        if total_oi_usd < min_oi:
+        # 按真实 24h 成交量过滤。
+        if day_volume_usd < min_volume:
             continue
         
         # 提取费率
@@ -207,6 +219,7 @@ def process_ostium_data(pairs, prices, min_oi=OS_MIN_OI):
             "mid": price_data.get("mid"),
             "ask": price_data.get("ask"),
             "isMarketOpen": price_data.get("isMarketOpen"),
+            "dayVolume_USD": round(day_volume_usd, 2),
             "totalOI_USD": round(total_oi_usd, 2),
             "longOI": pair.get("longOI"),
             "shortOI": pair.get("shortOI"),
@@ -223,8 +236,11 @@ def process_ostium_data(pairs, prices, min_oi=OS_MIN_OI):
         }
         filtered.append(contract)
     
-    # 按 OI 排序
-    filtered.sort(key=lambda x: x["totalOI_USD"], reverse=True)
+    # 优先按真实 24h 成交量排序，缺失时再看 OI。
+    filtered.sort(
+        key=lambda x: (x.get("dayVolume_USD", 0), x["totalOI_USD"]),
+        reverse=True
+    )
     return filtered
 
 
@@ -254,16 +270,17 @@ def refresh_data():
             os_data = asyncio.run(os_fetch_all_data())
             pairs = os_data.get("pairs", [])
             prices = os_data.get("prices", [])
-            print(f"[OS] 获取到 {len(pairs)} 个交易对, {len(prices)} 个价格")
+            volume_map = os_data.get("volume_map", {})
+            print(f"[OS] 获取到 {len(pairs)} 个交易对, {len(prices)} 个价格, {len(volume_map)} 个24h成交量")
         except Exception as e:
             print(f"[OS] 获取数据失败: {e}")
-            pairs, prices = [], []
+            pairs, prices, volume_map = [], [], {}
         
         # 4. 处理 Ostium 数据
         os_filtered = []
         if pairs:
             print("[4/4] 处理 Ostium 数据...")
-            os_filtered = process_ostium_data(pairs, prices)
+            os_filtered = process_ostium_data(pairs, prices, volume_map=volume_map)
         else:
             print("[OS] 无数据，跳过处理")
         
@@ -289,7 +306,7 @@ def refresh_data():
             }
             DATA_STORE["ostium"] = {
                 "total_filtered": len(os_data['contracts']),
-                "filter_criteria": f"Total OI > ${OS_MIN_OI:,}",
+                "filter_criteria": f"24h Volume > ${OS_MIN_VOLUME:,}",
                 "updated_at": timestamp,
                 "contracts": os_data['contracts']
             }

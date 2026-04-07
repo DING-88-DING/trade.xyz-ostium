@@ -29,9 +29,15 @@ Hyperliquid 永续合约数据处理器
 import json
 import os
 from typing import Dict, List, Any
+import sys
 
 # 获取脚本所在目录（确保无论从哪个目录运行都能找到正确的文件路径）
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PARENT_DIR = os.path.dirname(SCRIPT_DIR)
+if PARENT_DIR not in sys.path:
+    sys.path.insert(0, PARENT_DIR)
+
+from trade_hyperliquid.filters import is_hyperliquid_asset_excluded
 
 
 # ==================== 数据加载函数 ====================
@@ -133,6 +139,12 @@ def process_perpetuals(
     
     # ===== 遍历每个合约进行处理 =====
     for perp in perpetuals:
+        coin = perp.get("coin")
+        dex = perp.get("dex")
+
+        # 按统一配置排除不需要监控的 HL 合约。
+        if is_hyperliquid_asset_excluded(coin):
+            continue
         
         # ----- 步骤 1: 获取并检查 24h 成交量 -----
         day_volume = perp.get("dayNtlVlm")
@@ -169,8 +181,8 @@ def process_perpetuals(
         # ----- 步骤 4: 构建输出数据结构 -----
         contract = {
             # ===== 基础信息 =====
-            "coin": perp.get("coin"),                    # 合约名称（如 "BTC", "ETH"）
-            "pair": f"{perp.get('coin')}/USD",           # 交易对（如 "BTC/USD"）
+            "coin": coin,                                # 合约名称（如 "BTC", "ETH"）
+            "pair": f"{coin}/USD",                       # 交易对（如 "BTC/USD"）
             
             # ===== 价格信息 =====
             "bid": bid,                                  # 买价（买入时的价格）

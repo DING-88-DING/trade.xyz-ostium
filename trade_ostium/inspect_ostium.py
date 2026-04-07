@@ -41,6 +41,7 @@ import json
 import os
 import asyncio
 from typing import Dict, List, Any
+import requests
 
 # ==================== SDK 导入 ====================
 # Ostium Python SDK 用于与 Arbitrum 上的 Ostium 协议交互
@@ -59,16 +60,45 @@ if PARENT_DIR not in sys.path:
 
 # 尝试从 config.py 加载 Arbitrum RPC URL
 try:
-    from config import ARBITRUM_RPC_URL
+    from config import ARBITRUM_RPC_URL, OSTIUM_REST_API_URL
 except ImportError:
     # config.py 不存在时的警告
     print("警告: 未找到 config.py，请设置 ARBITRUM_RPC_URL")
     ARBITRUM_RPC_URL = None
+    OSTIUM_REST_API_URL = "https://metadata-backend.ostium.io"
 
 
 
 
 # ==================== 数据获取函数 ====================
+
+def fetch_volume_map_sync() -> Dict[str, float]:
+    """同步抓取 Ostium 每个交易对的真实 24h 成交量。"""
+    volume_url = f"{OSTIUM_REST_API_URL.rstrip('/')}/volume/all"
+    response = requests.get(volume_url, timeout=10)
+    response.raise_for_status()
+
+    payload = response.json()
+    volume_map = {}
+
+    for item in payload.get("data", []):
+        pair_id = str(item.get("pair_id", "")).strip()
+        if not pair_id:
+            continue
+
+        try:
+            volume_map[pair_id] = float(item.get("last_24h_volume", 0) or 0)
+        except (TypeError, ValueError):
+            # 单条脏数据不影响整体流程，直接回退为 0。
+            volume_map[pair_id] = 0.0
+
+    return volume_map
+
+
+async def fetch_volume_map() -> Dict[str, float]:
+    """异步包装 24h 成交量抓取，避免阻塞事件循环。"""
+    return await asyncio.to_thread(fetch_volume_map_sync)
+
 
 async def fetch_all_data() -> Dict[str, Any]:
     """
@@ -116,14 +146,22 @@ async def fetch_all_data() -> Dict[str, Any]:
     # 包含：买价、卖价、中间价、市场状态
     prices = await sdk.price.get_latest_prices()
     print(f"获取到 {len(prices)} 个价格数据")
+
+    # ===== 步骤 4: 获取真实 24h 成交量 =====
+    volume_map = await fetch_volume_map()
+    print(f"获取到 {len(volume_map)} 个 24h 成交量")
     
-    return {"pairs": pairs, "prices": prices}
+    return {
+        "pairs": pairs,
+        "prices": prices,
+        "volume_map": volume_map
+    }
 
 
 
 # ==================== 数据保存函数 ====================
 
-def save_data(pairs: List[Dict], prices: List[Dict]):
+def save_data(pairs: List[Dict], prices: List[Dict], volume_map: Dict[str, float] = None):
     """
     保存所有数据到 JSON 文件
     
@@ -140,7 +178,8 @@ def save_data(pairs: List[Dict], prices: List[Dict]):
     # 构建输出数据
     data = {
         "pairs": pairs,       # 交易对原始数据
-        "prices": prices      # 价格数据
+        "prices": prices,     # 价格数据
+        "volume_map": volume_map or {}  # 真实 24h 成交量，key 为 pair_id
     }
     
     # 构建完整路径（相对于脚本所在目录）
@@ -154,6 +193,7 @@ def save_data(pairs: List[Dict], prices: List[Dict]):
     print(f"\n数据已保存到 ostium_response.json")
     print(f"  交易对数量: {len(pairs)}")
     print(f"  价格数据数量: {len(prices)}")
+    print(f"  24h成交量数量: {len(volume_map or {})}")
     
     # 收集所有唯一资产名称并保存
     all_assets = set()
@@ -212,12 +252,13 @@ async def main():
         data = await fetch_all_data()
         pairs = data["pairs"]    # 交易对信息
         prices = data["prices"]  # 价格数据
+        volume_map = data.get("volume_map", {})
         
         # ===== 步骤 2: 打印示例数据 =====
         print_sample_data(pairs)
         
         # ===== 步骤 3: 保存数据 =====
-        save_data(pairs, prices)
+        save_data(pairs, prices, volume_map)
         
         # 完成提示
         print("\n" + "=" * 50)

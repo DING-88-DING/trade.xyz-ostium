@@ -73,6 +73,8 @@ function renderOSCard(contract) {
   const fee = contract.fee || {};
   const oracleFee = fee.oracle || 0.10;
   const isCrypto = group === 'crypto' || group === 'cryptocurrency';
+  const osMetricLabel = contract.dayVolume_USD ? "24h Vol" : "Total OI";
+  const osMetricValue = contract.dayVolume_USD || contract.totalOI_USD;
   
   let feeLabel, feeDisplay;
   if (isCrypto) {
@@ -112,8 +114,8 @@ function renderOSCard(contract) {
           <span class="data-value ${rateClass}">${formatRate(rate)}</span>
         </div>
         <div class="data-item" style="align-items: flex-end;">
-          <span class="data-label">Total OI</span>
-          <span class="data-value">${formatVolume(contract.totalOI_USD)}</span>
+          <span class="data-label">${osMetricLabel}</span>
+          <span class="data-value">${formatVolume(osMetricValue)}</span>
         </div>
         <div class="data-item" style="grid-column: span 2;">
           <span class="data-label">${feeLabel}</span>

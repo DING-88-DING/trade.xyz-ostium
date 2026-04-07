@@ -1,6 +1,6 @@
 # ⚡ DEX 费率对比系统 (Hyperliquid vs Ostium)
 
-这是一个用于实时监控和对比 **Hyperliquid** 与 **Ostium** 两个去中心化交易所（DEX）永续合约费率、持仓量（OI）及资金费率的系统。该工具旨在帮助交易员发现套利机会，监控市场热度，并优化资金费率策略。
+这是一个用于实时监控和对比 **Hyperliquid** 与 **Ostium** 两个去中心化交易所（DEX）永续合约费率、24h 成交量、持仓量（OI）及资金费率的系统。该工具旨在帮助交易员发现套利机会，监控市场热度，并优化资金费率策略。
 
 ## 📸 系统截图
 
@@ -10,7 +10,7 @@
 
 - **实时数据监控**：
   - **Hyperliquid**：监控 24小时成交量大于设定阈值（默认 $1M）的合约。
-  - **Ostium**：监控总持仓量（Total OI）大于设定阈值（默认 $1M）的合约。
+  - **Ostium**：监控 24小时成交量大于设定阈值（默认 $1M）的合约，真实成交量来自 `/volume/all`。
 - **智能跨平台对比**：
   - 自动识别两个平台的共有资产（如 BTC, ETH, GOLD 等）。
   - **套利监控 (Arbitrage Monitor)**：并排显示同一种资产在两个平台的资金费率，方便发现 Funding Rate Arbitrage 机会。
@@ -45,12 +45,13 @@ trade.xyz-ostium/
 ├── trade_hyperliquid/         # Hyperliquid 数据源模块
 │   ├── ws_client.py           # WebSocket 实时订阅客户端
 │   ├── inspect_hyperliquid.py # REST API 数据获取
+│   ├── filters.py             # Hyperliquid 资产过滤规则
 │   ├── process_hyperliquid.py # 数据处理逻辑
 │   └── DATA_SCHEMA.md         # 数据结构文档
 │
 ├── trade_ostium/              # Ostium 数据源模块
 │   ├── async_poller.py        # 异步轮询器（每2秒）
-│   ├── inspect_ostium.py      # Subgraph 数据获取
+│   ├── inspect_ostium.py      # SDK 数据获取 + `/volume/all` 成交量抓取
 │   ├── process_ostium.py      # 数据处理逻辑
 │   └── DATA_SCHEMA.md         # 数据结构文档
 │
@@ -84,8 +85,8 @@ trade.xyz-ostium/
 ┌─────────────────────────────────────────────────────────────────┐
 │                          数据源层                                │
 ├─────────────────────────────┬───────────────────────────────────┤
-│   Hyperliquid API           │   Ostium Subgraph (Arbitrum)      │
-│   (WebSocket 订阅)           │   (每2秒轮询)                      │
+│   Hyperliquid API           │   Ostium SDK + Metadata API       │
+│   (WebSocket 订阅)           │   (Pairs/Prices + /volume/all)    │
 └─────────────┬───────────────┴───────────────┬───────────────────┘
               │                               │
               ▼                               ▼
@@ -233,6 +234,15 @@ ARBITRUM_RPC_URL = "https://arb-mainnet.g.alchemy.com/v2/YOUR_API_KEY"
 
 # Hyperliquid API URL
 HYPERLIQUID_API_URL = "https://api.hyperliquid.xyz"
+
+# Ostium REST API URL（用于获取真实 24h 成交量）
+OSTIUM_REST_API_URL = "https://metadata-backend.ostium.io"
+
+# Hyperliquid 过滤配置
+# 默认示例先过滤 SPX，如需关闭可改成空列表。
+HYPERLIQUID_FILTER_CONFIG = {
+    'excluded_assets': ['SPX'],
+}
 ```
 
 > **重要**: 如果不配置有效的 `ARBITRUM_RPC_URL`，Ostium 数据将无法加载！
@@ -244,13 +254,16 @@ HYPERLIQUID_API_URL = "https://api.hyperliquid.xyz"
 | 参数               | 文件                             | 默认值        | 说明                                |
 | ------------------ | -------------------------------- | ------------- | ----------------------------------- |
 | `HL_MIN_VOLUME`    | `main.py`                        | 1,000,000 USD | Hyperliquid 最小 24h 成交量过滤阈值 |
-| `OS_MIN_OI`        | `main.py`                        | 1,000,000 USD | Ostium 最小持仓量过滤阈值           |
+| `OS_MIN_VOLUME`    | `main.py`                        | 1,000,000 USD | Ostium 最小 24h 成交量过滤阈值      |
 | `REFRESH_INTERVAL` | `main.py`                        | 5 秒          | HTTP 轮询模式下后端刷新间隔         |
 | `pollInterval`     | `js/http-client.js`              | 5000 ms       | HTTP 轮询模式下前端刷新间隔         |
 | `MIN_VOLUME_USD`   | `trade_hyperliquid/ws_client.py` | 1,000,000 USD | WebSocket 模式下的过滤阈值          |
-| `MIN_OI_USD`       | `trade_ostium/async_poller.py`   | 1,000,000 USD | Ostium 轮询器的过滤阈值             |
+| `MIN_VOLUME_USD`   | `trade_ostium/async_poller.py`   | 1,000,000 USD | Ostium 轮询器的 24h 成交量过滤阈值  |
+| `OSTIUM_MIN_VOLUME_USD` | `trade_ostium/process_ostium.py` | 1,000,000 USD | 离线处理脚本的 Ostium 24h 成交量过滤阈值 |
+| `HYPERLIQUID_FILTER_CONFIG` | `config.py` / `config.example.py` | `['SPX']` | Hyperliquid 资产过滤名单 |
+| `OSTIUM_REST_API_URL` | `config.py` / `config.example.py` | `https://metadata-backend.ostium.io` | Ostium 成交量接口地址 |
 
-> **提示**: 现在您可以在 `config.py` 中直接修改 **费率表 (FEE_SCHEDULE)**、**套利参数 (ARBITRAGE_CONFIG)** 和 **预期收敛价差** 等高级配置，无需修改源代码或重新打包。
+> **提示**: 现在您可以在 `config.py` 中直接修改 **费率表 (FEE_SCHEDULE)**、**套利参数 (ARBITRAGE_CONFIG)**、**Hyperliquid 过滤配置 (HYPERLIQUID_FILTER_CONFIG)** 和 **预期收敛价差** 等高级配置，无需修改源代码或重新打包。
 
 ### 4. RPC 连接优先级与兜底机制
 
@@ -301,7 +314,23 @@ HYPERLIQUID_API_URL = "https://api.hyperliquid.xyz"
   - Oil (CL): 10 bps
 - **其他费用**: 包含 $0.10 的预言机费用 (Oracle Fee)
 
-### 3. 套利计算逻辑
+### 3. 过滤规则
+
+**Hyperliquid**:
+
+- 默认过滤配置位于 `trade_hyperliquid/filters.py`
+- 当前默认排除资产：`SPX`
+- 可通过根目录 `config.py` / `config.example.py` 中的 `HYPERLIQUID_FILTER_CONFIG` 覆盖默认值
+- 过滤时会先标准化资产名，例如 `xyz:SPX` 会被识别为 `SPX`
+
+**Ostium**:
+
+- 过滤依据已从旧的 `Total OI` 切换为真实 **24h Volume**
+- 真实成交量通过 `OSTIUM_REST_API_URL + /volume/all` 获取
+- 当前默认过滤阈值：`24h Volume > $1,000,000`
+- `totalOI_USD` 仍会保留在结果中，用于展示和辅助排序
+
+### 4. 套利计算逻辑
 
 套利计算模块 (`js/arbitrage.js`) 支持两种费率模式：
 
@@ -331,24 +360,27 @@ HYPERLIQUID_API_URL = "https://api.hyperliquid.xyz"
 | ------------------------ | ------------------------------------------------------ |
 | `ws_client.py`           | WebSocket 客户端，订阅 `allDexsAssetCtxs` 获取实时数据 |
 | `inspect_hyperliquid.py` | REST API 调用，获取合约元数据                          |
+| `filters.py`             | Hyperliquid 资产过滤配置与过滤判断逻辑                |
 | `process_hyperliquid.py` | 数据处理和格式化                                       |
 
 **数据特点**：
 
 - 支持主站加密货币 + xyz DEX（外汇/大宗商品）
 - WebSocket 订阅实现毫秒级更新
+- 默认排除 `SPX`，并支持通过 `config.py` 覆盖过滤名单
 
 ### trade_ostium 模块
 
 | 文件                | 功能                            |
 | ------------------- | ------------------------------- |
 | `async_poller.py`   | 异步轮询器，每 2 秒获取一次数据 |
-| `inspect_ostium.py` | Subgraph 查询接口               |
-| `process_ostium.py` | 数据处理和格式化                |
+| `inspect_ostium.py` | 通过 SDK 获取交易对/价格，并抓取 `/volume/all` |
+| `process_ostium.py` | 数据处理和格式化，按 24h 成交量过滤 |
 
 **数据特点**：
 
-- 通过 `ostium-python-sdk` 连接 Subgraph
+- 通过 `ostium-python-sdk` 获取交易对与价格
+- 通过 `/volume/all` 获取真实 24h 成交量
 - 支持 Crypto、Forex、Commodities、Stocks、Indices 五大类资产
 - 区分资金费率（Crypto）和隔夜费率（传统资产）
 
@@ -384,6 +416,20 @@ HYPERLIQUID_API_URL = "https://api.hyperliquid.xyz"
 4. **仅供参考**：本工具仅供参考，不构成投资建议
 
 ## 📝 更新日志
+
+### 2026-04-07
+
+- 🔧 **Hyperliquid 过滤配置新增**：
+  - 新增 `trade_hyperliquid/filters.py`，统一管理 Hyperliquid 资产过滤逻辑
+  - 默认过滤 `SPX`
+  - 支持通过根目录 `config.py` / `config.example.py` 中的 `HYPERLIQUID_FILTER_CONFIG` 覆盖
+- 📊 **Ostium 过滤逻辑更新**：
+  - Ostium 24h 成交量改为通过 `/volume/all` 获取真实数据
+  - 过滤条件从 `Total OI` 切换为 `24h Volume > $1,000,000`
+  - 离线处理脚本 `trade_ostium/process_ostium.py` 的默认阈值与主流程保持一致
+- 📝 **README 同步更新**：
+  - 补充新的过滤配置说明
+  - 同步 Ostium 数据来源与过滤规则
 
 ### 2026-02-02
 

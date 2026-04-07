@@ -142,6 +142,13 @@ TRADING_CONFIG = {
 # 范围: 0-100，默认 4 表示 4% 的折扣
 REFERRAL_DISCOUNT = 4
 
+# Hyperliquid 过滤配置
+# 这里会覆盖 trade_hyperliquid/filters.py 里的默认值。
+# 默认示例先过滤 SPX，如需关闭可改成空列表。
+HYPERLIQUID_FILTER_CONFIG = {
+    'excluded_assets': ['SPX'],
+}
+
 # Hyperliquid 费率表
 FEE_SCHEDULE = {
     # 主流加密货币
@@ -187,7 +194,7 @@ OSTIUM_FEE_SCHEDULE = {
         'XPT': 0.20,        # 铂金 20 bps
         'XPD': 0.20,        # 钯金 20 bps
         'HG': 0.15,         # 铜 15 bps
-        'CL': 0.10,         # 原油 10 bps
+        'CL': 0.15,         # 原油 10 bps
     },
     'crypto': {
         'm': 0.03,      # Maker 3 bps
@@ -205,12 +212,13 @@ NAME_MAPPING = {
     'XAG': 'SILVER',
     'HG': 'COPPER',
     'NDX': 'XYZ100',
+    'BRENT': 'BRENTOIL'
 }
 
 # 优先显示资产
 PRIORITY_ASSETS = [
-    'GOLD', 'SILVER', 'COPPER', 'XYZ100', 'CL',
-    'XAU', 'XAG', 'HG', 'NDX', 'CL'
+    'GOLD', 'SILVER', 'COPPER', 'XYZ100', 'CL', 'BRENTOIL',
+    'XAU', 'XAG', 'HG', 'NDX', 'CL', 'BRENT'
 ]
 
 # 套利计算设置

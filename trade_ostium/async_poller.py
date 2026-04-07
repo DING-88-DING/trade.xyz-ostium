@@ -9,6 +9,7 @@ from datetime import datetime
 from ostium_python_sdk import OstiumSDK
 from ostium_python_sdk.config import NetworkConfig
 import os
+from trade_ostium.inspect_ostium import fetch_volume_map
 
 # Arbitrum RPC URL (优先级：环境变量 > config.py > 默认公共节点)
 ARBITRUM_RPC_URL = os.getenv('ARBITRUM_RPC_URL')
@@ -49,8 +50,8 @@ if not ARBITRUM_RPC_URL:
     ARBITRUM_RPC_URL = 'https://arb1.arbitrum.io/rpc'
     print('[OS Poller] ⚠️ 使用内置硬编码 RPC (可能不稳定)')
 
-# 最小持仓量（美元）- 用于过滤
-MIN_OI_USD = 1_000_000  # 1M 美元
+# 最小 24h 成交量（美元）- 用于过滤
+MIN_VOLUME_USD = 1_000_000  # 1M 美元
 
 
 class OstiumAsyncPoller:
@@ -104,9 +105,12 @@ class OstiumAsyncPoller:
             
             # 获取最新价格（使用 price 模块）
             prices = await self.sdk.price.get_latest_prices()
+
+            # 获取真实 24h 成交量（按 pair_id 返回）。
+            volume_map = await fetch_volume_map()
             
             # 构建合约列表
-            contracts = await self._build_contracts(pairs, prices)
+            contracts = await self._build_contracts(pairs, prices, volume_map)
             
             return {
                 'contracts': contracts,
@@ -119,7 +123,7 @@ class OstiumAsyncPoller:
             traceback.print_exc()
             return None
     
-    async def _build_contracts(self, pairs, prices):
+    async def _build_contracts(self, pairs, prices, volume_map):
         """构建合约列表"""
         # 将价格列表转换为字典，key 为 "from/to" 格式
         price_map = {}
@@ -141,9 +145,11 @@ class OstiumAsyncPoller:
                 total_oi = (long_oi + short_oi) / 1e18
                 mid_price = price_data.get('mid', 1.0)
                 total_oi_usd = total_oi * mid_price if mid_price else 0
+                pair_id = str(pair.get('id', '')).strip()
+                day_volume_usd = float(volume_map.get(pair_id, 0) or 0)
                 
-                # 过滤：持仓量必须大于 MIN_OI_USD
-                if total_oi_usd < MIN_OI_USD:
+                # 过滤：真实 24h 成交量必须大于阈值
+                if day_volume_usd < MIN_VOLUME_USD:
                     filtered_count += 1
                     continue
                 
@@ -172,6 +178,7 @@ class OstiumAsyncPoller:
                     'bid': price_data.get('bid', 0),
                     'mid': price_data.get('mid', 0),
                     'ask': price_data.get('ask', 0),
+                    'dayVolume_USD': round(day_volume_usd, 2),
                     'totalOI_USD': round(total_oi_usd, 2),
                     'longOI': pair.get('longOI'),
                     'shortOI': pair.get('shortOI'),
@@ -188,8 +195,12 @@ class OstiumAsyncPoller:
                 })
         
         if filtered_count > 0:
-            print(f'[OS Poller] 🔍 过滤掉 {filtered_count} 个低 OI 合约（< ${MIN_OI_USD:,}）')
+            print(f'[OS Poller] 🔍 过滤掉 {filtered_count} 个低成交量合约（< ${MIN_VOLUME_USD:,}）')
         
+        contracts.sort(
+            key=lambda x: (x.get('dayVolume_USD', 0), x['totalOI_USD']),
+            reverse=True
+        )
         return contracts
 
 

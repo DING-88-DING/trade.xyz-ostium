@@ -4,7 +4,7 @@ Ostium 交易对数据处理器
 
 功能说明:
     1. 加载 inspect_ostium.py 生成的原始数据文件
-    2. 过滤高 OI（持仓量）的合约（默认 OI > $2,000,000）
+    2. 过滤 24h 成交量达标的合约（默认 24h Volume > $1,000,000）
     3. 计算并转换费率（资金费率 / 隔夜费率）
     4. 将处理后的数据保存到 JSON 文件
 
@@ -39,7 +39,8 @@ OI 计算公式:
     python process_ostium.py
 
 注意事项:
-    - Ostium 不提供 24h 成交量数据，使用 OI 作为过滤条件
+    - Ostium 的真实 24h 成交量通过 /volume/all 获取，并额外挂载到 dayVolume_USD
+    - 当前过滤条件已切换为 24h 成交量阈值
     - Arbitrum 出块速度约 4 块/秒（此脚本使用保守估计 1 块/秒）
 """
 
@@ -49,6 +50,9 @@ from typing import Dict, List, Any
 
 # 获取脚本所在目录（确保无论从哪个目录运行都能找到正确的文件路径）
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Ostium 最小 24h 成交量过滤阈值（USD）
+OSTIUM_MIN_VOLUME_USD = 1_000_000
 
 
 # ==================== 数据加载函数 ====================
@@ -204,10 +208,10 @@ def get_total_oi_usd(pair: Dict, prices: List[Dict]) -> float:
 
 def process_data(
     data: Dict[str, Any],
-    min_oi_usd: float = 2_000_000
+    min_volume_usd: float = OSTIUM_MIN_VOLUME_USD
 ) -> List[Dict[str, Any]]:
     """
-    处理数据：过滤高 OI 合约，计算费率
+    处理数据：按 24h 成交量过滤合约，计算费率
     
     处理步骤:
         1. 遍历所有交易对
@@ -223,7 +227,7 @@ def process_data(
     
     Args:
         data: 原始数据（load_data() 的返回值）
-        min_oi_usd: 最小 OI 阈值（USD），默认 200万
+        min_volume_usd: 最小 24h 成交量阈值（USD），默认 100万
         
     Returns:
         list: 过滤并处理后的合约列表，按 OI 降序排列
@@ -261,6 +265,7 @@ def process_data(
     # 从原始数据中提取交易对和价格
     pairs = data.get("pairs", [])
     prices = data.get("prices", [])
+    volume_map = data.get("volume_map", {})
     
     # ===== 创建价格快速查找表 =====
     # key: "BTC/USD", value: 价格数据
@@ -282,12 +287,14 @@ def process_data(
         # ----- 步骤 1: 计算总 OI（USD） -----
         total_oi_usd = get_total_oi_usd(pair, prices)
         
-        # ----- 步骤 2: 过滤低 OI 合约 -----
-        if total_oi_usd < min_oi_usd:
-            continue
-        
-        # ----- 步骤 3: 获取价格数据 -----
+        # ----- 步骤 2: 获取价格数据与真实 24h 成交量 -----
         price_data = price_map.get(pair_name, {})
+        pair_id = str(pair.get("id", "")).strip()
+        day_volume_usd = float(volume_map.get(pair_id, 0) or 0)
+
+        # ----- 步骤 3: 过滤低成交量合约 -----
+        if day_volume_usd < min_volume_usd:
+            continue
         
         # ----- 步骤 4: 获取原始费率值 -----
         # curFundingLong/Short: 资金费率（crypto 资产使用）
@@ -322,6 +329,7 @@ def process_data(
             "mid": price_data.get("mid"),           # 中间价
             "ask": price_data.get("ask"),           # 卖价
             "isMarketOpen": price_data.get("isMarketOpen"),  # 市场是否开放
+            "dayVolume_USD": round(day_volume_usd, 2),  # 真实 24h 成交量（USD）
             
             # ===== OI 数据 =====
             "totalOI_USD": round(total_oi_usd, 2),  # 总 OI（USD）
@@ -358,22 +366,29 @@ def process_data(
         
         filtered_contracts.append(contract)
     
-    # ===== 步骤 8: 按 OI 降序排列 =====
-    filtered_contracts.sort(key=lambda x: x["totalOI_USD"], reverse=True)
+    # ===== 步骤 8: 优先按真实 24h 成交量排序 =====
+    filtered_contracts.sort(
+        key=lambda x: (x.get("dayVolume_USD", 0), x["totalOI_USD"]),
+        reverse=True
+    )
     
     return filtered_contracts
 
 
 # ==================== 数据保存函数 ====================
 
-def save_results(contracts: List[Dict], filepath: str = "ostium_filtered.json"):
+def save_results(
+    contracts: List[Dict],
+    min_volume_usd: float = OSTIUM_MIN_VOLUME_USD,
+    filepath: str = "ostium_filtered.json"
+):
     """
     保存处理后的合约数据到 JSON 文件
     
     输出文件结构 (ostium_filtered.json):
         {
             "total_filtered": 13,                    # 符合条件的合约数量
-            "filter_criteria": "Total OI > $2,000,000",  # 过滤条件说明
+            "filter_criteria": "24h Volume > $1,000,000", # 过滤条件说明
             "contracts": [                           # 合约数据列表
                 {
                     "pair": "BTC/USD",
@@ -401,9 +416,9 @@ def save_results(contracts: List[Dict], filepath: str = "ostium_filtered.json"):
     """
     # 构建输出数据结构
     result = {
-        "total_filtered": len(contracts),             # 合约数量
-        "filter_criteria": "Total OI > $2,000,000",   # 过滤条件
-        "contracts": contracts                         # 合约数据
+        "total_filtered": len(contracts),                          # 合约数量
+        "filter_criteria": f"24h Volume > ${min_volume_usd:,.0f}", # 过滤条件
+        "contracts": contracts                                      # 合约数据
     }
     
     # 构建完整路径（相对于脚本所在目录）
@@ -443,8 +458,8 @@ def main():
     
     # ===== 步骤 2: 过滤和处理数据 =====
     print("\n正在过滤和处理数据...")
-    # 过滤条件: 总 OI > 200万美元
-    contracts = process_data(data, min_oi_usd=2_000_000)
+    # 过滤条件: 24h 成交量 > 200万美元
+    contracts = process_data(data, min_volume_usd=OSTIUM_MIN_VOLUME_USD)
     
     # ===== 步骤 3: 打印合约摘要 =====
     print(f"\n符合条件的合约: {len(contracts)}")
@@ -469,7 +484,7 @@ def main():
     print("-" * 60)
     
     # ===== 步骤 4: 保存结果 =====
-    save_results(contracts)
+    save_results(contracts, min_volume_usd=OSTIUM_MIN_VOLUME_USD)
     
     print("\n完成！")
 
