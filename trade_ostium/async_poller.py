@@ -10,6 +10,11 @@ from ostium_python_sdk import OstiumSDK
 from ostium_python_sdk.config import NetworkConfig
 import os
 from trade_ostium.inspect_ostium import fetch_volume_map
+from trade_ostium.filtering import (
+    OSTIUM_MIN_OI_USD,
+    OSTIUM_MIN_VOLUME_USD,
+    passes_ostium_liquidity_filter,
+)
 
 # Arbitrum RPC URL (优先级：环境变量 > config.py > 默认公共节点)
 ARBITRUM_RPC_URL = os.getenv('ARBITRUM_RPC_URL')
@@ -50,8 +55,9 @@ if not ARBITRUM_RPC_URL:
     ARBITRUM_RPC_URL = 'https://arb1.arbitrum.io/rpc'
     print('[OS Poller] ⚠️ 使用内置硬编码 RPC (可能不稳定)')
 
-# 最小 24h 成交量（美元）- 用于过滤
-MIN_VOLUME_USD = 1_000_000  # 1M 美元
+# Ostium 流动性过滤阈值统一从共享模块读取，避免多处逻辑漂移。
+MIN_VOLUME_USD = OSTIUM_MIN_VOLUME_USD
+MIN_OI_USD = OSTIUM_MIN_OI_USD
 
 
 class OstiumAsyncPoller:
@@ -133,6 +139,7 @@ class OstiumAsyncPoller:
         
         contracts = []
         filtered_count = 0
+        oi_rescued_count = 0
         
         for pair in pairs:
             pair_name = f"{pair.get('from', '')}/{pair.get('to', '')}"
@@ -148,10 +155,19 @@ class OstiumAsyncPoller:
                 pair_id = str(pair.get('id', '')).strip()
                 day_volume_usd = float(volume_map.get(pair_id, 0) or 0)
                 
-                # 过滤：真实 24h 成交量必须大于阈值
-                if day_volume_usd < MIN_VOLUME_USD:
+                # 过滤规则：24h 成交量或总 OI 满足其一即可保留。
+                if not passes_ostium_liquidity_filter(
+                    day_volume_usd=day_volume_usd,
+                    total_oi_usd=total_oi_usd,
+                    min_volume_usd=MIN_VOLUME_USD,
+                    min_oi_usd=MIN_OI_USD,
+                ):
                     filtered_count += 1
                     continue
+
+                # 记录通过 OI 阈值兜底保留的合约，便于观察过滤效果。
+                if day_volume_usd < MIN_VOLUME_USD and total_oi_usd >= MIN_OI_USD:
+                    oi_rescued_count += 1
                 
                 # 获取资产组
                 group_name = pair.get('group', {}).get('name', '')
@@ -195,7 +211,15 @@ class OstiumAsyncPoller:
                 })
         
         if filtered_count > 0:
-            print(f'[OS Poller] 🔍 过滤掉 {filtered_count} 个低成交量合约（< ${MIN_VOLUME_USD:,}）')
+            print(
+                f'[OS Poller] 🔍 过滤掉 {filtered_count} 个低流动性合约'
+                f'（24h Volume < ${MIN_VOLUME_USD:,} 且 Total OI < ${MIN_OI_USD:,}）'
+            )
+        if oi_rescued_count > 0:
+            print(
+                f'[OS Poller] 📌 有 {oi_rescued_count} 个合约虽然 24h Volume 不足，'
+                f'但因 Total OI >= ${MIN_OI_USD:,} 被保留'
+            )
         
         contracts.sort(
             key=lambda x: (x.get('dayVolume_USD', 0), x['totalOI_USD']),

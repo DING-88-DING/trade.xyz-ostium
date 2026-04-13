@@ -77,11 +77,11 @@
 ```jsonc
 {
   "total_filtered": 13, // 符合条件的合约数量
-  "filter_criteria": "Total OI > $2,000,000", // 过滤条件
+  "filter_criteria": "24h Volume > $1,000,000 OR Total OI > $1,000,000", // 过滤条件
   "updated_at": "2026-01-14 19:34:00", // 更新时间
 
   "contracts": [
-    // 过滤后的合约列表（按 OI 降序）
+    // 过滤后的合约列表（优先按 24h Volume，其次按 OI 降序）
     {
       "pair": "BTC/USD", // 交易对名称
       "from": "BTC", // 基础资产

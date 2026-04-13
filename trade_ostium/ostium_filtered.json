@@ -1,6 +1,6 @@
 {
   "total_filtered": 13,
-  "filter_criteria": "Total OI > $2,000,000",
+  "filter_criteria": "24h Volume > $1,000,000 OR Total OI > $1,000,000",
   "contracts": [
     {
       "pair": "TSLA/USD",

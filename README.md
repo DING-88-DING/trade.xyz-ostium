@@ -255,6 +255,7 @@ HYPERLIQUID_FILTER_CONFIG = {
 | ------------------ | -------------------------------- | ------------- | ----------------------------------- |
 | `HL_MIN_VOLUME`    | `main.py`                        | 1,000,000 USD | Hyperliquid 最小 24h 成交量过滤阈值 |
 | `OS_MIN_VOLUME`    | `main.py`                        | 1,000,000 USD | Ostium 最小 24h 成交量过滤阈值      |
+| `OS_MIN_OI`        | `main.py`                        | 1,000,000 USD | Ostium 最小总 OI 过滤阈值           |
 | `REFRESH_INTERVAL` | `main.py`                        | 5 秒          | HTTP 轮询模式下后端刷新间隔         |
 | `pollInterval`     | `js/http-client.js`              | 5000 ms       | HTTP 轮询模式下前端刷新间隔         |
 | `MIN_VOLUME_USD`   | `trade_hyperliquid/ws_client.py` | 1,000,000 USD | WebSocket 模式下的过滤阈值          |
@@ -325,10 +326,10 @@ HYPERLIQUID_FILTER_CONFIG = {
 
 **Ostium**:
 
-- 过滤依据已从旧的 `Total OI` 切换为真实 **24h Volume**
+- 过滤依据为真实 **24h Volume** 与 **Total OI** 的并行条件
 - 真实成交量通过 `OSTIUM_REST_API_URL + /volume/all` 获取
-- 当前默认过滤阈值：`24h Volume > $1,000,000`
-- `totalOI_USD` 仍会保留在结果中，用于展示和辅助排序
+- 当前默认过滤阈值：`24h Volume > $1,000,000` 或 `Total OI > $1,000,000`
+- `totalOI_USD` 仍会保留在结果中，用于展示、辅助排序和作为第二过滤条件
 
 ### 4. 套利计算逻辑
 
@@ -425,7 +426,7 @@ HYPERLIQUID_FILTER_CONFIG = {
   - 支持通过根目录 `config.py` / `config.example.py` 中的 `HYPERLIQUID_FILTER_CONFIG` 覆盖
 - 📊 **Ostium 过滤逻辑更新**：
   - Ostium 24h 成交量改为通过 `/volume/all` 获取真实数据
-  - 过滤条件从 `Total OI` 切换为 `24h Volume > $1,000,000`
+  - 过滤条件更新为 `24h Volume > $1,000,000` 或 `Total OI > $1,000,000`
   - 离线处理脚本 `trade_ostium/process_ostium.py` 的默认阈值与主流程保持一致
 - 📝 **README 同步更新**：
   - 补充新的过滤配置说明
