@@ -27,6 +27,11 @@ from .fee_config import ARBITRAGE_CONFIG
 
 # 监控的资产列表（HL 名称）
 MONITORED_ASSETS = ARBITRAGE_CONFIG.get('monitored_assets', ['GOLD', 'SILVER', 'COPPER', 'XYZ100'])
+MONITORED_ASSET_SET = {
+    str(asset).strip().upper()
+    for asset in MONITORED_ASSETS
+    if str(asset).strip()
+}
 
 # 通知冷却时间（秒）- 同一资产在此时间内不重复通知
 NOTIFICATION_COOLDOWN = ARBITRAGE_CONFIG.get('notification_cooldown', 60)
@@ -130,12 +135,10 @@ class ArbitrageNotifier:
             name = pair.get('name', '')
             hl_contract = pair.get('hl', {})
             hl_coin = hl_contract.get('coin', '')
+            normalized_hl_coin = hl_coin.split(':')[-1].upper() if hl_coin else ''
             
             # 检查是否在监控列表中
-            is_monitored = any(
-                asset in name or asset in hl_coin 
-                for asset in MONITORED_ASSETS
-            )
+            is_monitored = normalized_hl_coin in MONITORED_ASSET_SET
             
             if not is_monitored:
                 continue
@@ -153,7 +156,7 @@ class ArbitrageNotifier:
                 continue
             
             # 提取资产标识（用于防重复）
-            asset_key = hl_coin or name.split(' ')[0]
+            asset_key = normalized_hl_coin or name.split(' ')[0]
             
             # 检查冷却时间
             last_time = self.last_notification_time.get(asset_key, 0)
